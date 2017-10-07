@@ -1,0 +1,52 @@
+body {
+  background-color: black;
+  font-family: Avenir, sans-serif;
+  color: white; }
+
+#main-console {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%; }
+
+#text {
+  -ms-flex-preferred-size: 15%;
+      flex-basis: 15%;
+  margin: 0;
+  overflow: scroll; }
+
+p, h1, ul {
+  text-align: left; }
+
+h1 {
+  font-size: 1em;
+  font-weight: normal;
+  margin: 0; }
+
+div {
+  width: 1024px;
+  text-align: center; }
+
+.layer {
+  position: absolute;
+  padding: 0;
+  margin: 0; }
+
+#controller {
+  display: block;
+  padding: 5px;
+  border-radius: 50%;
+  cursor: pointer;
+  width: 15em; }
+  #controller div {
+    color: black;
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    margin: auto;
+    border-radius: 50% #controller div; }
+    #controller div :active {
+      background-color: gray;
+      box-shadow: 0 0 10px 10px rgba(255, 255, 255, 0.4); }
+
+/*# sourceMappingURL=main.css.map */
