@@ -4,12 +4,12 @@ module.exports = {
   devServer: {
     host: '0.0.0.0'
   },
-  entry: 'src/index.js',
+  entry: './src/index.js',
   output: {
     filename: 'bundle.js',
     library: 'App'
   },
-  // devtool: "eval-source-map",
+  devtool: "eval-source-map",
   module: {
     rules:[
       {
