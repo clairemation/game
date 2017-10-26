@@ -1,37 +1,17 @@
 // Constants ==========================
 
-const FRAMERATE = 200
+const ANIM_FRAMERATE = 200
 const SPRITE_WIDTH = 48
 const SPRITE_HEIGHT = 32
+const GROUND = 200
 
 // ====================================
 
 // Base Classes =======================
 
-class GameObject{
-    constructor(args = {}){
-        this.scripts = {}
-        this.behaviors = {
-            default: sharedBehaviors.updateAllScripts
-        }
-        this.currentBehavior = this.behaviors.default
-        Object.assign(this, args.properties)
-    }
-
-    update(dt){
-        this.currentBehavior.update.call(this, dt)
-    }
-
-    changeBehavior(newBehavior){
-        this.currentBehavior.exit()
-        newBehavior.enter()
-        this.currentBehavior = newBehavior
-    }
-}
-
 class Behavior{
     constructor(args = {}){
-        Object.assign(this, args.properties)
+        Object.assign(this, args)
     }
 
     enter(){
@@ -49,7 +29,7 @@ class Behavior{
 
 class Script{
     constructor(args = {}){
-        Object.assign(this, args.properties)
+        Object.assign(this, args)
     }
 
     update(deltaTime){
@@ -57,14 +37,35 @@ class Script{
     }
 }
 
-// ====================================
-
 var sharedBehaviors = {
-    updateAllScripts: {
+    updateAllScripts: new Behavior({
         update: function(dt){
             for (var scriptName in this.scripts){
                 this.scripts[scriptName].update(dt)
             }
+        }
+    })
+}
+
+class GameObject{
+    constructor(args = {}){
+        this.scripts = {}
+        this.behaviors = {
+            default: sharedBehaviors.updateAllScripts
+        }
+        this.currentBehavior = this.behaviors.default
+        Object.assign(this, args)
+    }
+
+    update(dt){
+        this.currentBehavior.update.call(this, dt)
+    }
+
+    changeBehavior(newBehavior){
+        if (this.currentBehavior != newBehavior){
+            this.currentBehavior.exit.call(this, newBehavior)
+            newBehavior.enter.call(this, this.currentBehavior)
+            this.currentBehavior = newBehavior
         }
     }
 }
@@ -86,8 +87,8 @@ class SpriteHandler extends Script{
 
     advanceFrame(dt){
         this.elapsedTime += dt
-        this.elapsedTime = this.elapsedTime % (this.numFrames * FRAMERATE)
-        this.currentFrameNum = Math.floor (this.elapsedTime / FRAMERATE)
+        this.elapsedTime = this.elapsedTime % (this.numFrames * ANIM_FRAMERATE)
+        this.currentFrameNum = Math.floor (this.elapsedTime / ANIM_FRAMERATE)
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
     }
 
@@ -106,76 +107,116 @@ var player = new GameObject()
 var gameEnginesObject = new GameObject()
 
 var levelGameplayScript = new Script({
-    properties: {
-        gameObjects: {
-            player,
-            gameEnginesObject
-        },
-        update: function(dt){
-            for (var goName in this.gameObjects){
-                this.gameObjects[goName].update(dt)
-            }
+    gameObjects: {
+        player,
+        gameEnginesObject
+    },
+    update: function(dt){
+        for (var goName in this.gameObjects){
+            this.gameObjects[goName].update(dt)
         }
     }
 })
 
 var game = new GameObject({
-    properties: {
-        scripts: {
-            levelGameplayScript
-        }
+    scripts: {
+        levelGameplayScript
     }
 })
 
 player.scripts.transform = new Script({
-    properties: {
-        owner: player,
-        position: [20, 200],
-        rotation: [0, 0, 0],
-        scale: [1, 1, 1],
-        forward: [1, 0]
-    }
+    owner: player,
+    position: [20, GROUND - SPRITE_HEIGHT],
+    rotation: [0, 0, 0],
+    scale: [1, 1, 1],
+    facing: [1, 0],
+    pivot: [SPRITE_WIDTH / 2, SPRITE_HEIGHT],
+    center: [SPRITE_WIDTH / 2, SPRITE_HEIGHT / 2]
 })
 
 player.scripts.spriteHandler = new SpriteHandler({
-    properties: {
-        owner: player,
-        engine: spriteEngineScript,
-        animations: {
-            stand: [2],
-            walk: [2, 3],
-            flap: [0, 1]
-        }
+    owner: player,
+    engine: spriteEngineScript,
+    animations: {
+        stand: [2],
+        walk: [2, 3],
+        jump: [0],
+        fall: [1]
     }
 })
 
-player.scripts.spriteHandler.setCurrentAnimation("stand")
-
-player.scripts.movementController = new Script({
-    properties: {
-        push(direction){
-
-        }
+var stand = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("stand")
     }
 })
+
+var walk = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("walk")
+    },
+    update: function(dt){
+        this.scripts.spriteHandler.update(dt)
+    }
+})
+
+player.scripts.jumpScript = new Script({
+    owner: player,
+    yAccel: 0,
+    startJump: function(){
+        this.yAccel -=5
+    },
+    update: function(dt){
+        this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
+        this.yAccel += 0.25 * (dt / 30)
+        if (this.yAccel > 0) {
+            this.owner.changeBehavior(fall)
+        }
+        if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
+            this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
+            this.yAccel = 0
+            this.owner.changeBehavior(walk)
+        }
+
+    }
+})
+
+var fall = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("fall")
+    },
+    update: function(dt){
+        this.scripts.jumpScript.update(dt)
+    }
+})
+
+var jump = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("jump")
+        this.scripts.jumpScript.startJump()
+    },
+    update: function(dt){
+        this.scripts.jumpScript.update(dt)
+    }
+})
+
+player.changeBehavior(walk)
 
 document.addEventListener("keydown", e => {
     if (e.keyCode == 38){
-        
+        player.changeBehavior(jump)
     }
 })
 
 
 var spriteEngineScript = new Script({
-    properties: {
-        components: [player.scripts.spriteHandler],
-        update: function(dt){
-            ctx.clearRect(0, 0, 320, 240)
-            for (var i = 0; i < this.components.length; i++){
-                var position = this.components[i].owner.scripts.transform.position
-                var frame = this.components[i].currentFrame
-                ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
-            }
+    components: [player.scripts.spriteHandler],
+    update: function(dt){
+        ctx.clearRect(0, 0, 320, 240)
+        for (var i = 0; i < this.components.length; i++){
+            var position = this.components[i].owner.scripts.transform.position
+            var frame = this.components[i].currentFrame
+            ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
         }
     }
 })
