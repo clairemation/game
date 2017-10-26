@@ -1,4 +1,6 @@
 const FRAMERATE = 200
+const SPRITE_WIDTH = 48
+const SPRITE_HEIGHT = 32
 
 var GameObject = (() => {
     const goIndex = [];
@@ -6,7 +8,7 @@ var GameObject = (() => {
     class GameObject{
         constructor(args = {}){
             goIndex.push(this)
-            this.components = {}
+            this.scripts = {}
             this.behaviors = {}
             Object.assign(this, args.properties)
             Object.defineProperty(this, "all", {
@@ -14,8 +16,8 @@ var GameObject = (() => {
             })
         }
 
-        update(deltaTime){
-            this.currentBehavior.update.call(this, deltaTime)
+        update(dt){
+            this.currentBehavior.update.call(this, dt)
         }
 
         destroy(){
@@ -51,32 +53,80 @@ class Behavior{
     }
 }
 
-
-class NormalGameBehavior extends Behavior{
-    update(deltaTime){
-        this.components.gameplay.update(deltaTime);
+class Script{
+    constructor(args = {}){
+        this.owner = args.owner
+        this.engine = args.engine
+        Object.assign(this, args.properties)
     }
 }
+
+class SpriteHandler extends Script{
+    constructor(args = {}){
+        super(args)
+        this.engine = spriteEngine
+        this.currentFrameNum = 0
+        this.elapsedTime = 0
+    }
+
+    setCurrentAnimation(name){
+        this.currentAnimation = this.animations[name]
+        this.currentFrameNum = 0
+        this.currentFrame = this.currentAnimation[this.currentFrameNum]
+        this.numFrames = this.currentAnimation.length
+        this.elapsedTime = 0
+    }
+
+    advanceFrame(dt){
+        this.elapsedTime += dt
+        this.elapsedTime = this.elapsedTime % (this.numFrames * FRAMERATE)
+        this.currentFrameNum = Math.floor (this.elapsedTime / FRAMERATE)
+        this.currentFrame = this.currentAnimation[this.currentFrameNum]
+    }
+
+    update(dt){
+        advanceFrame(dt)
+    }
+}
+
+var gameplayBehavior = new Behavior({
+    properties: {
+        update: function(dt){
+            this.scripts.levelGameplay.update(dt);
+        }
+    }
+})
+
+var levelGameplay = new Script({
+    properties: {
+        gameObjects: {
+            player,
+            spriteEngine
+        },
+        update: function(dt){
+            for (var i = 0; i < this.gameObjects.length; i++){
+                this.gameObjects[i].update(dt)
+            }
+        }
+    }
+})
 
 var game = new GameObject({
     properties: {
         behaviors: {
-            normal: new NormalGameBehavior()
+            normal: gameplayBehavior
         },
-        components: {
-            gameplay: {
-                update: updateGameplay
-            }
+        scripts: {
+            levelGameplay
         }
     }
 })
 
 game.currentBehavior = game.behaviors.normal
 
-
 var player = new GameObject()
 
-player.components.transform = {
+player.scripts.transform = {
     owner: player,
     position: [20, 200],
     rotation: [0, 0, 0],
@@ -84,59 +134,29 @@ player.components.transform = {
     forward: [1, 0]
 }
 
-player.spriteHandler = new SpriteHandler({
+player.scripts.spriteHandler = new SpriteHandler({
     owner: player,
-    engine: spriteEngine
-})
-
-var spriteEngine = {
-    spriteComponents: [player.spriteHandler],
-    update: function(){
-        ctx.clearRect(0, 0, 320, 240)
-
-        for (var i = 0; i < this.spriteComponents.length; i++){
-            var position = this.spriteComponents[i].owner.components.transform.position
-            var frame = this.spriteComponents[i].currentFrame
-            ctx.drawImage(raptorSprite, frame*48, 0, 48, 32, position[0], position[1], 48, 32)
+    engine: spriteEngine,
+    properties: {
+        animations: {
+            walk: [2, 3],
+            flap: [0, 1]
         }
     }
-}
+})
 
-function SpriteHandler(args){
-    this.owner = args.owner
-    this.engine = args.spriteEngine
-    this.animations = {
-        walk: [2, 3],
-        flap: [0, 1]
+player.scripts.spriteHandler.setCurrentAnimation("walk")
+
+var spriteEngine = {
+    components: [player.spriteHandler],
+    update: function(){
+        ctx.clearRect(0, 0, 320, 240)
+        for (var i = 0; i < this.components.length; i++){
+            var position = this.components[i].owner.components.transform.position
+            var frame = this.components[i].currentFrame
+            ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+        }
     }
-    this.currentAnimation = this.animations.walk
-    this.currentFrameNum = 0
-
-    this.currentFrame = this.currentAnimation[this.currentFrameNum]
-
-    this.numFrames = this.currentAnimation.length
-
-    this.elapsedTime = 0
-
-}
-
-SpriteHandler.prototype.advanceFrame = function(deltaTime){
-    this.elapsedTime += deltaTime
-    this.elapsedTime = this.elapsedTime % (this.numFrames * FRAMERATE)
-    this.currentFrameNum = Math.floor (this.elapsedTime / FRAMERATE)
-    this.currentFrame = this.currentAnimation[this.currentFrameNum]
-}
-
-
-
-
-var elapsedTime = 0
-var frameOne = true
-const numFrames = 2
-
-function updateGameplay(deltaTime){
-    player.spriteHandler.advanceFrame(deltaTime)
-    spriteEngine.update(deltaTime)
 }
 
 
@@ -145,8 +165,9 @@ var lastTime = 0
 function tick(timestamp){
     requestAnimationFrame(tick);
     var dt = timestamp - lastTime
-    lastTime = timestamp
     game.update(dt);
+    // console.log(player.scripts.spriteHandler.currentFrame)
+    lastTime = timestamp
 }
 
 
@@ -160,5 +181,6 @@ raptorSprite.onload = () => {
     requestAnimationFrame(tick)
 }
 raptorSprite.src = raptorSpritesheetSrc
+
 
 module.exports = {GameObject}
