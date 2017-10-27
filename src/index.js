@@ -22,6 +22,10 @@ class Behavior{
         //Override
     }
 
+    message(msg){
+        //Override
+    }
+
     update(deltaTime){
         //Override
     }
@@ -61,12 +65,16 @@ class GameObject{
         this.currentBehavior.update.call(this, dt)
     }
 
+    message(msg){
+        this.currentBehavior.message.call(this, msg)
+    }
+
     changeBehavior(newBehavior){
-        if (this.currentBehavior != newBehavior){
+        // if (this.currentBehavior != newBehavior){
             this.currentBehavior.exit.call(this, newBehavior)
             newBehavior.enter.call(this, this.currentBehavior)
             this.currentBehavior = newBehavior
-        }
+        // }
     }
 }
 
@@ -105,10 +113,12 @@ class SpriteHandler extends Script{
 
 var player = new GameObject()
 var gameEnginesObject = new GameObject()
+var fern = new GameObject()
 
 var levelGameplayScript = new Script({
     gameObjects: {
         player,
+        // fern,
         gameEnginesObject
     },
     update: function(dt){
@@ -136,18 +146,31 @@ player.scripts.transform = new Script({
 
 player.scripts.spriteHandler = new SpriteHandler({
     owner: player,
-    engine: spriteEngineScript,
     animations: {
-        stand: [2],
-        walk: [2, 3],
-        jump: [0],
-        fall: [1]
+        stand: [3],
+        walk: [3, 4],
+        jump: [1],
+        fall: [2]
+    }
+})
+
+fern.scripts.spriteHandler = new SpriteHandler({
+    owner: fern,
+    animations: {
+        default: [0]
     }
 })
 
 var stand = new Behavior({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("stand")
+    },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                this.changeBehavior(jump)
+                break
+        }
     }
 })
 
@@ -155,20 +178,34 @@ var walk = new Behavior({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("walk")
     },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                if (this.scripts.jumpScript.jumpBar > 5){
+                    this.changeBehavior(jump)
+                }
+                break
+        }
+    },
     update: function(dt){
         this.scripts.spriteHandler.update(dt)
+        this.scripts.jumpScript.charge(dt)
     }
 })
 
 player.scripts.jumpScript = new Script({
     owner: player,
     yAccel: 0,
+    nextJumpTime: 0,
+    jumpBar: 10,
     startJump: function(){
-        this.yAccel -=5
+        this.yAccel -=7
+        this.nextJumpTime = currentTime + 1000
+        this.jumpBar = Math.max(this.jumpBar - 5, 0)
     },
-    update: function(dt){
+    move: function(dt){
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
-        this.yAccel += 0.25 * (dt / 30)
+        this.yAccel += 0.5 * (dt / 30)
         if (this.yAccel > 0) {
             this.owner.changeBehavior(fall)
         }
@@ -177,7 +214,9 @@ player.scripts.jumpScript = new Script({
             this.yAccel = 0
             this.owner.changeBehavior(walk)
         }
-
+    },
+    charge: function(dt){
+        this.jumpBar = Math.min(this.jumpBar + dt/100, 10)
     }
 })
 
@@ -185,8 +224,18 @@ var fall = new Behavior({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("fall")
     },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                if (this.scripts.jumpScript.jumpBar > 5){
+                    this.changeBehavior(jump)
+                }
+                break
+        }
+    },
     update: function(dt){
-        this.scripts.jumpScript.update(dt)
+        this.scripts.jumpScript.move(dt)
+        this.scripts.jumpScript.charge(dt)
     }
 })
 
@@ -195,16 +244,27 @@ var jump = new Behavior({
         this.scripts.spriteHandler.setCurrentAnimation("jump")
         this.scripts.jumpScript.startJump()
     },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                if (this.scripts.jumpScript.jumpBar > 5){
+                    this.changeBehavior(jump)
+                }
+                break
+        }
+    },
     update: function(dt){
-        this.scripts.jumpScript.update(dt)
+        this.scripts.jumpScript.move(dt)
+        this.scripts.jumpScript.charge(dt)
     }
 })
 
 player.changeBehavior(walk)
 
+
 document.addEventListener("keydown", e => {
-    if (e.keyCode == 38){
-        player.changeBehavior(jump)
+    if (e.keyCode == 32){
+        player.message("jump")
     }
 })
 
@@ -226,8 +286,8 @@ gameEnginesObject.scripts.spriteEngine = spriteEngineScript
 
 
 
-
-
+// Expose globally
+var currentTime
 var tick = (() => {
 
     var lastTime = 0
@@ -237,6 +297,8 @@ var tick = (() => {
         var dt = timestamp - lastTime
         game.update(dt);
         lastTime = timestamp
+        currentTime = timestamp
+        console.log(player.scripts.jumpScript.jumpBar)
     }
 
     return tick
