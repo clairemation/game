@@ -3,7 +3,7 @@
 const ANIM_FRAMERATE = 200
 const SPRITE_WIDTH = 48
 const SPRITE_HEIGHT = 32
-const GROUND = 200
+const GROUND = 176
 
 // ====================================
 
@@ -181,61 +181,45 @@ var walk = new Behavior({
     message: function(msg){
         switch (msg){
             case "jump":
-                if (this.scripts.jumpScript.jumpBar > 5){
-                    this.changeBehavior(jump)
-                }
+                this.changeBehavior(jump)
                 break
         }
     },
     update: function(dt){
         this.scripts.spriteHandler.update(dt)
-        this.scripts.jumpScript.charge(dt)
     }
 })
 
 player.scripts.jumpScript = new Script({
     owner: player,
     yAccel: 0,
-    nextJumpTime: 0,
-    jumpBar: 10,
+    gliding: false,
     startJump: function(){
-        this.yAccel -=7
-        this.nextJumpTime = currentTime + 1000
-        this.jumpBar = Math.max(this.jumpBar - 7, 0)
+        this.yAccel -=4
+        this.gliding = true
+    },
+    flap: function(){
+        this.yAccel -= 4
+        this.gliding = true
+        this.owner.scripts.spriteHandler.setCurrentAnimation("jump")
+    },
+    fall: function(){
+        this.gliding = false
+        this.owner.scripts.spriteHandler.setCurrentAnimation("fall")
     },
     move: function(dt){
+        this.yAccel = Math.max(this.yAccel, -4)
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
-        this.yAccel += 0.5 * (dt / 30)
-        if (this.yAccel > 0) {
-            this.owner.changeBehavior(fall)
+        if (this.gliding && this.yAccel > 0){
+            this.yAccel = (dt / 30)
+        } else {
+            this.yAccel += 0.5 * (dt / 30)
         }
         if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
             this.yAccel = 0
             this.owner.changeBehavior(walk)
         }
-    },
-    charge: function(dt){
-        this.jumpBar = Math.min(this.jumpBar + dt/100, 10)
-    }
-})
-
-var fall = new Behavior({
-    enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("fall")
-    },
-    message: function(msg){
-        switch (msg){
-            case "jump":
-                if (this.scripts.jumpScript.jumpBar > 5){
-                    this.changeBehavior(jump)
-                }
-                break
-        }
-    },
-    update: function(dt){
-        this.scripts.jumpScript.move(dt)
-        this.scripts.jumpScript.charge(dt)
     }
 })
 
@@ -247,24 +231,33 @@ var jump = new Behavior({
     message: function(msg){
         switch (msg){
             case "jump":
-                if (this.scripts.jumpScript.jumpBar > 5){
-                    this.changeBehavior(jump)
-                }
+                this.scripts.jumpScript.flap()
                 break
+            case "fall":
+                this.scripts.jumpScript.fall()
         }
     },
     update: function(dt){
         this.scripts.jumpScript.move(dt)
-        this.scripts.jumpScript.charge(dt)
     }
 })
 
 player.changeBehavior(walk)
 
 
+var keyDown = false
+
 document.addEventListener("keydown", e => {
-    if (e.keyCode == 32){
+    if (keyDown == false && e.keyCode == 32){
         player.message("jump")
+        keyDown = true
+    }
+})
+
+document.addEventListener("keyup", e => {
+    if (keyDown == true && e.keyCode == 32){
+        player.message("fall")
+        keyDown = false
     }
 })
 
@@ -286,6 +279,7 @@ gameEnginesObject.scripts.spriteEngine = spriteEngineScript
 
 
 
+var bgX = 0
 // Expose globally
 var currentTime
 var tick = (() => {
@@ -298,7 +292,8 @@ var tick = (() => {
         game.update(dt);
         lastTime = timestamp
         currentTime = timestamp
-        console.log(player.scripts.jumpScript.jumpBar)
+        bgX = bgX - 5 * (dt/30)
+        bg1.style.backgroundPosition = `${bgX}px 0px`
     }
 
     return tick
@@ -307,6 +302,8 @@ var tick = (() => {
 
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
+
+var bg1 = document.getElementById("bg1")
 
 var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
 var raptorSprite = new Image()
