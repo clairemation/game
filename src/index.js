@@ -201,7 +201,7 @@ player.scripts.jumpScript = new Script({
     startJump: function(){
         this.yAccel -=7
         this.nextJumpTime = currentTime + 1000
-        this.jumpBar = Math.max(this.jumpBar - 5, 0)
+        this.jumpBar = Math.max(this.jumpBar - 7, 0)
     },
     move: function(dt){
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
