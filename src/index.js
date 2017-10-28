@@ -101,11 +101,13 @@ class SpriteHandler extends Script{
     }
 
     setCurrentAnimation(name){
-        this.currentAnimation = this.animations[name]
-        this.currentFrameNum = 0
-        this.currentFrame = this.currentAnimation[this.currentFrameNum]
-        this.numFrames = this.currentAnimation.length
-        this.elapsedTime = 0
+        if (this.currentAnimation != this.animations[name]){
+            this.currentAnimation = this.animations[name]
+            this.currentFrameNum = 0
+            this.currentFrame = this.currentAnimation[this.currentFrameNum]
+            this.numFrames = this.currentAnimation.length
+            this.elapsedTime = 0
+        }
     }
 }
 
@@ -148,9 +150,10 @@ player.scripts.spriteHandler = new SpriteHandler({
     owner: player,
     animations: {
         stand: [3],
-        walk: [3, 4],
+        walk: [5, 6],
         jump: [1],
-        fall: [2]
+        fall: [2],
+        glide: [3, 4]
     }
 })
 
@@ -211,6 +214,7 @@ player.scripts.jumpScript = new Script({
         this.yAccel = Math.max(this.yAccel, -4)
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
         if (this.gliding && this.yAccel > 0){
+            this.owner.scripts.spriteHandler.setCurrentAnimation("glide")
             this.yAccel = (dt / 30)
         } else {
             this.yAccel += 0.5 * (dt / 30)
@@ -239,6 +243,7 @@ var jump = new Behavior({
     },
     update: function(dt){
         this.scripts.jumpScript.move(dt)
+        this.scripts.spriteHandler.update(dt)
     }
 })
 
@@ -292,7 +297,7 @@ var tick = (() => {
         game.update(dt);
         lastTime = timestamp
         currentTime = timestamp
-        bgX = bgX - 5 * (dt/30)
+        bgX = (bgX - 5 * (dt/30)) % 640
         bg1.style.backgroundPosition = `${bgX}px 0px`
     }
 
