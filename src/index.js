@@ -266,6 +266,20 @@ document.addEventListener("keyup", e => {
     }
 })
 
+document.addEventListener("touchstart", e => {
+    if (keyDown == false){
+        player.message("jump")
+        keyDown = true
+    }
+})
+
+document.addEventListener("touchend", e => {
+    if (keyDown == true){
+        player.message("fall")
+        keyDown = false
+    }
+})
+
 
 var spriteEngineScript = new Script({
     components: [player.scripts.spriteHandler],
