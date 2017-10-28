@@ -111,6 +111,14 @@ class SpriteHandler extends Script{
     }
 }
 
+class Transform extends Script{
+    constructor(args){
+        super(args)
+        this.position = this.position || [0, 0]
+    }
+
+}
+
 // =================================================
 
 var player = new GameObject()
@@ -139,9 +147,6 @@ var game = new GameObject({
 player.scripts.transform = new Script({
     owner: player,
     position: [20, GROUND - SPRITE_HEIGHT],
-    rotation: [0, 0, 0],
-    scale: [1, 1, 1],
-    facing: [1, 0],
     pivot: [SPRITE_WIDTH / 2, SPRITE_HEIGHT],
     center: [SPRITE_WIDTH / 2, SPRITE_HEIGHT / 2]
 })
@@ -198,7 +203,7 @@ player.scripts.jumpScript = new Script({
     yAccel: 0,
     gliding: false,
     startJump: function(){
-        this.yAccel -=4
+        this.yAccel -= 7
         this.gliding = true
     },
     flap: function(){
@@ -211,7 +216,7 @@ player.scripts.jumpScript = new Script({
         this.owner.scripts.spriteHandler.setCurrentAnimation("fall")
     },
     move: function(dt){
-        this.yAccel = Math.max(this.yAccel, -4)
+        this.yAccel = Math.max(this.yAccel, -7)
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
         if (this.gliding && this.yAccel > 0){
             this.owner.scripts.spriteHandler.setCurrentAnimation("glide")
