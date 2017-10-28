@@ -70,11 +70,9 @@ class GameObject{
     }
 
     changeBehavior(newBehavior){
-        // if (this.currentBehavior != newBehavior){
-            this.currentBehavior.exit.call(this, newBehavior)
-            newBehavior.enter.call(this, this.currentBehavior)
-            this.currentBehavior = newBehavior
-        // }
+        this.currentBehavior.exit.call(this, newBehavior)
+        newBehavior.enter.call(this, this.currentBehavior)
+        this.currentBehavior = newBehavior
     }
 }
 
@@ -114,7 +112,9 @@ class SpriteHandler extends Script{
 class Transform extends Script{
     constructor(args){
         super(args)
-        this.position = this.position || [0, 0]
+        this.position = this.position || [0, GROUND - SPRITE_HEIGHT]
+        this.pivot = this.pivot || [SPRITE_WIDTH/2, SPRITE_HEIGHT]
+        this.center = this.center || [SPRITE_WIDTH/2, SPRITE_HEIGHT/2]
     }
 
 }
@@ -128,7 +128,7 @@ var fern = new GameObject()
 var levelGameplayScript = new Script({
     gameObjects: {
         player,
-        // fern,
+        fern,
         gameEnginesObject
     },
     update: function(dt){
@@ -144,11 +144,9 @@ var game = new GameObject({
     }
 })
 
-player.scripts.transform = new Script({
+player.scripts.transform = new Transform({
     owner: player,
-    position: [20, GROUND - SPRITE_HEIGHT],
-    pivot: [SPRITE_WIDTH / 2, SPRITE_HEIGHT],
-    center: [SPRITE_WIDTH / 2, SPRITE_HEIGHT / 2]
+    position: [20, GROUND - SPRITE_HEIGHT]
 })
 
 player.scripts.spriteHandler = new SpriteHandler({
@@ -162,10 +160,33 @@ player.scripts.spriteHandler = new SpriteHandler({
     }
 })
 
+var prop = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("default")
+    },
+    update: function(dt){
+        this.scripts.scroll.update(dt)
+    }
+})
+
 fern.scripts.spriteHandler = new SpriteHandler({
     owner: fern,
     animations: {
         default: [0]
+    }
+})
+
+fern.scripts.transform = new Transform({
+    owner: fern,
+    position: [320, GROUND - SPRITE_HEIGHT],
+})
+
+fern.scripts.scroll = new Script({
+    owner: fern,
+    xScroll: 0,
+    update: function(dt){
+        this.xScroll = (this.xScroll + 2.5 * (dt/30))
+        this.owner.scripts.transform.position[0] = 320 - this.xScroll
     }
 })
 
@@ -253,6 +274,7 @@ var jump = new Behavior({
 })
 
 player.changeBehavior(walk)
+fern.changeBehavior(prop)
 
 
 var keyDown = false
@@ -287,7 +309,7 @@ document.addEventListener("touchend", e => {
 
 
 var spriteEngineScript = new Script({
-    components: [player.scripts.spriteHandler],
+    components: [player.scripts.spriteHandler, fern.scripts.spriteHandler],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
         for (var i = 0; i < this.components.length; i++){
@@ -297,6 +319,7 @@ var spriteEngineScript = new Script({
         }
     }
 })
+
 
 gameEnginesObject.scripts.spriteEngine = spriteEngineScript
 
