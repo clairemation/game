@@ -82,7 +82,7 @@ class GameObject{
 class SpriteHandler extends Script{
     constructor(args = {}){
         super(args)
-        this.engine = spriteEngineScript
+        this.engine = gameEnginesObject.spriteEngine
         this.currentFrameNum = 0
         this.elapsedTime = 0
     }
@@ -109,6 +109,10 @@ class SpriteHandler extends Script{
     }
 }
 
+class Collider extends Script{
+
+}
+
 class Transform extends Script{
     constructor(args){
         super(args)
@@ -124,23 +128,18 @@ class Transform extends Script{
 var player = new GameObject()
 var gameEnginesObject = new GameObject()
 var fern = new GameObject()
+var game = new GameObject()
 
-var levelGameplayScript = new Script({
+game.scripts.levelGameplayScript = new Script({
     gameObjects: {
         player,
         fern,
         gameEnginesObject
     },
     update: function(dt){
-        for (var goName in this.gameObjects){
-            this.gameObjects[goName].update(dt)
+        for (var name in this.gameObjects){
+            this.gameObjects[name].update(dt)
         }
-    }
-})
-
-var game = new GameObject({
-    scripts: {
-        levelGameplayScript
     }
 })
 
@@ -157,65 +156,6 @@ player.scripts.spriteHandler = new SpriteHandler({
         jump: [1],
         fall: [2],
         glide: [3, 4]
-    }
-})
-
-var prop = new Behavior({
-    enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("default")
-    },
-    update: function(dt){
-        this.scripts.scroll.update(dt)
-    }
-})
-
-fern.scripts.spriteHandler = new SpriteHandler({
-    owner: fern,
-    animations: {
-        default: [0]
-    }
-})
-
-fern.scripts.transform = new Transform({
-    owner: fern,
-    position: [320, GROUND - SPRITE_HEIGHT],
-})
-
-fern.scripts.scroll = new Script({
-    owner: fern,
-    xScroll: 0,
-    update: function(dt){
-        this.xScroll = (this.xScroll + 2.5 * (dt/30))
-        this.owner.scripts.transform.position[0] = 320 - this.xScroll
-    }
-})
-
-var stand = new Behavior({
-    enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("stand")
-    },
-    message: function(msg){
-        switch (msg){
-            case "jump":
-                this.changeBehavior(jump)
-                break
-        }
-    }
-})
-
-var walk = new Behavior({
-    enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("walk")
-    },
-    message: function(msg){
-        switch (msg){
-            case "jump":
-                this.changeBehavior(jump)
-                break
-        }
-    },
-    update: function(dt){
-        this.scripts.spriteHandler.update(dt)
     }
 })
 
@@ -253,6 +193,35 @@ player.scripts.jumpScript = new Script({
     }
 })
 
+var stand = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("stand")
+    },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                this.changeBehavior(jump)
+                break
+        }
+    }
+})
+
+var walk = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("walk")
+    },
+    message: function(msg){
+        switch (msg){
+            case "jump":
+                this.changeBehavior(jump)
+                break
+        }
+    },
+    update: function(dt){
+        this.scripts.spriteHandler.update(dt)
+    }
+})
+
 var jump = new Behavior({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("jump")
@@ -270,6 +239,36 @@ var jump = new Behavior({
     update: function(dt){
         this.scripts.jumpScript.move(dt)
         this.scripts.spriteHandler.update(dt)
+    }
+})
+
+fern.scripts.spriteHandler = new SpriteHandler({
+    owner: fern,
+    animations: {
+        default: [0]
+    }
+})
+
+fern.scripts.transform = new Transform({
+    owner: fern,
+    position: [320, GROUND - SPRITE_HEIGHT],
+})
+
+fern.scripts.scroll = new Script({
+    owner: fern,
+    xScroll: 0,
+    update: function(dt){
+        this.xScroll = (this.xScroll + 2.5 * (dt/30))
+        this.owner.scripts.transform.position[0] = 320 - this.xScroll
+    }
+})
+
+var prop = new Behavior({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("default")
+    },
+    update: function(dt){
+        this.scripts.scroll.update(dt)
     }
 })
 
@@ -308,7 +307,8 @@ document.addEventListener("touchend", e => {
 })
 
 
-var spriteEngineScript = new Script({
+gameEnginesObject.scripts.spriteEngine = new Script({
+    owner: gameEnginesObject,
     components: [player.scripts.spriteHandler, fern.scripts.spriteHandler],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
@@ -320,13 +320,13 @@ var spriteEngineScript = new Script({
     }
 })
 
-
-gameEnginesObject.scripts.spriteEngine = spriteEngineScript
-
-
+gameEnginesObject.scripts.collisionEngine = new Script({
+    owner: gameEnginesObject
+})
 
 
 var bgX = 0
+
 // Expose globally
 var currentTime
 var tick = (() => {
@@ -336,9 +336,9 @@ var tick = (() => {
     function tick(timestamp){
         requestAnimationFrame(tick);
         var dt = timestamp - lastTime
+        currentTime = timestamp
         game.update(dt);
         lastTime = timestamp
-        currentTime = timestamp
         bgX = (bgX - 5 * (dt/30)) % 640
         bg1.style.backgroundPosition = `${bgX}px 0px`
     }
