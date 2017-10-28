@@ -176,7 +176,7 @@ class ObstaclePooler extends Script{
     }
 
     update(dt){
-        if (this.owner.scripts.transform.position < -SPRITE_WIDTH){
+        if (this.owner.scripts.transform.position[0] < -SPRITE_WIDTH - 1){
             this.deactivate()
         }
     }
