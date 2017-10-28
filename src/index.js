@@ -119,7 +119,6 @@ class SpriteHandler extends Script{
 class Collider extends Script{
     constructor(args){
         super(args)
-        this.engine = gameEnginesObject.collisionEngine
         this.hitBox = this.hitBox || [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT]
     }
 
@@ -165,13 +164,22 @@ class Scroller extends Script{
 class ObstaclePooler extends Script{
     constructor(args){
         super(args)
-        this.active = this.active || false
     }
 
     activate(){
-        this.owner.currentBehavior = activeObstacle
+        this.owner.changeBehavior(activeObstacle)
     }
 
+    deactivate(){
+        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool()
+        this.owner.changeBehavior(inactiveObstacle)
+    }
+
+    update(dt){
+        if (this.owner.scripts.transform.position < -SPRITE_WIDTH){
+            this.deactivate()
+        }
+    }
 }
 
 // =================================================
@@ -183,7 +191,6 @@ var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
 var fern1 = new GameObject({name: "Fern1"})
 var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
-var obstaclePool = new GameObject({name: "ObstaclePool"})
 var game = new GameObject({name: "Game"})
 
 // =================================================
@@ -320,6 +327,7 @@ fern1.scripts.spriteHandler = new SpriteHandler({
 fern1.scripts.collider = new Collider({owner: fern1})
 fern1.scripts.transform = new Transform({owner: fern1})
 fern1.scripts.scroller = new Scroller({owner: fern1})
+fern1.scripts.obstaclePooler = new ObstaclePooler({owner: fern1})
 
 fern2.scripts.spriteHandler = new SpriteHandler({
     owner: fern2,
@@ -330,6 +338,7 @@ fern2.scripts.spriteHandler = new SpriteHandler({
 fern2.scripts.collider = new Collider({owner: fern2})
 fern2.scripts.transform = new Transform({owner: fern2})
 fern2.scripts.scroller = new Scroller({owner: fern2})
+fern2.scripts.obstaclePooler = new ObstaclePooler({owner: fern2})
 
 fern3.scripts.spriteHandler = new SpriteHandler({
     owner: fern3,
@@ -340,6 +349,7 @@ fern3.scripts.spriteHandler = new SpriteHandler({
 fern3.scripts.collider = new Collider({owner: fern3})
 fern3.scripts.transform = new Transform({owner: fern3})
 fern3.scripts.scroller = new Scroller({owner: fern3})
+fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
 
 // =================================================
 
@@ -352,12 +362,14 @@ var activeObstacle = new Behavior({
     },
     update: function(dt){
         this.scripts.scroller.update(dt)
+        this.scripts.obstaclePooler.update(dt)
     }
 })
 
 var inactiveObstacle = new Behavior({
     enter: function(){
         this.scripts.transform.position = [-SPRITE_WIDTH, GROUND - SPRITE_HEIGHT]
+        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool()
     }
 })
 
@@ -365,17 +377,31 @@ var inactiveObstacle = new Behavior({
 
 // Obstacle pool scripts ===========================
 
-obstaclePool.scripts.managePool = new Script({
-    owner: obstaclePool,
-    components: [fern1, fern2, fern3],
-    startObstacle: function(){
-
-    }
-})
 
 // =================================================
 
 // Game engine scripts =============================
+
+gameEnginesObject.scripts.obstaclePoolEngine = new Script({
+    owner: gameEnginesObject,
+    activeComponents: [],
+    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler],
+    returnToPool: function(){
+        var obj = this.activeComponents.shift()
+        this.inactiveComponents.push(obj)
+    },
+    update: function(dt){
+        var rand = Math.random()
+        if (rand < 0.01) {
+            var obj = this.inactiveComponents.pop()
+            if (obj) {
+                this.activeComponents.push(obj)
+                obj.activate()
+
+            }
+        }
+    }
+})
 
 gameEnginesObject.scripts.spriteEngine = new Script({
     owner: gameEnginesObject,
