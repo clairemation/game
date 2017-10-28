@@ -1,3 +1,9 @@
+// Libs ===============================
+
+// const $ = require("./lib/coolgebra.js")
+
+// ====================================
+
 // Constants ==========================
 
 const ANIM_FRAMERATE = 200
@@ -53,6 +59,7 @@ var sharedBehaviors = {
 
 class GameObject{
     constructor(args = {}){
+        this.name = 'GameObject'
         this.scripts = {}
         this.behaviors = {
             default: sharedBehaviors.updateAllScripts
@@ -110,7 +117,25 @@ class SpriteHandler extends Script{
 }
 
 class Collider extends Script{
+    constructor(args){
+        super(args)
+        this.engine = gameEnginesObject.collisionEngine
+    }
 
+    onHit(other){
+        // Override
+    }
+}
+
+class CollisionReceiver extends Script{
+    constructor(args){
+        super(args)
+        this.engine = gameEnginesObject.collisionEngine
+    }
+
+    onHit(other){
+        // Override
+    }
 }
 
 class Transform extends Script{
@@ -125,10 +150,16 @@ class Transform extends Script{
 
 // =================================================
 
-var player = new GameObject()
-var gameEnginesObject = new GameObject()
-var fern = new GameObject()
-var game = new GameObject()
+// Game Object declarations ========================
+
+var player = new GameObject({name: "Player"})
+var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
+var fern = new GameObject({name: "Fern1"})
+var game = new GameObject({name: "Game"})
+
+// =================================================
+
+// Game object scripts =============================
 
 game.scripts.levelGameplayScript = new Script({
     gameObjects: {
@@ -143,6 +174,10 @@ game.scripts.levelGameplayScript = new Script({
     }
 })
 
+// =================================================
+
+// Player object scripts ===========================
+
 player.scripts.transform = new Transform({
     owner: player,
     position: [20, GROUND - SPRITE_HEIGHT]
@@ -156,6 +191,14 @@ player.scripts.spriteHandler = new SpriteHandler({
         jump: [1],
         fall: [2],
         glide: [3, 4]
+    }
+})
+
+player.scripts.collisionReceiver = new CollisionReceiver({
+    owner: player,
+    hitBox: [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT],
+    onHit: function(other){
+        console.log("Hit")
     }
 })
 
@@ -192,6 +235,10 @@ player.scripts.jumpScript = new Script({
         }
     }
 })
+
+// =================================================
+
+// Player object behaviors =========================
 
 var stand = new Behavior({
     enter: function(){
@@ -242,6 +289,15 @@ var jump = new Behavior({
     }
 })
 
+// =================================================
+
+// Fern scripts ====================================
+
+fern.scripts.collider = new Collider({
+    owner: fern,
+    hitBox: [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT]
+})
+
 fern.scripts.spriteHandler = new SpriteHandler({
     owner: fern,
     animations: {
@@ -263,6 +319,10 @@ fern.scripts.scroll = new Script({
     }
 })
 
+// =================================================
+
+// Fern behaviors ==================================
+
 var prop = new Behavior({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("default")
@@ -272,9 +332,93 @@ var prop = new Behavior({
     }
 })
 
+// =================================================
+
+// Game engine scripts =============================
+
+gameEnginesObject.scripts.spriteEngine = new Script({
+    owner: gameEnginesObject,
+    components: [player.scripts.spriteHandler, fern.scripts.spriteHandler],
+    update: function(dt){
+        ctx.clearRect(0, 0, 320, 240)
+        for (var i = 0; i < this.components.length; i++){
+            var position = this.components[i].owner.scripts.transform.position
+            var frame = this.components[i].currentFrame
+            ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+        }
+    }
+})
+
+function isColliding(a, b){
+
+    // If a is above b
+    if (a[3] < b[1]) {
+        return false
+    }
+
+    // If a is below b
+    if (a[1] > b[3]) {
+        return false
+    }
+
+    // If a is left of b
+    if (a[2] < b[0]) {
+        return false
+    }
+
+    // If a is right of b
+    if (a[0] > b[2]) {
+        return false
+    }
+
+    // Else collision
+    return true
+}
+
+gameEnginesObject.scripts.collisionEngine = new Script({
+    owner: gameEnginesObject,
+    playerCollider: player.scripts.collisionReceiver,
+    components: [fern.scripts.collider],
+    update: function(dt){
+        var playerBox
+        var otherBox
+        var playerPos
+        var otherPos
+        var playerBound = []
+        var otherBound = []
+        for (var i = 0; i < this.components.length; i++){
+            playerBox = this.playerCollider.hitBox
+            playerPos = this.playerCollider.owner.scripts.transform.position
+            playerBound[0] = playerBox[0] + playerPos[0]
+            playerBound[2] = playerBox[2] + playerPos[0]
+            playerBound[1] = playerBox[1] + playerPos[1]
+            playerBound[3] = playerBox[3] + playerPos[1]
+
+            otherBox = this.components[i].hitBox
+            otherPos = this.components[i].owner.scripts.transform.position
+            otherBound[0] = otherBox[0] + otherPos[0]
+            otherBound[2] = otherBox[2] + otherPos[0]
+            otherBound[1] = otherBox[1] + otherPos[1]
+            otherBound[3] = otherBox[3] + otherPos[1]
+
+            if (isColliding(playerBound, otherBound)){
+                player.scripts.collisionReceiver.onHit(this.components[i])
+            }
+        }
+    }
+})
+
+// =================================================
+
+// Behavior assignments ============================
+
 player.changeBehavior(walk)
 fern.changeBehavior(prop)
 
+// =================================================
+
+
+// Key listeners ===================================
 
 var keyDown = false
 
@@ -306,24 +450,9 @@ document.addEventListener("touchend", e => {
     }
 })
 
+// =================================================
 
-gameEnginesObject.scripts.spriteEngine = new Script({
-    owner: gameEnginesObject,
-    components: [player.scripts.spriteHandler, fern.scripts.spriteHandler],
-    update: function(dt){
-        ctx.clearRect(0, 0, 320, 240)
-        for (var i = 0; i < this.components.length; i++){
-            var position = this.components[i].owner.scripts.transform.position
-            var frame = this.components[i].currentFrame
-            ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
-        }
-    }
-})
-
-gameEnginesObject.scripts.collisionEngine = new Script({
-    owner: gameEnginesObject
-})
-
+// Game loop =======================================
 
 var bgX = 0
 
@@ -346,6 +475,9 @@ var tick = (() => {
     return tick
 })()
 
+// =================================================
+
+// Get resources ===================================
 
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
@@ -358,6 +490,10 @@ raptorSprite.onload = () => {
     requestAnimationFrame(tick)
 }
 raptorSprite.src = raptorSpritesheetSrc
+
+// =================================================
+
+// Export module ===================================
 
 
 // module.exports = {GameObject}
