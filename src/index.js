@@ -8,7 +8,7 @@
 
 const ANIM_FRAMERATE = 200
 const SPRITE_WIDTH = 48
-const SPRITE_HEIGHT = 32
+const SPRITE_HEIGHT = 48
 const GROUND = 176
 
 // ====================================
@@ -229,10 +229,12 @@ player.scripts.spriteHandler = new SpriteHandler({
     owner: player,
     animations: {
         stand: [3],
-        walk: [5, 6],
+        walk: [7, 8],
         jump: [1],
         fall: [2],
-        glide: [3, 4]
+        glide: [3, 4],
+        hurt: [5],
+        pounce: [6]
     }
 })
 
@@ -240,7 +242,7 @@ player.scripts.collisionReceiver = new CollisionReceiver({
     owner: player,
     hitBox: [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT],
     onHit: function(other){
-        console.log("Hit")
+        this.owner.message("hurt")
     }
 })
 
@@ -251,6 +253,10 @@ player.scripts.jumpScript = new Script({
     startJump: function(){
         this.yAccel -= 9
         this.gliding = true
+    },
+    bounce: function(){
+        this.yAccel -= 9
+        this.gliding = false
     },
     flap: function(){
         this.yAccel -= 4
@@ -278,6 +284,11 @@ player.scripts.jumpScript = new Script({
     }
 })
 
+player.scripts.hurtScript = new Script({
+    owner: player,
+
+})
+
 // =================================================
 
 // Player object behaviors =========================
@@ -290,6 +301,9 @@ var walk = new Behavior({
         switch (msg){
             case "jump":
                 this.changeBehavior(jump)
+                break
+            case "hurt":
+                this.changeBehavior(hurt)
                 break
         }
     },
@@ -310,7 +324,22 @@ var jump = new Behavior({
                 break
             case "fall":
                 this.scripts.jumpScript.fall()
+                break
+            case "hurt":
+                this.changeBehavior(hurt)
+                break
         }
+    },
+    update: function(dt){
+        this.scripts.jumpScript.move(dt)
+        this.scripts.spriteHandler.update(dt)
+    }
+})
+
+var hurt = new Behavior({
+    enter: function(){
+        this.scripts.jumpScript.bounce()
+        this.scripts.spriteHandler.setCurrentAnimation("hurt")
     },
     update: function(dt){
         this.scripts.jumpScript.move(dt)
@@ -491,6 +520,7 @@ gameEnginesObject.scripts.collisionEngine = new Script({
 
             if (isColliding(playerBound, otherBound)){
                 player.scripts.collisionReceiver.onHit(this.components[i])
+                this.components[i].onHit()
             }
         }
     }
