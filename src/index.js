@@ -171,7 +171,7 @@ class ObstaclePooler extends Script{
     }
 
     deactivate(){
-        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool()
+        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool(this)
         this.owner.changeBehavior(inactiveObstacle)
     }
 
@@ -401,19 +401,14 @@ var inactiveObstacle = new Behavior({
 
 // =================================================
 
-// Obstacle pool scripts ===========================
-
-
-// =================================================
-
 // Game engine scripts =============================
 
 gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     owner: gameEnginesObject,
     activeComponents: [],
     inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler, fern4.scripts.obstaclePooler, fern5.scripts.obstaclePooler],
-    returnToPool: function(){
-        var obj = this.activeComponents.shift()
+    returnToPool: function(obj){
+        this.activeComponents.splice(this.activeComponents.indexOf(obj), 1)
         this.inactiveComponents.push(obj)
     },
     update: function(dt){
