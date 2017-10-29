@@ -1,15 +1,11 @@
-// Libs ===============================
-
-// const $ = require("./lib/coolgebra.js")
-
-// ====================================
+"use strict";
 
 // Constants ==========================
 
-const ANIM_FRAMERATE = 200
-const SPRITE_WIDTH = 48
-const SPRITE_HEIGHT = 48
-const GROUND = 176
+var ANIM_FRAMERATE = 200
+var SPRITE_WIDTH = 48
+var SPRITE_HEIGHT = 48
+var GROUND = 176
 
 // ====================================
 
@@ -119,7 +115,7 @@ class SpriteHandler extends Script{
 class Collider extends Script{
     constructor(args){
         super(args)
-        this.hitBox = this.hitBox || [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT]
+        this.hitBox = this.hitBox || [20, 30, 33, 48]
     }
 
     onHit(other){
@@ -240,7 +236,7 @@ player.scripts.spriteHandler = new SpriteHandler({
 
 player.scripts.collisionReceiver = new CollisionReceiver({
     owner: player,
-    hitBox: [0, 0, SPRITE_WIDTH, SPRITE_HEIGHT],
+    hitBox: [20, 26, 40, 40],
     onHit: function(other){
         this.owner.message("hurt")
     }
