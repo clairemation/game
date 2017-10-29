@@ -669,6 +669,11 @@ var tick = (() => {
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
 
+ctx.mozImageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+ctx.msImageSmoothingEnabled = false;
+ctx.imageSmoothingEnabled = false;
+
 var bg1 = document.getElementById("bg1")
 
 var scoreboard = document.getElementById("scoreboard")
