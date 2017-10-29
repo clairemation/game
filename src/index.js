@@ -156,7 +156,7 @@ class Scroller extends Script{
         this.xScroll = 0
     }
     update(dt){
-        this.xScroll = (this.xScroll + 2.5 * (dt/30))
+        this.xScroll = (this.xScroll + 5 * (dt/30))
         this.owner.scripts.transform.position[0] = 320 - this.xScroll
     }
 }
@@ -191,6 +191,8 @@ var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
 var fern1 = new GameObject({name: "Fern1"})
 var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
+var fern4 = new GameObject({name: "Fern4"})
+var fern5 = new GameObject({name: "Fern5"})
 var game = new GameObject({name: "Game"})
 
 // =================================================
@@ -203,6 +205,8 @@ game.scripts.levelGameplayScript = new Script({
         fern1,
         fern2,
         fern3,
+        fern4,
+        fern5,
         gameEnginesObject
     },
     update: function(dt){
@@ -245,7 +249,7 @@ player.scripts.jumpScript = new Script({
     yAccel: 0,
     gliding: false,
     startJump: function(){
-        this.yAccel -= 7
+        this.yAccel -= 9
         this.gliding = true
     },
     flap: function(){
@@ -258,13 +262,13 @@ player.scripts.jumpScript = new Script({
         this.owner.scripts.spriteHandler.setCurrentAnimation("fall")
     },
     move: function(dt){
-        this.yAccel = Math.max(this.yAccel, -7)
+        this.yAccel = Math.max(this.yAccel, -9)
         this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
         if (this.gliding && this.yAccel > 0){
             this.owner.scripts.spriteHandler.setCurrentAnimation("glide")
             this.yAccel = (dt / 30)
         } else {
-            this.yAccel += 0.5 * (dt / 30)
+            this.yAccel += 0.75 * (dt / 30)
         }
         if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
@@ -351,6 +355,28 @@ fern3.scripts.transform = new Transform({owner: fern3})
 fern3.scripts.scroller = new Scroller({owner: fern3})
 fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
 
+fern4.scripts.spriteHandler = new SpriteHandler({
+    owner: fern4,
+    animations: {
+        default: [0]
+    }
+})
+fern4.scripts.collider = new Collider({owner: fern4})
+fern4.scripts.transform = new Transform({owner: fern4})
+fern4.scripts.scroller = new Scroller({owner: fern4})
+fern4.scripts.obstaclePooler = new ObstaclePooler({owner: fern4})
+
+fern5.scripts.spriteHandler = new SpriteHandler({
+    owner: fern5,
+    animations: {
+        default: [0]
+    }
+})
+fern5.scripts.collider = new Collider({owner: fern5})
+fern5.scripts.transform = new Transform({owner: fern5})
+fern5.scripts.scroller = new Scroller({owner: fern5})
+fern5.scripts.obstaclePooler = new ObstaclePooler({owner: fern5})
+
 // =================================================
 
 // Fern behaviors ==================================
@@ -385,14 +411,14 @@ var inactiveObstacle = new Behavior({
 gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     owner: gameEnginesObject,
     activeComponents: [],
-    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler],
+    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler, fern4.scripts.obstaclePooler, fern5.scripts.obstaclePooler],
     returnToPool: function(){
         var obj = this.activeComponents.shift()
         this.inactiveComponents.push(obj)
     },
     update: function(dt){
         var rand = Math.random()
-        if (rand < 0.01) {
+        if (rand < 0.02) {
             var obj = this.inactiveComponents.pop()
             if (obj) {
                 this.activeComponents.push(obj)
@@ -405,7 +431,7 @@ gameEnginesObject.scripts.obstaclePoolEngine = new Script({
 
 gameEnginesObject.scripts.spriteEngine = new Script({
     owner: gameEnginesObject,
-    components: [player.scripts.spriteHandler, fern1.scripts.spriteHandler, fern2.scripts.spriteHandler, fern3.scripts.spriteHandler],
+    components: [player.scripts.spriteHandler, fern1.scripts.spriteHandler, fern2.scripts.spriteHandler, fern3.scripts.spriteHandler, fern4.scripts.spriteHandler, fern5.scripts.spriteHandler],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
         for (var i = 0; i < this.components.length; i++){
@@ -445,7 +471,7 @@ function isColliding(a, b){
 gameEnginesObject.scripts.collisionEngine = new Script({
     owner: gameEnginesObject,
     playerCollider: player.scripts.collisionReceiver,
-    components: [fern1.scripts.collider, fern2.scripts.collider, fern3.scripts.collider],
+    components: [fern1.scripts.collider, fern2.scripts.collider, fern3.scripts.collider, fern4.scripts.collider, fern5.scripts.collider],
     update: function(dt){
         var playerBox
         var otherBox
@@ -483,6 +509,8 @@ player.changeBehavior(walk)
 fern1.changeBehavior(inactiveObstacle)
 fern2.changeBehavior(inactiveObstacle)
 fern3.changeBehavior(inactiveObstacle)
+fern4.changeBehavior(inactiveObstacle)
+fern5.changeBehavior(inactiveObstacle)
 
 // =================================================
 
@@ -537,7 +565,7 @@ var tick = (() => {
         currentTime = timestamp
         game.update(dt);
         lastTime = timestamp
-        bgX = (bgX - 5 * (dt/30)) % 640
+        bgX = (bgX - 3 * (dt/30)) % 640
         bg1.style.backgroundPosition = `${bgX}px 0px`
     }
 
@@ -564,4 +592,4 @@ raptorSprite.src = raptorSpritesheetSrc
 
 // Export module ===================================
 
-// module.exports = {GameObject}
+module.exports = {GameObject}
