@@ -251,7 +251,7 @@ player.scripts.jumpScript = new Script({
         this.gliding = true
     },
     bounce: function(){
-        this.yAccel -= 9
+        this.yAccel = -9
         this.gliding = false
     },
     flap: function(){
@@ -336,6 +336,13 @@ var hurt = new Behavior({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
+    },
+    message: function(msg){
+        switch(msg){
+            case "hurt":
+                this.changeBehavior(hurt)
+                break
+        }
     },
     update: function(dt){
         this.scripts.jumpScript.move(dt)
