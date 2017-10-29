@@ -189,27 +189,87 @@ var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
 var fern4 = new GameObject({name: "Fern4"})
 var fern5 = new GameObject({name: "Fern5"})
+var score = new GameObject({name: "Score", score: 0})
 var game = new GameObject({name: "Game"})
+
+// =================================================
+
+// Score scripts ===================================
+
+score.scripts.incrementScript = new Script({
+    owner: score,
+    increment: function(amt){
+        this.owner.score += amt
+        scoreboard.innerHTML = `Score: ${Math.floor(this.owner.score)}`
+    }
+})
+
+// =================================================
+
+// Score behaviors =================================
+
+var countUp = new Behavior({
+    enter: function(){
+        this.score = 0
+    },
+    update: function(dt){
+        this.scripts.incrementScript.increment(dt/200)
+    }
+
+})
 
 // =================================================
 
 // Game object scripts =============================
 
 game.scripts.levelGameplayScript = new Script({
-    gameObjects: {
+    components: {
         player,
         fern1,
         fern2,
         fern3,
         fern4,
         fern5,
+        score,
         gameEnginesObject
     },
     update: function(dt){
-        for (var name in this.gameObjects){
-            this.gameObjects[name].update(dt)
+        for (var name in this.components){
+            this.components[name].update(dt)
         }
     }
+})
+
+// =================================================
+
+// Game object behaviors ===========================
+
+var playLevel = new Behavior({
+    message: function(msg){
+        switch(msg){
+            case ("lose"):
+                this.changeBehavior(lose)
+        }
+    },
+    update: function(dt){
+        this.scripts.levelGameplayScript.update(dt)
+    }
+})
+
+var pause = new Behavior({
+    enter: function(){
+        cancelAnimationFrame(loop)
+    }
+})
+
+var lose = new Behavior({
+    enter: function(){
+        setTimeout(() => {this.changeBehavior(pause)}, 200)
+    },
+    update: function(dt){
+        this.scripts.levelGameplayScript.update(dt)
+    }
+
 })
 
 // =================================================
@@ -336,6 +396,7 @@ var hurt = new Behavior({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
+        game.changeBehavior(lose)
     },
     message: function(msg){
         switch(msg){
@@ -539,6 +600,7 @@ fern2.changeBehavior(inactiveObstacle)
 fern3.changeBehavior(inactiveObstacle)
 fern4.changeBehavior(inactiveObstacle)
 fern5.changeBehavior(inactiveObstacle)
+score.changeBehavior(countUp)
 
 // =================================================
 
@@ -588,7 +650,7 @@ var tick = (() => {
     var lastTime = 0
 
     function tick(timestamp){
-        requestAnimationFrame(tick);
+        loop = requestAnimationFrame(tick);
         var dt = timestamp - lastTime
         currentTime = timestamp
         game.update(dt);
@@ -609,10 +671,13 @@ var ctx = canvas.getContext("2d")
 
 var bg1 = document.getElementById("bg1")
 
+var scoreboard = document.getElementById("scoreboard")
+
 var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
 var raptorSprite = new Image()
+var loop
 raptorSprite.onload = () => {
-    requestAnimationFrame(tick)
+    loop = requestAnimationFrame(tick)
 }
 raptorSprite.src = raptorSpritesheetSrc
 
