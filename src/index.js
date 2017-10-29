@@ -189,7 +189,8 @@ var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
 var fern4 = new GameObject({name: "Fern4"})
 var fern5 = new GameObject({name: "Fern5"})
-var score = new GameObject({name: "Score", score: 0})
+var score = new GameObject({name: "Score"})
+var message = new GameObject({name: "MessageWindow"})
 var game = new GameObject({name: "Game"})
 
 // =================================================
@@ -199,8 +200,8 @@ var game = new GameObject({name: "Game"})
 score.scripts.incrementScript = new Script({
     owner: score,
     increment: function(amt){
-        this.owner.score += amt
-        scoreboard.innerHTML = `Score: ${Math.floor(this.owner.score)}`
+        score += amt
+        scoreboard.innerHTML = `Score: ${Math.floor(score)}`
     }
 })
 
@@ -248,7 +249,7 @@ var playLevel = new Behavior({
     message: function(msg){
         switch(msg){
             case ("lose"):
-                this.changeBehavior(lose)
+                setTimeout(() => {this.changeBehavior(lose)}, 200)
         }
     },
     update: function(dt){
@@ -264,10 +265,9 @@ var pause = new Behavior({
 
 var lose = new Behavior({
     enter: function(){
-        setTimeout(() => {this.changeBehavior(pause)}, 200)
-    },
-    update: function(dt){
-        this.scripts.levelGameplayScript.update(dt)
+        cancelAnimationFrame(loop)
+        messageWindow.style.visibility = "visible"
+        messageWindow.innerHTML = `Final score: ${Math.floor(score)}`
     }
 
 })
@@ -396,7 +396,8 @@ var hurt = new Behavior({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
-        game.changeBehavior(lose)
+        console.log(game.currentBehavior)
+        game.message("lose")
     },
     message: function(msg){
         switch(msg){
@@ -594,6 +595,7 @@ gameEnginesObject.scripts.collisionEngine = new Script({
 
 // Behavior assignments ============================
 
+game.changeBehavior(playLevel)
 player.changeBehavior(walk)
 fern1.changeBehavior(inactiveObstacle)
 fern2.changeBehavior(inactiveObstacle)
@@ -675,12 +677,13 @@ ctx.msImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
 var bg1 = document.getElementById("bg1")
-
 var scoreboard = document.getElementById("scoreboard")
+var messageWindow = document.getElementById("message")
 
 var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
 var raptorSprite = new Image()
 var loop
+var score = 0
 raptorSprite.onload = () => {
     loop = requestAnimationFrame(tick)
 }
