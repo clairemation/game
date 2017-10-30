@@ -1,13 +1,41 @@
 "use strict";
 
-// Constants ==========================
+// DOM resources ===================================
 
-var ANIM_FRAMERATE = 200
-var SPRITE_WIDTH = 48
-var SPRITE_HEIGHT = 48
-var GROUND = 176
+var canvas = document.getElementById("canvas")
+var ctx = canvas.getContext("2d")
 
-// ====================================
+ctx.mozImageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+ctx.msImageSmoothingEnabled = false;
+ctx.imageSmoothingEnabled = false;
+
+var bg1 = document.getElementById("bg1")
+var fg1 = document.getElementById("fg1")
+var scoreboard = document.getElementById("scoreboard")
+var messageWindow = document.getElementById("message")
+
+// Constants ========================================
+
+const ANIM_FRAMERATE = 200
+const SPRITE_WIDTH = 48
+const SPRITE_HEIGHT = 48
+const GROUND = 176
+const FG_SCROLL_SPEED = 5 / 30
+
+// =================================================
+
+// Globals =========================================
+
+var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
+var raptorSprite = new Image()
+var loop
+var currentScore = 0
+
+
+// =================================================
+
+
 
 // Base Classes =======================
 
@@ -152,7 +180,7 @@ class Scroller extends Script{
         this.xScroll = 0
     }
     update(dt){
-        this.xScroll = (this.xScroll + 5 * (dt/30))
+        this.xScroll = (this.xScroll + FG_SCROLL_SPEED * dt)
         this.owner.scripts.transform.position[0] = 320 - this.xScroll
     }
 }
@@ -189,7 +217,7 @@ var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
 var fern4 = new GameObject({name: "Fern4"})
 var fern5 = new GameObject({name: "Fern5"})
-var score = new GameObject({name: "Score"})
+var scoreCounter = new GameObject({name: "Score"})
 var message = new GameObject({name: "MessageWindow"})
 var game = new GameObject({name: "Game"})
 
@@ -197,11 +225,11 @@ var game = new GameObject({name: "Game"})
 
 // Score scripts ===================================
 
-score.scripts.incrementScript = new Script({
-    owner: score,
+scoreCounter.scripts.incrementScript = new Script({
+    owner: scoreCounter,
     increment: function(amt){
-        score += amt
-        scoreboard.innerHTML = `Score: ${Math.floor(score)}`
+        currentScore += amt
+        scoreboard.innerHTML = `Score: ${Math.floor(currentScore)}`
     }
 })
 
@@ -211,7 +239,7 @@ score.scripts.incrementScript = new Script({
 
 var countUp = new Behavior({
     enter: function(){
-        this.score = 0
+        currentScore = 0
     },
     update: function(dt){
         this.scripts.incrementScript.increment(dt/200)
@@ -231,7 +259,7 @@ game.scripts.levelGameplayScript = new Script({
         fern3,
         fern4,
         fern5,
-        score,
+        scoreCounter,
         gameEnginesObject
     },
     update: function(dt){
@@ -267,7 +295,7 @@ var lose = new Behavior({
     enter: function(){
         cancelAnimationFrame(loop)
         messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `Final score: ${Math.floor(score)}`
+        messageWindow.innerHTML = `Final score: ${Math.floor(currentScore)}`
     }
 
 })
@@ -396,8 +424,7 @@ var hurt = new Behavior({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
-        console.log(game.currentBehavior)
-        game.message("lose")
+        // game.message("lose")
     },
     message: function(msg){
         switch(msg){
@@ -602,7 +629,7 @@ fern2.changeBehavior(inactiveObstacle)
 fern3.changeBehavior(inactiveObstacle)
 fern4.changeBehavior(inactiveObstacle)
 fern5.changeBehavior(inactiveObstacle)
-score.changeBehavior(countUp)
+scoreCounter.changeBehavior(countUp)
 
 // =================================================
 
@@ -644,6 +671,7 @@ document.addEventListener("touchend", e => {
 // Game loop =======================================
 
 var bgX = 0
+var fgX = 0
 
 // Expose globally
 var currentTime
@@ -659,6 +687,9 @@ var tick = (() => {
         lastTime = timestamp
         bgX = (bgX - 3 * (dt/30)) % 640
         bg1.style.backgroundPosition = `${bgX}px 0px`
+        fgX = (fgX - FG_SCROLL_SPEED * dt * 2) % 640
+        fg1.style.backgroundPosition = `${fgX}px 0px`
+
     }
 
     return tick
@@ -666,24 +697,8 @@ var tick = (() => {
 
 // =================================================
 
-// Get resources ===================================
+// Start ============================================
 
-var canvas = document.getElementById("canvas")
-var ctx = canvas.getContext("2d")
-
-ctx.mozImageSmoothingEnabled = false;
-ctx.webkitImageSmoothingEnabled = false;
-ctx.msImageSmoothingEnabled = false;
-ctx.imageSmoothingEnabled = false;
-
-var bg1 = document.getElementById("bg1")
-var scoreboard = document.getElementById("scoreboard")
-var messageWindow = document.getElementById("message")
-
-var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
-var raptorSprite = new Image()
-var loop
-var score = 0
 raptorSprite.onload = () => {
     loop = requestAnimationFrame(tick)
 }
