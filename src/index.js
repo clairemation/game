@@ -215,8 +215,6 @@ var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
 var fern1 = new GameObject({name: "Fern1"})
 var fern2 = new GameObject({name: "Fern2"})
 var fern3 = new GameObject({name: "Fern3"})
-var fern4 = new GameObject({name: "Fern4"})
-var fern5 = new GameObject({name: "Fern5"})
 var proto1 = new GameObject({name: "Proto1"})
 var scoreCounter = new GameObject({name: "Score"})
 var message = new GameObject({name: "MessageWindow"})
@@ -230,7 +228,7 @@ scoreCounter.scripts.incrementScript = new Script({
     owner: scoreCounter,
     increment: function(amt){
         currentScore += amt
-        scoreboard.innerHTML = `Score: ${Math.floor(currentScore)}`
+        scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
     }
 })
 
@@ -258,8 +256,6 @@ game.scripts.levelGameplayScript = new Script({
         fern1,
         fern2,
         fern3,
-        fern4,
-        fern5,
         proto1,
         scoreCounter,
         gameEnginesObject
@@ -478,28 +474,6 @@ fern3.scripts.transform = new Transform({owner: fern3})
 fern3.scripts.scroller = new Scroller({owner: fern3})
 fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
 
-fern4.scripts.spriteHandler = new SpriteHandler({
-    owner: fern4,
-    animations: {
-        default: [0]
-    }
-})
-fern4.scripts.collider = new Collider({owner: fern4})
-fern4.scripts.transform = new Transform({owner: fern4})
-fern4.scripts.scroller = new Scroller({owner: fern4})
-fern4.scripts.obstaclePooler = new ObstaclePooler({owner: fern4})
-
-fern5.scripts.spriteHandler = new SpriteHandler({
-    owner: fern5,
-    animations: {
-        default: [0]
-    }
-})
-fern5.scripts.collider = new Collider({owner: fern5})
-fern5.scripts.transform = new Transform({owner: fern5})
-fern5.scripts.scroller = new Scroller({owner: fern5})
-fern5.scripts.obstaclePooler = new ObstaclePooler({owner: fern5})
-
 // =================================================
 
 // Proto scripts ===================================
@@ -544,7 +518,7 @@ var inactiveObstacle = new Behavior({
 gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     owner: gameEnginesObject,
     activeComponents: [],
-    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler, fern4.scripts.obstaclePooler, fern5.scripts.obstaclePooler, proto1.scripts.obstaclePooler],
+    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler, proto1.scripts.obstaclePooler],
     returnToPool: function(obj){
         this.activeComponents.splice(this.activeComponents.indexOf(obj), 1)
         this.inactiveComponents.push(obj)
@@ -565,7 +539,7 @@ gameEnginesObject.scripts.obstaclePoolEngine = new Script({
 
 gameEnginesObject.scripts.spriteEngine = new Script({
     owner: gameEnginesObject,
-    components: [player.scripts.spriteHandler, fern1.scripts.spriteHandler, fern2.scripts.spriteHandler, fern3.scripts.spriteHandler, fern4.scripts.spriteHandler, fern5.scripts.spriteHandler, proto1.scripts.spriteHandler],
+    components: [player.scripts.spriteHandler, fern1.scripts.spriteHandler, fern2.scripts.spriteHandler, fern3.scripts.spriteHandler, proto1.scripts.spriteHandler],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
         for (var i = 0; i < this.components.length; i++){
@@ -605,7 +579,7 @@ function isColliding(a, b){
 gameEnginesObject.scripts.collisionEngine = new Script({
     owner: gameEnginesObject,
     playerCollider: player.scripts.collisionReceiver,
-    components: [fern1.scripts.collider, fern2.scripts.collider, fern3.scripts.collider, fern4.scripts.collider, fern5.scripts.collider, proto1.scripts.collider],
+    components: [fern1.scripts.collider, fern2.scripts.collider, fern3.scripts.collider, proto1.scripts.collider],
     update: function(dt){
         var playerBox
         var otherBox
@@ -645,8 +619,6 @@ player.changeBehavior(walk)
 fern1.changeBehavior(inactiveObstacle)
 fern2.changeBehavior(inactiveObstacle)
 fern3.changeBehavior(inactiveObstacle)
-fern4.changeBehavior(inactiveObstacle)
-fern5.changeBehavior(inactiveObstacle)
 proto1.changeBehavior(inactiveObstacle)
 scoreCounter.changeBehavior(countUp)
 
