@@ -27,8 +27,8 @@ const FG_SCROLL_SPEED = 5 / 30
 
 // Globals =========================================
 
-var raptorSpritesheetSrc = "assets/spritesheets/sheet00.png"
-var raptorSprite = new Image()
+var spritesheetSrc = "assets/spritesheets/sheet00.png"
+var sprite = new Image()
 var loop
 var currentScore = 0
 
@@ -39,7 +39,7 @@ var currentScore = 0
 
 // Base Classes =======================
 
-class Behavior{
+class State{
     constructor(args = {}){
         Object.assign(this, args)
     }
@@ -71,8 +71,8 @@ class Script{
     }
 }
 
-var sharedBehaviors = {
-    updateAllScripts: new Behavior({
+var sharedStates = {
+    updateAllScripts: new State({
         update: function(dt){
             for (var scriptName in this.scripts){
                 this.scripts[scriptName].update(dt)
@@ -85,25 +85,25 @@ class GameObject{
     constructor(args = {}){
         this.name = 'GameObject'
         this.scripts = {}
-        this.behaviors = {
-            default: sharedBehaviors.updateAllScripts
+        this.states = {
+            default: sharedStates.updateAllScripts
         }
-        this.currentBehavior = this.behaviors.default
+        this.currentState = this.states.default
         Object.assign(this, args)
     }
 
     update(dt){
-        this.currentBehavior.update.call(this, dt)
+        this.currentState.update.call(this, dt)
     }
 
     message(msg){
-        this.currentBehavior.message.call(this, msg)
+        this.currentState.message.call(this, msg)
     }
 
-    changeBehavior(newBehavior){
-        this.currentBehavior.exit.call(this, newBehavior)
-        newBehavior.enter.call(this, this.currentBehavior)
-        this.currentBehavior = newBehavior
+    changeState(newState){
+        this.currentState.exit.call(this, newState)
+        newState.enter.call(this, this.currentState)
+        this.currentState = newState
     }
 }
 
@@ -191,12 +191,12 @@ class ObstaclePooler extends Script{
     }
 
     activate(){
-        this.owner.changeBehavior(activeObstacle)
+        this.owner.changeState(activeObstacle)
     }
 
     deactivate(){
         gameEnginesObject.scripts.obstaclePoolEngine.returnToPool(this)
-        this.owner.changeBehavior(inactiveObstacle)
+        this.owner.changeState(inactiveObstacle)
     }
 
     update(dt){
@@ -234,9 +234,9 @@ scoreCounter.scripts.incrementScript = new Script({
 
 // =================================================
 
-// Score behaviors =================================
+// Score states =================================
 
-var countUp = new Behavior({
+var countUp = new State({
     enter: function(){
         currentScore = 0
     },
@@ -269,13 +269,13 @@ game.scripts.levelGameplayScript = new Script({
 
 // =================================================
 
-// Game object behaviors ===========================
+// Game object states ===========================
 
-var playLevel = new Behavior({
+var playLevel = new State({
     message: function(msg){
         switch(msg){
             case ("lose"):
-                setTimeout(() => {this.changeBehavior(lose)}, 200)
+                setTimeout(() => {this.changeState(lose)}, 200)
         }
     },
     update: function(dt){
@@ -283,13 +283,13 @@ var playLevel = new Behavior({
     }
 })
 
-var pause = new Behavior({
+var pause = new State({
     enter: function(){
         cancelAnimationFrame(loop)
     }
 })
 
-var lose = new Behavior({
+var lose = new State({
     enter: function(){
         cancelAnimationFrame(loop)
         messageWindow.style.visibility = "visible"
@@ -310,13 +310,13 @@ player.scripts.transform = new Transform({
 player.scripts.spriteHandler = new SpriteHandler({
     owner: player,
     animations: {
-        stand: [4],
-        walk: [8, 9],
-        jump: [2],
-        fall: [3],
-        glide: [4, 5],
-        hurt: [6],
-        pounce: [7]
+        stand: [6],
+        walk: [10, 11],
+        jump: [4],
+        fall: [5],
+        glide: [6, 7],
+        hurt: [8],
+        pounce: [9]
     }
 })
 
@@ -361,7 +361,7 @@ player.scripts.jumpScript = new Script({
         if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
             this.yAccel = 0
-            this.owner.changeBehavior(walk)
+            this.owner.changeState(walk)
         }
     }
 })
@@ -373,19 +373,19 @@ player.scripts.hurtScript = new Script({
 
 // =================================================
 
-// Player object behaviors =========================
+// Player object states =========================
 
-var walk = new Behavior({
+var walk = new State({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("walk")
     },
     message: function(msg){
         switch (msg){
             case "jump":
-                this.changeBehavior(jump)
+                this.changeState(jump)
                 break
             case "hurt":
-                this.changeBehavior(hurt)
+                this.changeState(hurt)
                 break
         }
     },
@@ -394,7 +394,7 @@ var walk = new Behavior({
     }
 })
 
-var jump = new Behavior({
+var jump = new State({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("jump")
         this.scripts.jumpScript.startJump()
@@ -408,7 +408,7 @@ var jump = new Behavior({
                 this.scripts.jumpScript.fall()
                 break
             case "hurt":
-                this.changeBehavior(hurt)
+                this.changeState(hurt)
                 break
         }
     },
@@ -418,7 +418,7 @@ var jump = new Behavior({
     }
 })
 
-var hurt = new Behavior({
+var hurt = new State({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
@@ -427,7 +427,7 @@ var hurt = new Behavior({
     message: function(msg){
         switch(msg){
             case "hurt":
-                this.changeBehavior(hurt)
+                this.changeState(hurt)
                 break
         }
     },
@@ -481,7 +481,7 @@ fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
 proto1.scripts.spriteHandler = new SpriteHandler({
     owner: proto1,
     animations: {
-        default: [1]
+        default: [3]
     }
 })
 proto1.scripts.collider = new Collider({owner: proto1})
@@ -491,9 +491,9 @@ proto1.scripts.obstaclePooler = new ObstaclePooler({owner: proto1})
 
 // =================================================
 
-// Fern behaviors ==================================
+// Fern states ==================================
 
-var activeObstacle = new Behavior({
+var activeObstacle = new State({
     enter: function(){
         this.scripts.spriteHandler.setCurrentAnimation("default")
         this.scripts.scroller.reset()
@@ -504,7 +504,7 @@ var activeObstacle = new Behavior({
     }
 })
 
-var inactiveObstacle = new Behavior({
+var inactiveObstacle = new State({
     enter: function(){
         this.scripts.transform.position = [-SPRITE_WIDTH, GROUND - SPRITE_HEIGHT]
         gameEnginesObject.scripts.obstaclePoolEngine.returnToPool()
@@ -545,7 +545,7 @@ gameEnginesObject.scripts.spriteEngine = new Script({
         for (var i = 0; i < this.components.length; i++){
             var position = this.components[i].owner.scripts.transform.position
             var frame = this.components[i].currentFrame
-            ctx.drawImage(raptorSprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+            ctx.drawImage(sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
         }
     }
 })
@@ -612,15 +612,15 @@ gameEnginesObject.scripts.collisionEngine = new Script({
 
 // =================================================
 
-// Behavior assignments ============================
+// State assignments ============================
 
-game.changeBehavior(playLevel)
-player.changeBehavior(walk)
-fern1.changeBehavior(inactiveObstacle)
-fern2.changeBehavior(inactiveObstacle)
-fern3.changeBehavior(inactiveObstacle)
-proto1.changeBehavior(inactiveObstacle)
-scoreCounter.changeBehavior(countUp)
+game.changeState(playLevel)
+player.changeState(walk)
+fern1.changeState(inactiveObstacle)
+fern2.changeState(inactiveObstacle)
+fern3.changeState(inactiveObstacle)
+proto1.changeState(inactiveObstacle)
+scoreCounter.changeState(countUp)
 
 // =================================================
 
@@ -690,10 +690,10 @@ var tick = (() => {
 
 // Start ============================================
 
-raptorSprite.onload = () => {
+sprite.onload = () => {
     loop = requestAnimationFrame(tick)
 }
-raptorSprite.src = raptorSpritesheetSrc
+sprite.src = spritesheetSrc
 
 // =================================================
 
