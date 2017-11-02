@@ -297,7 +297,7 @@ var playLevel = new State({
     message: function(msg){
         switch(msg){
             case ("lose"):
-                setTimeout(() => {this.changeState(lose)}, 200)
+                setTimeout(() => {this.changeState(lose)}, 400)
         }
     },
     update: function(dt){
@@ -326,7 +326,7 @@ var lose = new State({
 
 player.scripts.transform = new Transform({
     owner: player,
-    position: [100, GROUND - SPRITE_HEIGHT]
+    position: [100, 125]
 })
 
 player.scripts.spriteHandler = new SpriteHandler({
@@ -385,9 +385,10 @@ player.scripts.jumpScript = new Script({
             this.yAccel += 0.75 * (dt / 30)
         }
         if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
-            this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
-            this.yAccel = 0
-            this.owner.changeState(walk)
+            // this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
+            this.owner.scripts.spriteHandler.setCurrentAnimation("hurt")
+            this.yAccel = 1.5
+            game.message("lose")
         }
     }
 })
@@ -465,6 +466,7 @@ var hurt = new State({
 
 // Fern scripts ====================================
 
+// TODO: Make Fern class
 fern1.scripts.spriteHandler = new SpriteHandler({
     owner: fern1,
     animations: {
@@ -524,6 +526,8 @@ fern5.scripts.obstaclePooler = new ObstaclePooler({owner: fern5})
 
 // Proto scripts ===================================
 
+// TODO: Make protoceratops class
+
 function protoOnHit(){
     if (player.currentState == jump && player.scripts.transform.position[1] < this.owner.scripts.transform.position[1]){
             this.owner.changeState(deadEnemy)
@@ -539,6 +543,7 @@ proto1.scripts.spriteHandler = new SpriteHandler({
 })
 proto1.scripts.collider = new Collider({
     owner: proto1,
+    hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
 proto1.scripts.transform = new Transform({owner: proto1})
@@ -554,6 +559,7 @@ proto2.scripts.spriteHandler = new SpriteHandler({
 })
 proto2.scripts.collider = new Collider({
     owner: proto2,
+    hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
 proto2.scripts.transform = new Transform({owner: proto2})
@@ -569,6 +575,7 @@ proto3.scripts.spriteHandler = new SpriteHandler({
 })
 proto3.scripts.collider = new Collider({
     owner: proto3,
+    hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
 proto3.scripts.transform = new Transform({owner: proto3})
@@ -612,8 +619,10 @@ var deadEnemy = new State({
 
 // Game engine scripts =============================
 
+// TODO: Optimize
 gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     owner: gameEnginesObject,
+    nextObjectPlacementTime: 0,
     activeComponents: [],
     inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler,fern4.scripts.obstaclePooler, fern5.scripts.obstaclePooler, proto1.scripts.obstaclePooler, proto2.scripts.obstaclePooler, proto3.scripts.obstaclePooler],
     returnToPool: function(obj){
@@ -621,14 +630,17 @@ gameEnginesObject.scripts.obstaclePoolEngine = new Script({
         this.inactiveComponents.push(obj)
     },
     update: function(dt){
-        var rand = Math.random()
-        if (rand < OBSTACLE_FREQUENCY) {
-            var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
-            var obj = this.inactiveComponents.splice(r, 1)[0]
-            if (obj) {
-                this.activeComponents.push(obj)
-                obj.activate()
+        if (currentTime >= this.nextObjectPlacementTime){
+            var rand = Math.random()
+            if (rand < OBSTACLE_FREQUENCY) {
+                var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
+                var obj = this.inactiveComponents.splice(r, 1)[0]
+                if (obj) {
+                    this.activeComponents.push(obj)
+                    obj.activate()
+                    this.nextObjectPlacementTime = currentTime + 300
 
+                }
             }
         }
     }
@@ -712,7 +724,8 @@ gameEnginesObject.scripts.collisionEngine = new Script({
 // State assignments ============================
 
 game.changeState(playLevel)
-player.changeState(walk)
+player.changeState(jump)
+player.scripts.jumpScript.gliding = false
 fern1.changeState(inactiveObstacle)
 fern2.changeState(inactiveObstacle)
 fern3.changeState(inactiveObstacle)
