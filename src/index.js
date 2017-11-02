@@ -116,6 +116,9 @@ class SpriteHandler extends Script{
         this.engine = gameEnginesObject.spriteEngine
         this.currentFrameNum = 0
         this.elapsedTime = 0
+        this.looping = true
+        this.finished = false
+        this.onFinished = function(){}
     }
 
     update(dt){
@@ -124,12 +127,22 @@ class SpriteHandler extends Script{
 
     advanceFrame(dt){
         this.elapsedTime += dt
-        this.elapsedTime = this.elapsedTime % (this.numFrames * ANIM_FRAMERATE)
+        if (this.looping){
+            this.elapsedTime = this.elapsedTime % (this.numFrames * ANIM_FRAMERATE)
+        } else if (!this.finished){
+            if (this.elapsedTime >= this.numFrames * ANIM_FRAMERATE){
+                this.onFinished()
+                this.finished = true
+            }
+        }
         this.currentFrameNum = Math.floor (this.elapsedTime / ANIM_FRAMERATE)
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
     }
 
-    setCurrentAnimation(name){
+    setCurrentAnimation(name, looping = true, onFinished = function(){}){
+        this.looping = looping
+        this.finished = false
+        this.onFinished = onFinished
         if (this.currentAnimation != this.animations[name]){
             this.currentAnimation = this.animations[name]
             this.currentFrameNum = 0
@@ -304,7 +317,7 @@ var lose = new State({
 
 player.scripts.transform = new Transform({
     owner: player,
-    position: [20, GROUND - SPRITE_HEIGHT]
+    position: [100, GROUND - SPRITE_HEIGHT]
 })
 
 player.scripts.spriteHandler = new SpriteHandler({
@@ -481,10 +494,16 @@ fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
 proto1.scripts.spriteHandler = new SpriteHandler({
     owner: proto1,
     animations: {
-        default: [3]
+        default: [3],
+        dead: [1,2]
     }
 })
-proto1.scripts.collider = new Collider({owner: proto1})
+proto1.scripts.collider = new Collider({
+    owner: proto1,
+    onHit: function(){
+        this.owner.changeState(deadEnemy)
+    }
+})
 proto1.scripts.transform = new Transform({owner: proto1})
 proto1.scripts.scroller = new Scroller({owner: proto1})
 proto1.scripts.obstaclePooler = new ObstaclePooler({owner: proto1})
@@ -511,6 +530,16 @@ var inactiveObstacle = new State({
     }
 })
 
+var deadEnemy = new State({
+    enter: function(){
+        this.scripts.spriteHandler.setCurrentAnimation("dead", false)
+    },
+    update: function(dt){
+        this.scripts.scroller.update(dt)
+        this.scripts.obstaclePooler.update(dt)
+        this.scripts.spriteHandler.update(dt)
+    }
+})
 // =================================================
 
 // Game engine scripts =============================
