@@ -784,7 +784,6 @@ var tick = (() => {
         if (!lastTime){
             lastTime = timestamp
         }
-        console.log(player.scripts.transform.position)
         var dt = timestamp - lastTime
         currentTime = timestamp
         game.update(dt);
