@@ -252,20 +252,6 @@ scoreCounter.scripts.incrementScript = new Script({
 
 // =================================================
 
-// Score states =================================
-
-var countUp = new State({
-    enter: function(){
-        currentScore = 0
-    },
-    update: function(dt){
-        this.scripts.incrementScript.increment(dt/200)
-    }
-
-})
-
-// =================================================
-
 // Game object scripts =============================
 
 game.scripts.levelGameplayScript = new Script({
@@ -315,7 +301,9 @@ var lose = new State({
     enter: function(){
         cancelAnimationFrame(loop)
         messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `Final score: ${Math.floor(currentScore)}`
+        messageWindow.innerHTML = `
+        Final score: ${Math.floor(currentScore)}
+        SPACE to restart`
     }
 
 })
@@ -450,11 +438,6 @@ var hurt = new State({
         game.message("lose")
     },
     message: function(msg){
-        switch(msg){
-            case "hurt":
-                this.changeState(hurt)
-                break
-        }
     },
     update: function(dt){
         this.scripts.jumpScript.move(dt)
@@ -745,8 +728,12 @@ var keyDown = false
 
 document.addEventListener("keydown", e => {
     if (keyDown == false && e.keyCode == 32){
-        player.message("jump")
-        keyDown = true
+        if (game.currentState == lose){
+            restart()
+        } else {
+            player.message("jump")
+            keyDown = true
+        }
     }
 })
 
@@ -759,8 +746,12 @@ document.addEventListener("keyup", e => {
 
 document.addEventListener("touchstart", e => {
     if (keyDown == false){
-        player.message("jump")
-        keyDown = true
+        if (game.currentState == lose){
+            restart()
+        } else {
+            player.message("jump")
+            keyDown = true
+        }
     }
 })
 
@@ -780,12 +771,16 @@ var fgX = 0
 
 // Expose globally
 var currentTime
+var lastTime = 0
 var tick = (() => {
 
-    var lastTime = 0
 
     function tick(timestamp){
         loop = requestAnimationFrame(tick);
+        if (!lastTime){
+            lastTime = timestamp
+        }
+        console.log(player.scripts.transform.position)
         var dt = timestamp - lastTime
         currentTime = timestamp
         game.update(dt);
@@ -800,6 +795,26 @@ var tick = (() => {
     return tick
 })()
 
+function restart(){
+    lastTime = null
+    player.scripts.transform.position = [100, 125]
+    game.changeState(playLevel)
+    player.changeState(jump)
+    player.scripts.jumpScript.gliding = false
+    fern1.changeState(inactiveObstacle)
+    fern2.changeState(inactiveObstacle)
+    fern3.changeState(inactiveObstacle)
+    fern4.changeState(inactiveObstacle)
+    fern5.changeState(inactiveObstacle)
+    proto1.changeState(inactiveObstacle)
+    proto2.changeState(inactiveObstacle)
+    proto3.changeState(inactiveObstacle)
+    messageWindow.style.visibility = "hidden"
+    game.changeState(playLevel)
+    loop = requestAnimationFrame(tick)
+
+}
+
 // =================================================
 
 // Start ============================================
@@ -813,4 +828,4 @@ sprite.src = spritesheetSrc
 
 // Export module ===================================
 
-module.exports = {GameObject}
+// module.exports = {GameObject}
