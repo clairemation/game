@@ -22,12 +22,12 @@ const SPRITE_WIDTH = 48
 const SPRITE_HEIGHT = 48
 const GROUND = 176
 const FG_SCROLL_SPEED = 5 / 30
-const OBSTACLE_FREQUENCY = 0.06
 
 // =================================================
 
 // Globals =========================================
 
+var obstacleFrequency = 0.2
 var spritesheetSrc = "assets/spritesheets/sheet00.png"
 var sprite = new Image()
 var loop
@@ -242,11 +242,17 @@ var game = new GameObject({name: "Game"})
 
 // Score scripts ===================================
 
+var nextScoreMilestone = 50
+
 scoreCounter.scripts.incrementScript = new Script({
     owner: scoreCounter,
     increment: function(amt){
         currentScore += amt
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
+        if (currentScore > nextScoreMilestone){
+            obstacleFrequency -= 0.02
+            nextScoreMilestone += 50
+        }
     }
 })
 
@@ -301,9 +307,7 @@ var lose = new State({
     enter: function(){
         cancelAnimationFrame(loop)
         messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `
-        Final score: ${Math.floor(currentScore)}
-        SPACE to restart`
+        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
     }
 
 })
@@ -615,7 +619,7 @@ gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     update: function(dt){
         if (currentTime >= this.nextObjectPlacementTime){
             var rand = Math.random()
-            if (rand < OBSTACLE_FREQUENCY) {
+            if (rand < obstacleFrequency) {
                 var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
                 var obj = this.inactiveComponents.splice(r, 1)[0]
                 if (obj) {
@@ -797,18 +801,21 @@ var tick = (() => {
 
 function restart(){
     lastTime = null
+    currentScore = 0
+    obstacleFrequency = 0.2
+    scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.scripts.transform.position = [100, 125]
     game.changeState(playLevel)
     player.changeState(jump)
     player.scripts.jumpScript.gliding = false
-    fern1.changeState(inactiveObstacle)
-    fern2.changeState(inactiveObstacle)
-    fern3.changeState(inactiveObstacle)
-    fern4.changeState(inactiveObstacle)
-    fern5.changeState(inactiveObstacle)
-    proto1.changeState(inactiveObstacle)
-    proto2.changeState(inactiveObstacle)
-    proto3.changeState(inactiveObstacle)
+    // fern1.changeState(inactiveObstacle)
+    // fern2.changeState(inactiveObstacle)
+    // fern3.changeState(inactiveObstacle)
+    // fern4.changeState(inactiveObstacle)
+    // fern5.changeState(inactiveObstacle)
+    // proto1.changeState(inactiveObstacle)
+    // proto2.changeState(inactiveObstacle)
+    // proto3.changeState(inactiveObstacle)
     messageWindow.style.visibility = "hidden"
     game.changeState(playLevel)
     loop = requestAnimationFrame(tick)
