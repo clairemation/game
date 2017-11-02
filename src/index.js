@@ -337,7 +337,11 @@ player.scripts.collisionReceiver = new CollisionReceiver({
     owner: player,
     hitBox: [20, 26, 40, 40],
     onHit: function(other){
-        this.owner.message("hurt")
+        if (other.owner.scripts.transform.position[1] > this.owner.scripts.transform.position[1]){
+            this.owner.message("pounce", other)
+        } else {
+            this.owner.message("hurt", other)
+        }
     }
 })
 
@@ -379,11 +383,6 @@ player.scripts.jumpScript = new Script({
     }
 })
 
-player.scripts.hurtScript = new Script({
-    owner: player,
-
-})
-
 // =================================================
 
 // Player object states =========================
@@ -412,7 +411,7 @@ var jump = new State({
         this.scripts.spriteHandler.setCurrentAnimation("jump")
         this.scripts.jumpScript.startJump()
     },
-    message: function(msg){
+    message: function(msg, e){
         switch (msg){
             case "jump":
                 this.scripts.jumpScript.flap()
@@ -423,6 +422,9 @@ var jump = new State({
             case "hurt":
                 this.changeState(hurt)
                 break
+            case "pounce":
+                this.scripts.spriteHandler.setCurrentAnimation("pounce")
+                this.scripts.jumpScript.bounce()
         }
     },
     update: function(dt){
@@ -435,7 +437,7 @@ var hurt = new State({
     enter: function(){
         this.scripts.jumpScript.bounce()
         this.scripts.spriteHandler.setCurrentAnimation("hurt")
-        // game.message("lose")
+        game.message("lose")
     },
     message: function(msg){
         switch(msg){
@@ -501,7 +503,10 @@ proto1.scripts.spriteHandler = new SpriteHandler({
 proto1.scripts.collider = new Collider({
     owner: proto1,
     onHit: function(){
-        this.owner.changeState(deadEnemy)
+        console.log(player.scripts.transform.position[1] + " " + this.owner.scripts.transform.position[1])
+        if (player.currentState == jump && player.scripts.transform.position[1] < this.owner.scripts.transform.position[1]){
+            this.owner.changeState(deadEnemy)
+        }
     }
 })
 proto1.scripts.transform = new Transform({owner: proto1})
