@@ -38,27 +38,21 @@ var lastTime = 0
 
 // =================================================
 
-
-
 // Base Classes =======================
 
 class State{
     constructor(args = {}){
         Object.assign(this, args)
     }
-
     enter(){
         //Override
     }
-
     exit(){
         //Override
     }
-
     message(msg){
         //Override
     }
-
     update(deltaTime){
         //Override
     }
@@ -110,6 +104,61 @@ class GameObject{
     }
 }
 
+// GAME OBJECT ======================================
+
+var game = new GameObject({name: "Game"})
+
+// Game object controls =============================
+
+game.controls.playControl = new Control({
+    components: [],
+    update: function(dt){
+        for (var i = 0; i < this.components.length; i++){
+            this.components[i].update(dt)
+        }
+    }
+})
+
+// =================================================
+
+// Game object states ===========================
+
+var play = new State({
+    message: function(msg){
+        switch(msg){
+            case ("lose"):
+                setTimeout(() => {this.changeState(lose)}, 400)
+        }
+    },
+    update: function(dt){
+        this.controls.playControl.update(dt)
+    }
+})
+
+var pause = new State({
+    enter: function(){
+        cancelAnimationFrame(loop)
+    }
+})
+
+var lose = new State({
+    enter: function(){
+        cancelAnimationFrame(loop)
+        messageWindow.style.visibility = "visible"
+        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
+    }
+
+})
+
+// =================================================
+
+
+class GameplayObject extends GameObject{
+    constructor(args){
+        super(args)
+        game.controls.playControl.components.push(this)
+    }
+}
 
 // Derived classes ==============================
 
@@ -226,19 +275,18 @@ class ObstaclePooler extends Control{
 
 // Game Object declarations ========================
 
-var player = new GameObject({name: "Player"})
-var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
-var fern1 = new GameObject({name: "Fern1"})
-var fern2 = new GameObject({name: "Fern2"})
-var fern3 = new GameObject({name: "Fern3"})
-var fern4 = new GameObject({name: "Fern4"})
-var fern5 = new GameObject({name: "Fern5"})
-var proto1 = new GameObject({name: "Proto1"})
-var proto2 = new GameObject({name: "Proto2"})
-var proto3 = new GameObject({name: "Proto3"})
-var scoreCounter = new GameObject({name: "Score"})
-var message = new GameObject({name: "MessageWindow"})
-var game = new GameObject({name: "Game"})
+var player = new GameplayObject({name: "Player"})
+var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
+var fern1 = new GameplayObject({name: "Fern1"})
+var fern2 = new GameplayObject({name: "Fern2"})
+var fern3 = new GameplayObject({name: "Fern3"})
+var fern4 = new GameplayObject({name: "Fern4"})
+var fern5 = new GameplayObject({name: "Fern5"})
+var proto1 = new GameplayObject({name: "Proto1"})
+var proto2 = new GameplayObject({name: "Proto2"})
+var proto3 = new GameplayObject({name: "Proto3"})
+var scoreCounter = new GameplayObject({name: "Score"})
+var message = new GameplayObject({name: "MessageWindow"})
 
 // =================================================
 
@@ -260,61 +308,6 @@ scoreCounter.controls.incrementControl = new Control({
 
 // =================================================
 
-// Game object controls =============================
-
-game.controls.levelGameplayControl = new Control({
-    components: {
-        player,
-        fern1,
-        fern2,
-        fern3,
-        fern4,
-        fern5,
-        proto1,
-        proto2,
-        proto3,
-        scoreCounter,
-        gameEnginesObject
-    },
-    update: function(dt){
-        for (var name in this.components){
-            this.components[name].update(dt)
-        }
-    }
-})
-
-// =================================================
-
-// Game object states ===========================
-
-var playLevel = new State({
-    message: function(msg){
-        switch(msg){
-            case ("lose"):
-                setTimeout(() => {this.changeState(lose)}, 400)
-        }
-    },
-    update: function(dt){
-        this.controls.levelGameplayControl.update(dt)
-    }
-})
-
-var pause = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-    }
-})
-
-var lose = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-        messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
-    }
-
-})
-
-// =================================================
 
 // Player object controls ===========================
 
@@ -712,7 +705,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 // State assignments ============================
 
-game.changeState(playLevel)
+game.changeState(play)
 player.changeState(jump)
 player.controls.jumpControl.gliding = false
 fern1.changeState(inactiveObstacle)
@@ -797,7 +790,7 @@ function restart(){
     obstacleFrequency = 0.2
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [100, 125]
-    game.changeState(playLevel)
+    game.changeState(play)
     player.changeState(jump)
     player.controls.jumpControl.gliding = false
     // fern1.changeState(inactiveObstacle)
@@ -809,7 +802,7 @@ function restart(){
     // proto2.changeState(inactiveObstacle)
     // proto3.changeState(inactiveObstacle)
     messageWindow.style.visibility = "hidden"
-    game.changeState(playLevel)
+    game.changeState(play)
     loop = requestAnimationFrame(tick)
 
 }
