@@ -21,22 +21,22 @@ const ANIM_FRAMERATE = 200
 const SPRITE_WIDTH = 48
 const SPRITE_HEIGHT = 48
 const GROUND = 176
-const FG_SCROLL_SPEED = 5 / 30
 
 // =================================================
 
 // Globals =========================================
 
+var fgScrollSpeed = 0.12
 var obstacleFrequency = 0.2
 var spritesheetSrc = "assets/spritesheets/sheet00.png"
 var sprite = new Image()
 var loop
 var currentScore = 0
+var currentTime
+var lastTime = 0
 
 
 // =================================================
-
-
 
 // Base Classes =======================
 
@@ -44,25 +44,21 @@ class State{
     constructor(args = {}){
         Object.assign(this, args)
     }
-
     enter(){
         //Override
     }
-
     exit(){
         //Override
     }
-
     message(msg){
         //Override
     }
-
     update(deltaTime){
         //Override
     }
 }
 
-class Script{
+class Control{
     constructor(args = {}){
         Object.assign(this, args)
     }
@@ -73,10 +69,10 @@ class Script{
 }
 
 var sharedStates = {
-    updateAllScripts: new State({
+    updateAllControls: new State({
         update: function(dt){
-            for (var scriptName in this.scripts){
-                this.scripts[scriptName].update(dt)
+            for (var controlName in this.controls){
+                this.controls[controlName].update(dt)
             }
         }
     })
@@ -85,9 +81,9 @@ var sharedStates = {
 class GameObject{
     constructor(args = {}){
         this.name = 'GameObject'
-        this.scripts = {}
+        this.controls = {}
         this.states = {
-            default: sharedStates.updateAllScripts
+            default: sharedStates.updateAllControls
         }
         this.currentState = this.states.default
         Object.assign(this, args)
@@ -108,10 +104,64 @@ class GameObject{
     }
 }
 
+// GAME OBJECT ======================================
 
-// Derived classes ==============================
+var game = new GameObject({name: "Game"})
 
-class SpriteHandler extends Script{
+// Game object controls =============================
+
+game.controls.playControl = new Control({
+    components: [],
+    update: function(dt){
+        for (var i = 0; i < this.components.length; i++){
+            this.components[i].update(dt)
+        }
+    }
+})
+
+// =================================================
+
+// Game object states ===========================
+
+var play = new State({
+    message: function(msg){
+        switch(msg){
+            case ("lose"):
+                setTimeout(() => {this.changeState(lose)}, 400)
+        }
+    },
+    update: function(dt){
+        this.controls.playControl.update(dt)
+    }
+})
+
+var pause = new State({
+    enter: function(){
+        cancelAnimationFrame(loop)
+    }
+})
+
+var lose = new State({
+    enter: function(){
+        cancelAnimationFrame(loop)
+        messageWindow.style.visibility = "visible"
+        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
+    }
+
+})
+
+// =================================================
+
+class GameplayObject extends GameObject{
+    constructor(args){
+        super(args)
+        game.controls.playControl.components.push(this)
+    }
+}
+
+// GameplayObject Controls ==============================
+
+class Sprite extends Control{
     constructor(args = {}){
         super(args)
         this.engine = gameEnginesObject.spriteEngine
@@ -154,7 +204,7 @@ class SpriteHandler extends Script{
     }
 }
 
-class Collider extends Script{
+class Collider extends Control{
     constructor(args){
         super(args)
         this.hitBox = this.hitBox || [20, 30, 33, 48]
@@ -165,7 +215,7 @@ class Collider extends Script{
     }
 }
 
-class CollisionReceiver extends Script{
+class CollisionReceiver extends Control{
     constructor(args){
         super(args)
         this.engine = gameEnginesObject.collisionEngine
@@ -176,7 +226,7 @@ class CollisionReceiver extends Script{
     }
 }
 
-class Transform extends Script{
+class Transform extends Control{
     constructor(args){
         super(args)
         this.position = this.position || [0, GROUND - SPRITE_HEIGHT]
@@ -185,7 +235,7 @@ class Transform extends Script{
     }
 }
 
-class Scroller extends Script{
+class Scroller extends Control{
     constructor(args){
         super(args)
         this.reset()
@@ -194,12 +244,12 @@ class Scroller extends Script{
         this.xScroll = 0
     }
     update(dt){
-        this.xScroll = (this.xScroll + FG_SCROLL_SPEED * dt)
-        this.owner.scripts.transform.position[0] = 320 - this.xScroll
+        this.xScroll = (this.xScroll + fgScrollSpeed * dt)
+        this.owner.controls.transform.position[0] = 320 - this.xScroll
     }
 }
 
-class ObstaclePooler extends Script{
+class ObstaclePooler extends Control{
     constructor(args){
         super(args)
     }
@@ -209,12 +259,12 @@ class ObstaclePooler extends Script{
     }
 
     deactivate(){
-        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool(this)
+        gameEnginesObject.controls.obstaclePoolEngine.returnToPool(this)
         this.owner.changeState(inactiveObstacle)
     }
 
     update(dt){
-        if (this.owner.scripts.transform.position[0] < -SPRITE_WIDTH - 1){
+        if (this.owner.controls.transform.position[0] < -SPRITE_WIDTH - 1){
             this.deactivate()
         }
     }
@@ -224,27 +274,26 @@ class ObstaclePooler extends Script{
 
 // Game Object declarations ========================
 
-var player = new GameObject({name: "Player"})
-var gameEnginesObject = new GameObject({name: "GameEnginesObject"})
-var fern1 = new GameObject({name: "Fern1"})
-var fern2 = new GameObject({name: "Fern2"})
-var fern3 = new GameObject({name: "Fern3"})
-var fern4 = new GameObject({name: "Fern4"})
-var fern5 = new GameObject({name: "Fern5"})
-var proto1 = new GameObject({name: "Proto1"})
-var proto2 = new GameObject({name: "Proto2"})
-var proto3 = new GameObject({name: "Proto3"})
-var scoreCounter = new GameObject({name: "Score"})
-var message = new GameObject({name: "MessageWindow"})
-var game = new GameObject({name: "Game"})
+var player = new GameplayObject({name: "Player"})
+var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
+var fern1 = new GameplayObject({name: "Fern1"})
+var fern2 = new GameplayObject({name: "Fern2"})
+var fern3 = new GameplayObject({name: "Fern3"})
+var fern4 = new GameplayObject({name: "Fern4"})
+var fern5 = new GameplayObject({name: "Fern5"})
+var proto1 = new GameplayObject({name: "Proto1"})
+var proto2 = new GameplayObject({name: "Proto2"})
+var proto3 = new GameplayObject({name: "Proto3"})
+var scoreCounter = new GameplayObject({name: "Score"})
+var message = new GameplayObject({name: "MessageWindow"})
 
 // =================================================
 
-// Score scripts ===================================
+// Score controls ===================================
 
 var nextScoreMilestone = 50
 
-scoreCounter.scripts.incrementScript = new Script({
+scoreCounter.controls.incrementControl = new Control({
     owner: scoreCounter,
     increment: function(amt){
         currentScore += amt
@@ -258,70 +307,15 @@ scoreCounter.scripts.incrementScript = new Script({
 
 // =================================================
 
-// Game object scripts =============================
 
-game.scripts.levelGameplayScript = new Script({
-    components: {
-        player,
-        fern1,
-        fern2,
-        fern3,
-        fern4,
-        fern5,
-        proto1,
-        proto2,
-        proto3,
-        scoreCounter,
-        gameEnginesObject
-    },
-    update: function(dt){
-        for (var name in this.components){
-            this.components[name].update(dt)
-        }
-    }
-})
+// Player object controls ===========================
 
-// =================================================
-
-// Game object states ===========================
-
-var playLevel = new State({
-    message: function(msg){
-        switch(msg){
-            case ("lose"):
-                setTimeout(() => {this.changeState(lose)}, 400)
-        }
-    },
-    update: function(dt){
-        this.scripts.levelGameplayScript.update(dt)
-    }
-})
-
-var pause = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-    }
-})
-
-var lose = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-        messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
-    }
-
-})
-
-// =================================================
-
-// Player object scripts ===========================
-
-player.scripts.transform = new Transform({
+player.controls.transform = new Transform({
     owner: player,
     position: [100, 125]
 })
 
-player.scripts.spriteHandler = new SpriteHandler({
+player.controls.sprite = new Sprite({
     owner: player,
     animations: {
         stand: [6],
@@ -334,11 +328,11 @@ player.scripts.spriteHandler = new SpriteHandler({
     }
 })
 
-player.scripts.collisionReceiver = new CollisionReceiver({
+player.controls.collisionReceiver = new CollisionReceiver({
     owner: player,
     hitBox: [20, 26, 40, 40],
     onHit: function(other){
-        if (other.owner.scripts.transform.position[1] > this.owner.scripts.transform.position[1]){
+        if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
             this.owner.message("pounce", other)
         } else {
             this.owner.message("hurt", other)
@@ -346,7 +340,7 @@ player.scripts.collisionReceiver = new CollisionReceiver({
     }
 })
 
-player.scripts.jumpScript = new Script({
+player.controls.altitude = new Control({
     owner: player,
     yAccel: 0,
     gliding: false,
@@ -361,24 +355,23 @@ player.scripts.jumpScript = new Script({
     flap: function(){
         this.yAccel -= 4
         this.gliding = true
-        this.owner.scripts.spriteHandler.setCurrentAnimation("jump")
+        this.owner.controls.sprite.setCurrentAnimation("jump")
     },
     fall: function(){
         this.gliding = false
-        this.owner.scripts.spriteHandler.setCurrentAnimation("fall")
+        this.owner.controls.sprite.setCurrentAnimation("fall")
     },
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
-        this.owner.scripts.transform.position[1] += this.yAccel * (dt / 30)
+        this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
         if (this.gliding && this.yAccel > 0){
-            this.owner.scripts.spriteHandler.setCurrentAnimation("glide")
+            this.owner.controls.sprite.setCurrentAnimation("glide")
             this.yAccel = (dt / 30)
         } else {
             this.yAccel += 0.75 * (dt / 30)
         }
-        if (this.owner.scripts.transform.position[1] >= GROUND - SPRITE_HEIGHT){
-            // this.owner.scripts.transform.position[1] = GROUND - SPRITE_HEIGHT
-            this.owner.scripts.spriteHandler.setCurrentAnimation("hurt")
+        if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
+            this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
             game.message("lose")
         }
@@ -391,7 +384,7 @@ player.scripts.jumpScript = new Script({
 
 var walk = new State({
     enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("walk")
+        this.controls.sprite.setCurrentAnimation("walk")
     },
     message: function(msg){
         switch (msg){
@@ -404,170 +397,170 @@ var walk = new State({
         }
     },
     update: function(dt){
-        this.scripts.spriteHandler.update(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
 var jump = new State({
     enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("jump")
-        this.scripts.jumpScript.startJump()
+        this.controls.sprite.setCurrentAnimation("jump")
+        this.controls.altitude.startJump()
     },
     message: function(msg, e){
         switch (msg){
             case "jump":
-                this.scripts.jumpScript.flap()
+                this.controls.altitude.flap()
                 break
             case "fall":
-                this.scripts.jumpScript.fall()
+                this.controls.altitude.fall()
                 break
             case "hurt":
                 this.changeState(hurt)
                 break
             case "pounce":
-                this.scripts.spriteHandler.setCurrentAnimation("pounce")
-                this.scripts.jumpScript.bounce()
+                this.controls.sprite.setCurrentAnimation("pounce")
+                this.controls.altitude.bounce()
         }
     },
     update: function(dt){
-        this.scripts.jumpScript.move(dt)
-        this.scripts.spriteHandler.update(dt)
+        this.controls.altitude.move(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
 var hurt = new State({
     enter: function(){
-        this.scripts.jumpScript.bounce()
-        this.scripts.spriteHandler.setCurrentAnimation("hurt")
+        this.controls.altitude.bounce()
+        this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
     },
     message: function(msg){
     },
     update: function(dt){
-        this.scripts.jumpScript.move(dt)
-        this.scripts.spriteHandler.update(dt)
+        this.controls.altitude.move(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
 // =================================================
 
-// Fern scripts ====================================
+// Fern controls ====================================
 
 // TODO: Make Fern class
-fern1.scripts.spriteHandler = new SpriteHandler({
+fern1.controls.sprite = new Sprite({
     owner: fern1,
     animations: {
         default: [0]
     }
 })
-fern1.scripts.collider = new Collider({owner: fern1})
-fern1.scripts.transform = new Transform({owner: fern1})
-fern1.scripts.scroller = new Scroller({owner: fern1})
-fern1.scripts.obstaclePooler = new ObstaclePooler({owner: fern1})
+fern1.controls.collider = new Collider({owner: fern1})
+fern1.controls.transform = new Transform({owner: fern1})
+fern1.controls.scroller = new Scroller({owner: fern1})
+fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
 
-fern2.scripts.spriteHandler = new SpriteHandler({
+fern2.controls.sprite = new Sprite({
     owner: fern2,
     animations: {
         default: [0]
     }
 })
-fern2.scripts.collider = new Collider({owner: fern2})
-fern2.scripts.transform = new Transform({owner: fern2})
-fern2.scripts.scroller = new Scroller({owner: fern2})
-fern2.scripts.obstaclePooler = new ObstaclePooler({owner: fern2})
+fern2.controls.collider = new Collider({owner: fern2})
+fern2.controls.transform = new Transform({owner: fern2})
+fern2.controls.scroller = new Scroller({owner: fern2})
+fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
 
-fern3.scripts.spriteHandler = new SpriteHandler({
+fern3.controls.sprite = new Sprite({
     owner: fern3,
     animations: {
         default: [0]
     }
 })
-fern3.scripts.collider = new Collider({owner: fern3})
-fern3.scripts.transform = new Transform({owner: fern3})
-fern3.scripts.scroller = new Scroller({owner: fern3})
-fern3.scripts.obstaclePooler = new ObstaclePooler({owner: fern3})
+fern3.controls.collider = new Collider({owner: fern3})
+fern3.controls.transform = new Transform({owner: fern3})
+fern3.controls.scroller = new Scroller({owner: fern3})
+fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
 
-fern4.scripts.spriteHandler = new SpriteHandler({
+fern4.controls.sprite = new Sprite({
     owner: fern4,
     animations: {
         default: [0]
     }
 })
-fern4.scripts.collider = new Collider({owner: fern4})
-fern4.scripts.transform = new Transform({owner: fern4})
-fern4.scripts.scroller = new Scroller({owner: fern4})
-fern4.scripts.obstaclePooler = new ObstaclePooler({owner: fern4})
+fern4.controls.collider = new Collider({owner: fern4})
+fern4.controls.transform = new Transform({owner: fern4})
+fern4.controls.scroller = new Scroller({owner: fern4})
+fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
 
-fern5.scripts.spriteHandler = new SpriteHandler({
+fern5.controls.sprite = new Sprite({
     owner: fern5,
     animations: {
         default: [0]
     }
 })
-fern5.scripts.collider = new Collider({owner: fern5})
-fern5.scripts.transform = new Transform({owner: fern5})
-fern5.scripts.scroller = new Scroller({owner: fern5})
-fern5.scripts.obstaclePooler = new ObstaclePooler({owner: fern5})
+fern5.controls.collider = new Collider({owner: fern5})
+fern5.controls.transform = new Transform({owner: fern5})
+fern5.controls.scroller = new Scroller({owner: fern5})
+fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
 
 // =================================================
 
-// Proto scripts ===================================
+// Proto controls ===================================
 
 // TODO: Make protoceratops class
 
 function protoOnHit(){
-    if (player.currentState == jump && player.scripts.transform.position[1] < this.owner.scripts.transform.position[1]){
+    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
             this.owner.changeState(deadEnemy)
         }
 }
 
-proto1.scripts.spriteHandler = new SpriteHandler({
+proto1.controls.sprite = new Sprite({
     owner: proto1,
     animations: {
         default: [3],
         dead: [1,2]
     }
 })
-proto1.scripts.collider = new Collider({
+proto1.controls.collider = new Collider({
     owner: proto1,
     hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
-proto1.scripts.transform = new Transform({owner: proto1})
-proto1.scripts.scroller = new Scroller({owner: proto1})
-proto1.scripts.obstaclePooler = new ObstaclePooler({owner: proto1})
+proto1.controls.transform = new Transform({owner: proto1})
+proto1.controls.scroller = new Scroller({owner: proto1})
+proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
 
-proto2.scripts.spriteHandler = new SpriteHandler({
+proto2.controls.sprite = new Sprite({
     owner: proto2,
     animations: {
         default: [3],
         dead: [1,2]
     }
 })
-proto2.scripts.collider = new Collider({
+proto2.controls.collider = new Collider({
     owner: proto2,
     hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
-proto2.scripts.transform = new Transform({owner: proto2})
-proto2.scripts.scroller = new Scroller({owner: proto2})
-proto2.scripts.obstaclePooler = new ObstaclePooler({owner: proto2})
+proto2.controls.transform = new Transform({owner: proto2})
+proto2.controls.scroller = new Scroller({owner: proto2})
+proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
 
-proto3.scripts.spriteHandler = new SpriteHandler({
+proto3.controls.sprite = new Sprite({
     owner: proto3,
     animations: {
         default: [3],
         dead: [1,2]
     }
 })
-proto3.scripts.collider = new Collider({
+proto3.controls.collider = new Collider({
     owner: proto3,
     hitbox: [3, 31, 31, 48],
     onHit: protoOnHit
 })
-proto3.scripts.transform = new Transform({owner: proto3})
-proto3.scripts.scroller = new Scroller({owner: proto3})
-proto3.scripts.obstaclePooler = new ObstaclePooler({owner: proto3})
+proto3.controls.transform = new Transform({owner: proto3})
+proto3.controls.scroller = new Scroller({owner: proto3})
+proto3.controls.obstaclePooler = new ObstaclePooler({owner: proto3})
 
 // =================================================
 
@@ -575,43 +568,43 @@ proto3.scripts.obstaclePooler = new ObstaclePooler({owner: proto3})
 
 var activeObstacle = new State({
     enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("default")
-        this.scripts.scroller.reset()
+        this.controls.sprite.setCurrentAnimation("default")
+        this.controls.scroller.reset()
     },
     update: function(dt){
-        this.scripts.scroller.update(dt)
-        this.scripts.obstaclePooler.update(dt)
+        this.controls.scroller.update(dt)
+        this.controls.obstaclePooler.update(dt)
     }
 })
 
 var inactiveObstacle = new State({
     enter: function(){
-        this.scripts.transform.position = [-SPRITE_WIDTH, GROUND - SPRITE_HEIGHT]
-        gameEnginesObject.scripts.obstaclePoolEngine.returnToPool()
+        this.controls.transform.position = [-SPRITE_WIDTH, GROUND - SPRITE_HEIGHT]
+        gameEnginesObject.controls.obstaclePoolEngine.returnToPool()
     }
 })
 
 var deadEnemy = new State({
     enter: function(){
-        this.scripts.spriteHandler.setCurrentAnimation("dead", false)
-        scoreCounter.scripts.incrementScript.increment(10)
+        this.controls.sprite.setCurrentAnimation("dead", false)
+        scoreCounter.controls.incrementControl.increment(10)
     },
     update: function(dt){
-        this.scripts.scroller.update(dt)
-        this.scripts.obstaclePooler.update(dt)
-        this.scripts.spriteHandler.update(dt)
+        this.controls.scroller.update(dt)
+        this.controls.obstaclePooler.update(dt)
+        this.controls.sprite.update(dt)
     }
 })
 // =================================================
 
-// Game engine scripts =============================
+// Game engine controls =============================
 
 // TODO: Optimize
-gameEnginesObject.scripts.obstaclePoolEngine = new Script({
+gameEnginesObject.controls.obstaclePoolEngine = new Control({
     owner: gameEnginesObject,
     nextObjectPlacementTime: 0,
     activeComponents: [],
-    inactiveComponents: [fern1.scripts.obstaclePooler, fern2.scripts.obstaclePooler, fern3.scripts.obstaclePooler,fern4.scripts.obstaclePooler, fern5.scripts.obstaclePooler, proto1.scripts.obstaclePooler, proto2.scripts.obstaclePooler, proto3.scripts.obstaclePooler],
+    inactiveComponents: [fern1.controls.obstaclePooler, fern2.controls.obstaclePooler, fern3.controls.obstaclePooler,fern4.controls.obstaclePooler, fern5.controls.obstaclePooler, proto1.controls.obstaclePooler, proto2.controls.obstaclePooler, proto3.controls.obstaclePooler],
     returnToPool: function(obj){
         this.activeComponents.splice(this.activeComponents.indexOf(obj), 1)
         this.inactiveComponents.push(obj)
@@ -633,13 +626,13 @@ gameEnginesObject.scripts.obstaclePoolEngine = new Script({
     }
 })
 
-gameEnginesObject.scripts.spriteEngine = new Script({
+gameEnginesObject.controls.spriteEngine = new Control({
     owner: gameEnginesObject,
-    components: [player.scripts.spriteHandler, fern1.scripts.spriteHandler, fern2.scripts.spriteHandler, fern3.scripts.spriteHandler, fern4.scripts.spriteHandler, fern5.scripts.spriteHandler, proto1.scripts.spriteHandler, proto2.scripts.spriteHandler, proto3.scripts.spriteHandler],
+    components: [player.controls.sprite, fern1.controls.sprite, fern2.controls.sprite, fern3.controls.sprite, fern4.controls.sprite, fern5.controls.sprite, proto1.controls.sprite, proto2.controls.sprite, proto3.controls.sprite],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
         for (var i = 0; i < this.components.length; i++){
-            var position = this.components[i].owner.scripts.transform.position
+            var position = this.components[i].owner.controls.transform.position
             var frame = this.components[i].currentFrame
             ctx.drawImage(sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
         }
@@ -672,10 +665,10 @@ function isColliding(a, b){
     return true
 }
 
-gameEnginesObject.scripts.collisionEngine = new Script({
+gameEnginesObject.controls.collisionEngine = new Control({
     owner: gameEnginesObject,
-    playerCollider: player.scripts.collisionReceiver,
-    components: [fern1.scripts.collider, fern2.scripts.collider, fern3.scripts.collider, fern4.scripts.collider, fern5.scripts.collider, proto1.scripts.collider, proto2.scripts.collider, proto3.scripts.collider],
+    playerCollider: player.controls.collisionReceiver,
+    components: [fern1.controls.collider, fern2.controls.collider, fern3.controls.collider, fern4.controls.collider, fern5.controls.collider, proto1.controls.collider, proto2.controls.collider, proto3.controls.collider],
     update: function(dt){
         var playerBox
         var otherBox
@@ -685,21 +678,21 @@ gameEnginesObject.scripts.collisionEngine = new Script({
         var otherBound = []
         for (var i = 0; i < this.components.length; i++){
             playerBox = this.playerCollider.hitBox
-            playerPos = this.playerCollider.owner.scripts.transform.position
+            playerPos = this.playerCollider.owner.controls.transform.position
             playerBound[0] = playerBox[0] + playerPos[0]
             playerBound[2] = playerBox[2] + playerPos[0]
             playerBound[1] = playerBox[1] + playerPos[1]
             playerBound[3] = playerBox[3] + playerPos[1]
 
             otherBox = this.components[i].hitBox
-            otherPos = this.components[i].owner.scripts.transform.position
+            otherPos = this.components[i].owner.controls.transform.position
             otherBound[0] = otherBox[0] + otherPos[0]
             otherBound[2] = otherBox[2] + otherPos[0]
             otherBound[1] = otherBox[1] + otherPos[1]
             otherBound[3] = otherBox[3] + otherPos[1]
 
             if (isColliding(playerBound, otherBound)){
-                player.scripts.collisionReceiver.onHit(this.components[i])
+                player.controls.collisionReceiver.onHit(this.components[i])
                 this.components[i].onHit()
             }
         }
@@ -710,9 +703,9 @@ gameEnginesObject.scripts.collisionEngine = new Script({
 
 // State assignments ============================
 
-game.changeState(playLevel)
+game.changeState(play)
 player.changeState(jump)
-player.scripts.jumpScript.gliding = false
+player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
 fern2.changeState(inactiveObstacle)
 fern3.changeState(inactiveObstacle)
@@ -773,40 +766,31 @@ document.addEventListener("touchend", e => {
 var bgX = 0
 var fgX = 0
 
-// Expose globally
-var currentTime
-var lastTime = 0
-var tick = (() => {
-
-
-    function tick(timestamp){
-        loop = requestAnimationFrame(tick);
-        if (!lastTime){
-            lastTime = timestamp
-        }
-        var dt = timestamp - lastTime
-        currentTime = timestamp
-        game.update(dt);
+function tick(timestamp){
+    loop = requestAnimationFrame(tick);
+    if (!lastTime){
         lastTime = timestamp
-        bgX = (bgX - 3 * (dt/30)) % 640
-        bg1.style.backgroundPosition = `${bgX}px 0px`
-        fgX = (fgX - FG_SCROLL_SPEED * dt * 2) % 640
-        fg1.style.backgroundPosition = `${fgX}px 0px`
-
     }
+    var dt = timestamp - lastTime
+    currentTime = timestamp
+    game.update(dt);
+    lastTime = timestamp
+    bgX = (bgX - 3 * (dt/30)) % 640
+    bg1.style.backgroundPosition = `${bgX}px 0px`
+    fgX = (fgX - fgScrollSpeed * dt * 2) % 640
+    fg1.style.backgroundPosition = `${fgX}px 0px`
 
-    return tick
-})()
+}
 
 function restart(){
     lastTime = null
     currentScore = 0
     obstacleFrequency = 0.2
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
-    player.scripts.transform.position = [100, 125]
-    game.changeState(playLevel)
+    player.controls.transform.position = [100, 125]
+    game.changeState(play)
     player.changeState(jump)
-    player.scripts.jumpScript.gliding = false
+    player.controls.altitude.gliding = false
     // fern1.changeState(inactiveObstacle)
     // fern2.changeState(inactiveObstacle)
     // fern3.changeState(inactiveObstacle)
@@ -816,7 +800,7 @@ function restart(){
     // proto2.changeState(inactiveObstacle)
     // proto3.changeState(inactiveObstacle)
     messageWindow.style.visibility = "hidden"
-    game.changeState(playLevel)
+    game.changeState(play)
     loop = requestAnimationFrame(tick)
 
 }

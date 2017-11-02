@@ -152,7 +152,6 @@ var lose = new State({
 
 // =================================================
 
-
 class GameplayObject extends GameObject{
     constructor(args){
         super(args)
@@ -160,9 +159,9 @@ class GameplayObject extends GameObject{
     }
 }
 
-// Derived classes ==============================
+// GameplayObject Controls ==============================
 
-class SpriteHandler extends Control{
+class Sprite extends Control{
     constructor(args = {}){
         super(args)
         this.engine = gameEnginesObject.spriteEngine
@@ -300,7 +299,8 @@ scoreCounter.controls.incrementControl = new Control({
         currentScore += amt
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
-            obstacleFrequency -= 0.02
+            fgScrollSpeed += 0.02
+            obstacleFrequency = Math.max(obstacleFrequency - 0.02, 0.02)
             nextScoreMilestone += 50
         }
     }
@@ -316,7 +316,7 @@ player.controls.transform = new Transform({
     position: [100, 125]
 })
 
-player.controls.spriteHandler = new SpriteHandler({
+player.controls.sprite = new Sprite({
     owner: player,
     animations: {
         stand: [6],
@@ -341,7 +341,7 @@ player.controls.collisionReceiver = new CollisionReceiver({
     }
 })
 
-player.controls.jumpControl = new Control({
+player.controls.altitude = new Control({
     owner: player,
     yAccel: 0,
     gliding: false,
@@ -356,24 +356,23 @@ player.controls.jumpControl = new Control({
     flap: function(){
         this.yAccel -= 4
         this.gliding = true
-        this.owner.controls.spriteHandler.setCurrentAnimation("jump")
+        this.owner.controls.sprite.setCurrentAnimation("jump")
     },
     fall: function(){
         this.gliding = false
-        this.owner.controls.spriteHandler.setCurrentAnimation("fall")
+        this.owner.controls.sprite.setCurrentAnimation("fall")
     },
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
         this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
         if (this.gliding && this.yAccel > 0){
-            this.owner.controls.spriteHandler.setCurrentAnimation("glide")
+            this.owner.controls.sprite.setCurrentAnimation("glide")
             this.yAccel = (dt / 30)
         } else {
             this.yAccel += 0.75 * (dt / 30)
         }
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
-            // this.owner.controls.transform.position[1] = GROUND - SPRITE_HEIGHT
-            this.owner.controls.spriteHandler.setCurrentAnimation("hurt")
+            this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
             game.message("lose")
         }
@@ -386,7 +385,7 @@ player.controls.jumpControl = new Control({
 
 var walk = new State({
     enter: function(){
-        this.controls.spriteHandler.setCurrentAnimation("walk")
+        this.controls.sprite.setCurrentAnimation("walk")
     },
     message: function(msg){
         switch (msg){
@@ -399,48 +398,48 @@ var walk = new State({
         }
     },
     update: function(dt){
-        this.controls.spriteHandler.update(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
 var jump = new State({
     enter: function(){
-        this.controls.spriteHandler.setCurrentAnimation("jump")
-        this.controls.jumpControl.startJump()
+        this.controls.sprite.setCurrentAnimation("jump")
+        this.controls.altitude.startJump()
     },
     message: function(msg, e){
         switch (msg){
             case "jump":
-                this.controls.jumpControl.flap()
+                this.controls.altitude.flap()
                 break
             case "fall":
-                this.controls.jumpControl.fall()
+                this.controls.altitude.fall()
                 break
             case "hurt":
                 this.changeState(hurt)
                 break
             case "pounce":
-                this.controls.spriteHandler.setCurrentAnimation("pounce")
-                this.controls.jumpControl.bounce()
+                this.controls.sprite.setCurrentAnimation("pounce")
+                this.controls.altitude.bounce()
         }
     },
     update: function(dt){
-        this.controls.jumpControl.move(dt)
-        this.controls.spriteHandler.update(dt)
+        this.controls.altitude.move(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
 var hurt = new State({
     enter: function(){
-        this.controls.jumpControl.bounce()
-        this.controls.spriteHandler.setCurrentAnimation("hurt")
+        this.controls.altitude.bounce()
+        this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
     },
     message: function(msg){
     },
     update: function(dt){
-        this.controls.jumpControl.move(dt)
-        this.controls.spriteHandler.update(dt)
+        this.controls.altitude.move(dt)
+        this.controls.sprite.update(dt)
     }
 })
 
@@ -449,7 +448,7 @@ var hurt = new State({
 // Fern controls ====================================
 
 // TODO: Make Fern class
-fern1.controls.spriteHandler = new SpriteHandler({
+fern1.controls.sprite = new Sprite({
     owner: fern1,
     animations: {
         default: [0]
@@ -460,7 +459,7 @@ fern1.controls.transform = new Transform({owner: fern1})
 fern1.controls.scroller = new Scroller({owner: fern1})
 fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
 
-fern2.controls.spriteHandler = new SpriteHandler({
+fern2.controls.sprite = new Sprite({
     owner: fern2,
     animations: {
         default: [0]
@@ -471,7 +470,7 @@ fern2.controls.transform = new Transform({owner: fern2})
 fern2.controls.scroller = new Scroller({owner: fern2})
 fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
 
-fern3.controls.spriteHandler = new SpriteHandler({
+fern3.controls.sprite = new Sprite({
     owner: fern3,
     animations: {
         default: [0]
@@ -482,7 +481,7 @@ fern3.controls.transform = new Transform({owner: fern3})
 fern3.controls.scroller = new Scroller({owner: fern3})
 fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
 
-fern4.controls.spriteHandler = new SpriteHandler({
+fern4.controls.sprite = new Sprite({
     owner: fern4,
     animations: {
         default: [0]
@@ -493,7 +492,7 @@ fern4.controls.transform = new Transform({owner: fern4})
 fern4.controls.scroller = new Scroller({owner: fern4})
 fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
 
-fern5.controls.spriteHandler = new SpriteHandler({
+fern5.controls.sprite = new Sprite({
     owner: fern5,
     animations: {
         default: [0]
@@ -516,7 +515,7 @@ function protoOnHit(){
         }
 }
 
-proto1.controls.spriteHandler = new SpriteHandler({
+proto1.controls.sprite = new Sprite({
     owner: proto1,
     animations: {
         default: [3],
@@ -532,7 +531,7 @@ proto1.controls.transform = new Transform({owner: proto1})
 proto1.controls.scroller = new Scroller({owner: proto1})
 proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
 
-proto2.controls.spriteHandler = new SpriteHandler({
+proto2.controls.sprite = new Sprite({
     owner: proto2,
     animations: {
         default: [3],
@@ -548,7 +547,7 @@ proto2.controls.transform = new Transform({owner: proto2})
 proto2.controls.scroller = new Scroller({owner: proto2})
 proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
 
-proto3.controls.spriteHandler = new SpriteHandler({
+proto3.controls.sprite = new Sprite({
     owner: proto3,
     animations: {
         default: [3],
@@ -570,7 +569,7 @@ proto3.controls.obstaclePooler = new ObstaclePooler({owner: proto3})
 
 var activeObstacle = new State({
     enter: function(){
-        this.controls.spriteHandler.setCurrentAnimation("default")
+        this.controls.sprite.setCurrentAnimation("default")
         this.controls.scroller.reset()
     },
     update: function(dt){
@@ -588,13 +587,13 @@ var inactiveObstacle = new State({
 
 var deadEnemy = new State({
     enter: function(){
-        this.controls.spriteHandler.setCurrentAnimation("dead", false)
+        this.controls.sprite.setCurrentAnimation("dead", false)
         scoreCounter.controls.incrementControl.increment(10)
     },
     update: function(dt){
         this.controls.scroller.update(dt)
         this.controls.obstaclePooler.update(dt)
-        this.controls.spriteHandler.update(dt)
+        this.controls.sprite.update(dt)
     }
 })
 // =================================================
@@ -630,7 +629,7 @@ gameEnginesObject.controls.obstaclePoolEngine = new Control({
 
 gameEnginesObject.controls.spriteEngine = new Control({
     owner: gameEnginesObject,
-    components: [player.controls.spriteHandler, fern1.controls.spriteHandler, fern2.controls.spriteHandler, fern3.controls.spriteHandler, fern4.controls.spriteHandler, fern5.controls.spriteHandler, proto1.controls.spriteHandler, proto2.controls.spriteHandler, proto3.controls.spriteHandler],
+    components: [player.controls.sprite, fern1.controls.sprite, fern2.controls.sprite, fern3.controls.sprite, fern4.controls.sprite, fern5.controls.sprite, proto1.controls.sprite, proto2.controls.sprite, proto3.controls.sprite],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
         for (var i = 0; i < this.components.length; i++){
@@ -707,7 +706,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 game.changeState(play)
 player.changeState(jump)
-player.controls.jumpControl.gliding = false
+player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
 fern2.changeState(inactiveObstacle)
 fern3.changeState(inactiveObstacle)
@@ -788,11 +787,12 @@ function restart(){
     lastTime = null
     currentScore = 0
     obstacleFrequency = 0.2
+    fgScrollSpeed = 0.12
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [100, 125]
     game.changeState(play)
     player.changeState(jump)
-    player.controls.jumpControl.gliding = false
+    player.controls.altitude.gliding = false
     // fern1.changeState(inactiveObstacle)
     // fern2.changeState(inactiveObstacle)
     // fern3.changeState(inactiveObstacle)
