@@ -299,7 +299,8 @@ scoreCounter.controls.incrementControl = new Control({
         currentScore += amt
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
-            obstacleFrequency -= 0.02
+            fgScrollSpeed += 0.02
+            obstacleFrequency = Math.max(obstacleFrequency - 0.02, 0.02)
             nextScoreMilestone += 50
         }
     }
@@ -786,6 +787,7 @@ function restart(){
     lastTime = null
     currentScore = 0
     obstacleFrequency = 0.2
+    fgScrollSpeed = 0.12
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [100, 125]
     game.changeState(play)

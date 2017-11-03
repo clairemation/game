@@ -15,6 +15,38 @@ var fg1 = document.getElementById("fg1")
 var scoreboard = document.getElementById("scoreboard")
 var messageWindow = document.getElementById("message")
 
+var flapAudio = document.getElementById("flapsound")
+flapAudio.playbackRate = 4
+var crunchAudio = document.getElementById("crunchsound")
+var crunch2Audio = document.getElementById("crunchsound2")
+crunch2Audio.playbackRate = 2
+var blopAudio = document.getElementById("blopsound")
+blopAudio.playbackRate = 0.5
+var screechAudio = document.getElementById("screechsound")
+
+// Audio setup ======================================
+
+var audioCtx = new (window.AudioContext || new window.webkitAudioContext)()
+
+var flapSrc = audioCtx.createMediaElementSource(flapAudio)
+flapSrc.connect(audioCtx.destination)
+
+var crunchSrc = audioCtx.createMediaElementSource(crunchAudio)
+crunchSrc.connect(audioCtx.destination)
+
+var crunch2Src = audioCtx.createMediaElementSource(crunch2Audio)
+crunch2Src.connect(audioCtx.destination)
+
+var blopSrc = audioCtx.createMediaElementSource(blopAudio)
+blopSrc.connect(audioCtx.destination)
+
+var screechSrc = audioCtx.createMediaElementSource(screechAudio)
+screechSrc.connect(audioCtx.destination)
+
+function play(audio){
+
+}
+
 // Constants ========================================
 
 const ANIM_FRAMERATE = 200
@@ -313,19 +345,19 @@ scoreCounter.controls.incrementControl = new Control({
 
 player.controls.transform = new Transform({
     owner: player,
-    position: [100, 125]
+    position: [40, 125]
 })
 
 player.controls.sprite = new Sprite({
     owner: player,
     animations: {
-        stand: [6],
-        walk: [10, 11],
-        jump: [4],
-        fall: [5],
-        glide: [6, 7],
-        hurt: [8],
-        pounce: [9]
+        stand: [7],
+        walk: [11, 12],
+        jump: [5],
+        fall: [6],
+        glide: [7, 8],
+        hurt: [9],
+        pounce: [10]
     }
 })
 
@@ -357,6 +389,7 @@ player.controls.altitude = new Control({
         this.yAccel -= 4
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
+        flapAudio.play()
     },
     fall: function(){
         this.gliding = false
@@ -374,6 +407,7 @@ player.controls.altitude = new Control({
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
+            blopAudio.play()
             game.message("lose")
         }
     }
@@ -431,6 +465,7 @@ var jump = new State({
 
 var hurt = new State({
     enter: function(){
+        screechAudio.play()
         this.controls.altitude.bounce()
         this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
@@ -448,13 +483,22 @@ var hurt = new State({
 // Fern controls ====================================
 
 // TODO: Make Fern class
+
+function fernOnHit(){
+    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
+            this.owner.changeState(deadEnemy)
+            crunch2Audio.play()
+        }
+}
+
 fern1.controls.sprite = new Sprite({
     owner: fern1,
     animations: {
-        default: [0]
+        default: [1],
+        dead: [0]
     }
 })
-fern1.controls.collider = new Collider({owner: fern1})
+fern1.controls.collider = new Collider({owner: fern1, onHit: fernOnHit})
 fern1.controls.transform = new Transform({owner: fern1})
 fern1.controls.scroller = new Scroller({owner: fern1})
 fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
@@ -462,10 +506,11 @@ fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
 fern2.controls.sprite = new Sprite({
     owner: fern2,
     animations: {
-        default: [0]
+        default: [1],
+        dead: [0]
     }
 })
-fern2.controls.collider = new Collider({owner: fern2})
+fern2.controls.collider = new Collider({owner: fern2, onHit: fernOnHit})
 fern2.controls.transform = new Transform({owner: fern2})
 fern2.controls.scroller = new Scroller({owner: fern2})
 fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
@@ -473,10 +518,11 @@ fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
 fern3.controls.sprite = new Sprite({
     owner: fern3,
     animations: {
-        default: [0]
+        default: [1],
+        dead: [0]
     }
 })
-fern3.controls.collider = new Collider({owner: fern3})
+fern3.controls.collider = new Collider({owner: fern3, onHit: fernOnHit})
 fern3.controls.transform = new Transform({owner: fern3})
 fern3.controls.scroller = new Scroller({owner: fern3})
 fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
@@ -484,10 +530,11 @@ fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
 fern4.controls.sprite = new Sprite({
     owner: fern4,
     animations: {
-        default: [0]
+        default: [1],
+        dead: [0]
     }
 })
-fern4.controls.collider = new Collider({owner: fern4})
+fern4.controls.collider = new Collider({owner: fern4, onHit: fernOnHit})
 fern4.controls.transform = new Transform({owner: fern4})
 fern4.controls.scroller = new Scroller({owner: fern4})
 fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
@@ -495,10 +542,11 @@ fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
 fern5.controls.sprite = new Sprite({
     owner: fern5,
     animations: {
-        default: [0]
+        default: [1],
+        dead: [0]
     }
 })
-fern5.controls.collider = new Collider({owner: fern5})
+fern5.controls.collider = new Collider({owner: fern5, onHit: fernOnHit})
 fern5.controls.transform = new Transform({owner: fern5})
 fern5.controls.scroller = new Scroller({owner: fern5})
 fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
@@ -512,14 +560,15 @@ fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
 function protoOnHit(){
     if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
             this.owner.changeState(deadEnemy)
+            crunchAudio.play()
         }
 }
 
 proto1.controls.sprite = new Sprite({
     owner: proto1,
     animations: {
-        default: [3],
-        dead: [1,2]
+        default: [4],
+        dead: [2,3]
     }
 })
 proto1.controls.collider = new Collider({
@@ -534,8 +583,8 @@ proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
 proto2.controls.sprite = new Sprite({
     owner: proto2,
     animations: {
-        default: [3],
-        dead: [1,2]
+        default: [4],
+        dead: [2,3]
     }
 })
 proto2.controls.collider = new Collider({
@@ -550,8 +599,8 @@ proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
 proto3.controls.sprite = new Sprite({
     owner: proto3,
     animations: {
-        default: [3],
-        dead: [1,2]
+        default: [4],
+        dead: [2,3]
     }
 })
 proto3.controls.collider = new Collider({
@@ -789,7 +838,7 @@ function restart(){
     obstacleFrequency = 0.2
     fgScrollSpeed = 0.12
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
-    player.controls.transform.position = [100, 125]
+    player.controls.transform.position = [40, 125]
     game.changeState(play)
     player.changeState(jump)
     player.controls.altitude.gliding = false
@@ -820,4 +869,4 @@ sprite.src = spritesheetSrc
 
 // Export module ===================================
 
-// module.exports = {GameObject}
+module.exports = {GameObject}
