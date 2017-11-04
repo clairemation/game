@@ -12,7 +12,7 @@
 
     <div id="root" style="width: 640px; height: 480px; position: relative; overflow: hidden">
 
-      <img id="bg1" src="assets/bgb.jpg" style="position: absolute; width: 1280; height: 480px; left: 0; top: 0; image-rendering: pixelated;" />
+      <img id="bg1" src="assets/bgb.jpg" style="position: absolute; width: 1280; height: 480px; left: 0; top: 0; image-rendering: pixelated; visibility: hidden" />
 
       <canvas width=320 height=240 id="canvas"
         style="position: absolute; width: 640px; height: 480px;
@@ -24,9 +24,9 @@
           -ms-interpolation-mode: nearest-neighbor;   /* IE                            */">
       </canvas>
 
-      <img id="fg1" src="assets/fg2b.png" style="position: absolute; left: 0; top: 0; width: 1280; height: 480px; image-rendering: pixelated;"/>
+      <img id="fg1" src="assets/fg2b.png" style="position: absolute; left: 0; top: 0; width: 1280; height: 480px; image-rendering: pixelated; visibility: hidden"/>
 
-      <div id="scoreboard" style="position: absolute; left: 540px; top: 40px; width: 100px; height: 100px; color: #000; font-size: 16px; text-align: center">SCORE: 0</div>
+      <div id="scoreboard" style="position: absolute; left: 540px; top: 40px; width: 100px; height: 100px; color: #000; font-size: 16px; text-align: center; visibility: hidden">SCORE: 0</div>
 
       <div id="message-wrapper" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
 

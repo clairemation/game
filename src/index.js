@@ -21,37 +21,69 @@ var fg1 = document.getElementById("fg1")
 var scoreboard = document.getElementById("scoreboard")
 var messageWindow = document.getElementById("message")
 
-var flapAudio = document.getElementById("flapsound")
-flapAudio.playbackRate = 4
-var crunchAudio = document.getElementById("crunchsound")
-var crunch2Audio = document.getElementById("crunchsound2")
-crunch2Audio.playbackRate = 2
-var blopAudio = document.getElementById("blopsound")
-blopAudio.playbackRate = 0.5
-var screechAudio = document.getElementById("screechsound")
+var assets = {}
+
+assets.flapAudio = new Audio()
+assets.flapAudio.playbackRate = 4
+assets.crunchAudio = new Audio()
+assets.crunch2Audio = new Audio()
+assets.crunch2Audio.playbackRate = 2
+assets.blopAudio = new Audio()
+assets.blopAudio.playbackRate = 0.5
+assets.screechAudio = new Audio()
+assets.titlescreen = new Image()
+assets.sprite = new Image()
 
 // Audio setup ======================================
 
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
-var flapSrc = audioCtx.createMediaElementSource(flapAudio)
+var flapSrc = audioCtx.createMediaElementSource(assets.flapAudio)
 flapSrc.connect(audioCtx.destination)
 
-var crunchSrc = audioCtx.createMediaElementSource(crunchAudio)
+var crunchSrc = audioCtx.createMediaElementSource(assets.crunchAudio)
 crunchSrc.connect(audioCtx.destination)
 
-var crunch2Src = audioCtx.createMediaElementSource(crunch2Audio)
+var crunch2Src = audioCtx.createMediaElementSource(assets.crunch2Audio)
 crunch2Src.connect(audioCtx.destination)
 
-var blopSrc = audioCtx.createMediaElementSource(blopAudio)
+var blopSrc = audioCtx.createMediaElementSource(assets.blopAudio)
 blopSrc.connect(audioCtx.destination)
 
-var screechSrc = audioCtx.createMediaElementSource(screechAudio)
+var screechSrc = audioCtx.createMediaElementSource(assets.screechAudio)
 screechSrc.connect(audioCtx.destination)
 
-function play(audio){
 
+
+var assetSrcs = {
+    titlescreen: "assets/titlescreen.png",
+    sprite: "assets/spritesheets/sheet00.png",
+    flapAudio: "assets/flap.wav",
+    crunchAudio: "assets/crunch.wav",
+    crunch2Audio: "assets/crunch2.wav",
+    screechAudio: "assets/pusou.wav",
+    blopAudio: "assets/blop.wav"
 }
+
+function loadPromise(asset, src){
+    return new Promise((res, rej) => {
+        asset.onload = res
+        asset.onerror = res
+        asset.oncanplaythrough = res
+        asset.src = src
+    })
+}
+
+var assetPromises = []
+
+for (name in assets){
+    assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
+}
+
+Promise.all(assetPromises).then(val => {
+    console.log("asdf")
+    ctx.drawImage(assets.titlescreen, 0, 0)
+})
 
 // Constants ========================================
 
@@ -66,7 +98,6 @@ const GROUND = 176
 
 var fgScrollSpeed = 0.12
 var obstacleFrequency = 0.2
-var spritesheetSrc = "assets/spritesheets/sheet00.png"
 var sprite = new Image()
 var loop
 var currentScore = 0
@@ -175,14 +206,13 @@ var titleScreen = new State({
         }
         document.addEventListener("click", startGame)
     },
-    exit: function(){
-        fg1.style.visibility = "visible"
-        scoreboard.style.visibility = "visible"
-    }
 })
 
 var play = new State({
     enter: function(){
+        fg1.style.visibility = "visible"
+        bg1.style.visibility = "visible"
+        scoreboard.style.visibility = "visible"
         loop = requestAnimationFrame(tick)
     },
     message: function(msg){
@@ -418,7 +448,7 @@ player.controls.altitude = new Control({
         this.yAccel -= this.yAccel * 0.9
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
-        flapAudio.play()
+        assets.flapAudio.play()
     },
     fall: function(){
         this.gliding = false
@@ -436,7 +466,7 @@ player.controls.altitude = new Control({
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT / 2){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
-            blopAudio.play()
+            assets.blopAudio.play()
             game.message("lose")
         }
     }
@@ -494,7 +524,7 @@ var jump = new State({
 
 var hurt = new State({
     enter: function(){
-        screechAudio.play()
+        assets.screechAudio.play()
         this.controls.altitude.bounce()
         this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
@@ -516,7 +546,7 @@ var hurt = new State({
 function fernOnHit(){
     if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
             this.owner.changeState(deadEnemy)
-            crunch2Audio.play()
+            assets.crunch2Audio.play()
         }
 }
 
@@ -589,7 +619,7 @@ fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
 function protoOnHit(){
     if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
             this.owner.changeState(deadEnemy)
-            crunchAudio.play()
+            assets.crunchAudio.play()
         }
 }
 
@@ -713,7 +743,7 @@ gameEnginesObject.controls.spriteEngine = new Control({
         for (var i = 0; i < this.components.length; i++){
             var position = this.components[i].owner.controls.transform.position
             var frame = this.components[i].currentFrame
-            ctx.drawImage(sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+            ctx.drawImage(assets.sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
         }
     }
 })
@@ -881,16 +911,8 @@ function restart(){
 
 // Start ============================================
 
-sprite.onload = () => {
-    // loop = requestAnimationFrame(tick)
-}
-sprite.src = spritesheetSrc
 
-var titlescreen = new Image()
-titlescreen.onload = () => {
-    ctx.drawImage(titlescreen, 0, 0)
-}
-titlescreen.src = "assets/titlescreen.png"
+
 
 // =================================================
 
