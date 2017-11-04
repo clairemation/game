@@ -355,8 +355,8 @@ scoreCounter.controls.incrementControl = new Control({
         currentScore += amt
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
-            fgScrollSpeed += 0.02
-            obstacleFrequency = Math.max(obstacleFrequency - 0.02, 0.02)
+            fgScrollSpeed += 0.01
+            obstacleFrequency = Math.max(obstacleFrequency - 0.01, 0.04)
             nextScoreMilestone += 50
         }
     }
@@ -406,11 +406,11 @@ player.controls.altitude = new Control({
         this.gliding = true
     },
     bounce: function(){
-        this.yAccel = -5
+        this.yAccel = -7
         this.gliding = false
     },
     flap: function(){
-        this.yAccel -= Math.max(3, this.yAccel/2)
+        this.yAccel -= this.yAccel * 0.9
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
         flapAudio.play()
