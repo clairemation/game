@@ -10,48 +10,10 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.msImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
-ctx.fillStyle = "#000"
-ctx.fillRect(0, 0, 320, 240)
-ctx.fillStyle = "#fff"
-ctx.font = "16px PressStart2P"
-ctx.fillText("Loading...", 50, 50)
-
 var bg1 = document.getElementById("bg1")
 var fg1 = document.getElementById("fg1")
 var scoreboard = document.getElementById("scoreboard")
 var messageWindow = document.getElementById("message")
-
-var flapAudio = document.getElementById("flapsound")
-flapAudio.playbackRate = 4
-var crunchAudio = document.getElementById("crunchsound")
-var crunch2Audio = document.getElementById("crunchsound2")
-crunch2Audio.playbackRate = 2
-var blopAudio = document.getElementById("blopsound")
-blopAudio.playbackRate = 0.5
-var screechAudio = document.getElementById("screechsound")
-
-// Audio setup ======================================
-
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-
-var flapSrc = audioCtx.createMediaElementSource(flapAudio)
-flapSrc.connect(audioCtx.destination)
-
-var crunchSrc = audioCtx.createMediaElementSource(crunchAudio)
-crunchSrc.connect(audioCtx.destination)
-
-var crunch2Src = audioCtx.createMediaElementSource(crunch2Audio)
-crunch2Src.connect(audioCtx.destination)
-
-var blopSrc = audioCtx.createMediaElementSource(blopAudio)
-blopSrc.connect(audioCtx.destination)
-
-var screechSrc = audioCtx.createMediaElementSource(screechAudio)
-screechSrc.connect(audioCtx.destination)
-
-function play(audio){
-
-}
 
 // Constants ========================================
 
@@ -161,30 +123,7 @@ game.controls.playControl = new Control({
 
 // Game object states ===========================
 
-var titleScreen = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-        fg1.style.visibility = "hidden"
-        scoreboard.style.visibility = "hidden"
-        ctx.fillStyle = "#000"
-        ctx.fillRect(0, 0, 320, 240)
-        var startGame = () => {
-            console.log(this)
-            this.changeState(play)
-            document.removeEventListener("click", startGame)
-        }
-        document.addEventListener("click", startGame)
-    },
-    exit: function(){
-        fg1.style.visibility = "visible"
-        scoreboard.style.visibility = "visible"
-    }
-})
-
 var play = new State({
-    enter: function(){
-        loop = requestAnimationFrame(tick)
-    },
     message: function(msg){
         switch(msg){
             case ("lose"):
@@ -360,8 +299,8 @@ scoreCounter.controls.incrementControl = new Control({
         currentScore += amt
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
-            fgScrollSpeed += 0.01
-            obstacleFrequency = Math.max(obstacleFrequency - 0.01, 0.04)
+            fgScrollSpeed += 0.02
+            obstacleFrequency = Math.max(obstacleFrequency - 0.02, 0.02)
             nextScoreMilestone += 50
         }
     }
@@ -374,19 +313,19 @@ scoreCounter.controls.incrementControl = new Control({
 
 player.controls.transform = new Transform({
     owner: player,
-    position: [40, 125]
+    position: [100, 125]
 })
 
 player.controls.sprite = new Sprite({
     owner: player,
     animations: {
-        stand: [7],
-        walk: [11, 12],
-        jump: [5],
-        fall: [6],
-        glide: [7, 8],
-        hurt: [9],
-        pounce: [10]
+        stand: [6],
+        walk: [10, 11],
+        jump: [4],
+        fall: [5],
+        glide: [6, 7],
+        hurt: [8],
+        pounce: [9]
     }
 })
 
@@ -394,11 +333,11 @@ player.controls.collisionReceiver = new CollisionReceiver({
     owner: player,
     hitBox: [20, 26, 40, 40],
     onHit: function(other){
-        // if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
+        if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
             this.owner.message("pounce", other)
-        // } else {
-            // this.owner.message("hurt", other)
-        // }
+        } else {
+            this.owner.message("hurt", other)
+        }
     }
 })
 
@@ -411,14 +350,13 @@ player.controls.altitude = new Control({
         this.gliding = true
     },
     bounce: function(){
-        this.yAccel = -7
+        this.yAccel = -9
         this.gliding = false
     },
     flap: function(){
-        this.yAccel -= this.yAccel * 0.9
+        this.yAccel -= 4
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
-        flapAudio.play()
     },
     fall: function(){
         this.gliding = false
@@ -427,16 +365,15 @@ player.controls.altitude = new Control({
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
         this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
-        // if (this.gliding && this.yAccel > 0){
-        //     this.owner.controls.sprite.setCurrentAnimation("glide")
-        //     this.yAccel = (dt / 30)
-        // } else {
-            this.yAccel += 0.45 * (dt / 30)
-        // }
-        if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT / 2){
+        if (this.gliding && this.yAccel > 0){
+            this.owner.controls.sprite.setCurrentAnimation("glide")
+            this.yAccel = (dt / 30)
+        } else {
+            this.yAccel += 0.75 * (dt / 30)
+        }
+        if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
-            blopAudio.play()
             game.message("lose")
         }
     }
@@ -494,7 +431,6 @@ var jump = new State({
 
 var hurt = new State({
     enter: function(){
-        screechAudio.play()
         this.controls.altitude.bounce()
         this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
@@ -512,22 +448,13 @@ var hurt = new State({
 // Fern controls ====================================
 
 // TODO: Make Fern class
-
-function fernOnHit(){
-    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-            this.owner.changeState(deadEnemy)
-            crunch2Audio.play()
-        }
-}
-
 fern1.controls.sprite = new Sprite({
     owner: fern1,
     animations: {
-        default: [1],
-        dead: [0]
+        default: [0]
     }
 })
-fern1.controls.collider = new Collider({owner: fern1, onHit: fernOnHit})
+fern1.controls.collider = new Collider({owner: fern1})
 fern1.controls.transform = new Transform({owner: fern1})
 fern1.controls.scroller = new Scroller({owner: fern1})
 fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
@@ -535,11 +462,10 @@ fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
 fern2.controls.sprite = new Sprite({
     owner: fern2,
     animations: {
-        default: [1],
-        dead: [0]
+        default: [0]
     }
 })
-fern2.controls.collider = new Collider({owner: fern2, onHit: fernOnHit})
+fern2.controls.collider = new Collider({owner: fern2})
 fern2.controls.transform = new Transform({owner: fern2})
 fern2.controls.scroller = new Scroller({owner: fern2})
 fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
@@ -547,11 +473,10 @@ fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
 fern3.controls.sprite = new Sprite({
     owner: fern3,
     animations: {
-        default: [1],
-        dead: [0]
+        default: [0]
     }
 })
-fern3.controls.collider = new Collider({owner: fern3, onHit: fernOnHit})
+fern3.controls.collider = new Collider({owner: fern3})
 fern3.controls.transform = new Transform({owner: fern3})
 fern3.controls.scroller = new Scroller({owner: fern3})
 fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
@@ -559,11 +484,10 @@ fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
 fern4.controls.sprite = new Sprite({
     owner: fern4,
     animations: {
-        default: [1],
-        dead: [0]
+        default: [0]
     }
 })
-fern4.controls.collider = new Collider({owner: fern4, onHit: fernOnHit})
+fern4.controls.collider = new Collider({owner: fern4})
 fern4.controls.transform = new Transform({owner: fern4})
 fern4.controls.scroller = new Scroller({owner: fern4})
 fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
@@ -571,11 +495,10 @@ fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
 fern5.controls.sprite = new Sprite({
     owner: fern5,
     animations: {
-        default: [1],
-        dead: [0]
+        default: [0]
     }
 })
-fern5.controls.collider = new Collider({owner: fern5, onHit: fernOnHit})
+fern5.controls.collider = new Collider({owner: fern5})
 fern5.controls.transform = new Transform({owner: fern5})
 fern5.controls.scroller = new Scroller({owner: fern5})
 fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
@@ -589,15 +512,14 @@ fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
 function protoOnHit(){
     if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
             this.owner.changeState(deadEnemy)
-            crunchAudio.play()
         }
 }
 
 proto1.controls.sprite = new Sprite({
     owner: proto1,
     animations: {
-        default: [4],
-        dead: [2,3]
+        default: [3],
+        dead: [1,2]
     }
 })
 proto1.controls.collider = new Collider({
@@ -612,8 +534,8 @@ proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
 proto2.controls.sprite = new Sprite({
     owner: proto2,
     animations: {
-        default: [4],
-        dead: [2,3]
+        default: [3],
+        dead: [1,2]
     }
 })
 proto2.controls.collider = new Collider({
@@ -628,8 +550,8 @@ proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
 proto3.controls.sprite = new Sprite({
     owner: proto3,
     animations: {
-        default: [4],
-        dead: [2,3]
+        default: [3],
+        dead: [1,2]
     }
 })
 proto3.controls.collider = new Collider({
@@ -782,7 +704,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 // State assignments ============================
 
-game.changeState(titleScreen)
+game.changeState(play)
 player.changeState(jump)
 player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
@@ -793,6 +715,7 @@ fern5.changeState(inactiveObstacle)
 proto1.changeState(inactiveObstacle)
 proto2.changeState(inactiveObstacle)
 proto3.changeState(inactiveObstacle)
+// scoreCounter.changeState(countUp)
 
 // =================================================
 
@@ -854,9 +777,9 @@ function tick(timestamp){
     game.update(dt);
     lastTime = timestamp
     bgX = (bgX - 3 * (dt/30)) % 640
-    bg1.style.left = `${bgX}px`
+    bg1.style.backgroundPosition = `${bgX}px 0px`
     fgX = (fgX - fgScrollSpeed * dt * 2) % 640
-    fg1.style.left = `${fgX}px`
+    fg1.style.backgroundPosition = `${fgX}px 0px`
 
 }
 
@@ -865,12 +788,19 @@ function restart(){
     currentScore = 0
     obstacleFrequency = 0.2
     fgScrollSpeed = 0.12
-    nextScoreMilestone = 50
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
-    player.controls.transform.position = [40, 125]
+    player.controls.transform.position = [100, 125]
     game.changeState(play)
     player.changeState(jump)
     player.controls.altitude.gliding = false
+    // fern1.changeState(inactiveObstacle)
+    // fern2.changeState(inactiveObstacle)
+    // fern3.changeState(inactiveObstacle)
+    // fern4.changeState(inactiveObstacle)
+    // fern5.changeState(inactiveObstacle)
+    // proto1.changeState(inactiveObstacle)
+    // proto2.changeState(inactiveObstacle)
+    // proto3.changeState(inactiveObstacle)
     messageWindow.style.visibility = "hidden"
     game.changeState(play)
     loop = requestAnimationFrame(tick)
@@ -882,18 +812,12 @@ function restart(){
 // Start ============================================
 
 sprite.onload = () => {
-    // loop = requestAnimationFrame(tick)
+    loop = requestAnimationFrame(tick)
 }
 sprite.src = spritesheetSrc
-
-var titlescreen = new Image()
-titlescreen.onload = () => {
-    ctx.drawImage(titlescreen, 0, 0)
-}
-titlescreen.src = "assets/titlescreen.png"
 
 // =================================================
 
 // Export module ===================================
 
-module.exports = {GameObject}
+// module.exports = {GameObject}

@@ -10,9 +10,9 @@
 
   <body scroll="no" style="background: #000; font-family: 'Press Start 2P';">&nbsp;
 
-    <div id="root" style="width: 640px; height: 480px; position: relative;">
+    <div id="root" style="width: 640px; height: 480px; position: relative; overflow: hidden">
 
-      <div id="bg1" style="position: absolute; width: 640px; height: 480px; background: url('assets/bg.png') 0px 0px/640px 480px; background-repeat: x-repeat; image-rendering: pixelated;"></div>
+      <img id="bg1" src="assets/bgb.jpg" style="position: absolute; width: 1280; height: 480px; left: 0; top: 0; image-rendering: pixelated; visible: hidden" />
 
       <canvas width=320 height=240 id="canvas"
         style="position: absolute; width: 640px; height: 480px;
@@ -24,9 +24,9 @@
           -ms-interpolation-mode: nearest-neighbor;   /* IE                            */">
       </canvas>
 
-      <div id="fg1" style="position: absolute; width: 640px; height: 480px; background: url('assets/fg2.png') 0px 0px/320px 480px; background-repeat: x-repeat; image-rendering: pixelated;"></div>
+      <img id="fg1" src="assets/fg2b.png" style="position: absolute; left: 0; top: 0; width: 1280; height: 480px; image-rendering: pixelated; visible: hidden"/>
 
-      <div id="scoreboard" style="position: absolute; left: 540px; top: 40px; width: 100px; height: 100px; color: #000; font-size: 16px; text-align: center">SCORE: 0</div>
+      <div id="scoreboard" style="position: absolute; left: 540px; top: 40px; width: 100px; height: 100px; color: #000; font-size: 16px; text-align: center; visible: hidden">SCORE: 0</div>
 
       <div id="message-wrapper" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
 
