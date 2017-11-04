@@ -410,7 +410,7 @@ player.controls.altitude = new Control({
         this.gliding = false
     },
     flap: function(){
-        this.yAccel -= 3
+        this.yAccel -= Math.max(3, this.yAccel/2)
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
         flapAudio.play()
@@ -426,9 +426,9 @@ player.controls.altitude = new Control({
         //     this.owner.controls.sprite.setCurrentAnimation("glide")
         //     this.yAccel = (dt / 30)
         // } else {
-            this.yAccel += 0.5 * (dt / 30)
+            this.yAccel += 0.45 * (dt / 30)
         // }
-        if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
+        if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT / 2){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
             blopAudio.play()
