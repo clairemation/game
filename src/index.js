@@ -26,7 +26,7 @@ var screechAudio = document.getElementById("screechsound")
 
 // Audio setup ======================================
 
-var audioCtx = new (window.AudioContext || new window.webkitAudioContext)()
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
 var flapSrc = audioCtx.createMediaElementSource(flapAudio)
 flapSrc.connect(audioCtx.destination)
@@ -155,7 +155,31 @@ game.controls.playControl = new Control({
 
 // Game object states ===========================
 
+var titleScreen = new State({
+    enter: function(){
+        cancelAnimationFrame(loop)
+        fg1.style.visibility = "hidden"
+        ctx.fillStyle = "#000"
+        ctx.fillRect(0, 0, 320, 240)
+        ctx.fillStyle = "#fff"
+        ctx.font = "16px PressStart2P"
+        ctx.fillText("Click to start", 40, 120)
+        var startGame = () => {
+            console.log(this)
+            this.changeState(play)
+            document.removeEventListener("click", startGame)
+        }
+        document.addEventListener("click", startGame)
+    },
+    exit: function(){
+        fg1.style.visibility = "visible"
+    }
+})
+
 var play = new State({
+    enter: function(){
+        loop = requestAnimationFrame(tick)
+    },
     message: function(msg){
         switch(msg){
             case ("lose"):
@@ -365,11 +389,11 @@ player.controls.collisionReceiver = new CollisionReceiver({
     owner: player,
     hitBox: [20, 26, 40, 40],
     onHit: function(other){
-        if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
+        // if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
             this.owner.message("pounce", other)
-        } else {
-            this.owner.message("hurt", other)
-        }
+        // } else {
+            // this.owner.message("hurt", other)
+        // }
     }
 })
 
@@ -382,11 +406,11 @@ player.controls.altitude = new Control({
         this.gliding = true
     },
     bounce: function(){
-        this.yAccel = -9
+        this.yAccel = -5
         this.gliding = false
     },
     flap: function(){
-        this.yAccel -= 4
+        this.yAccel -= 3
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
         flapAudio.play()
@@ -398,12 +422,12 @@ player.controls.altitude = new Control({
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
         this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
-        if (this.gliding && this.yAccel > 0){
-            this.owner.controls.sprite.setCurrentAnimation("glide")
-            this.yAccel = (dt / 30)
-        } else {
-            this.yAccel += 0.75 * (dt / 30)
-        }
+        // if (this.gliding && this.yAccel > 0){
+        //     this.owner.controls.sprite.setCurrentAnimation("glide")
+        //     this.yAccel = (dt / 30)
+        // } else {
+            this.yAccel += 0.5 * (dt / 30)
+        // }
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
@@ -753,7 +777,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 // State assignments ============================
 
-game.changeState(play)
+game.changeState(titleScreen)
 player.changeState(jump)
 player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
@@ -764,7 +788,6 @@ fern5.changeState(inactiveObstacle)
 proto1.changeState(inactiveObstacle)
 proto2.changeState(inactiveObstacle)
 proto3.changeState(inactiveObstacle)
-// scoreCounter.changeState(countUp)
 
 // =================================================
 
@@ -837,19 +860,12 @@ function restart(){
     currentScore = 0
     obstacleFrequency = 0.2
     fgScrollSpeed = 0.12
+    nextScoreMilestone = 50
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [40, 125]
     game.changeState(play)
     player.changeState(jump)
     player.controls.altitude.gliding = false
-    // fern1.changeState(inactiveObstacle)
-    // fern2.changeState(inactiveObstacle)
-    // fern3.changeState(inactiveObstacle)
-    // fern4.changeState(inactiveObstacle)
-    // fern5.changeState(inactiveObstacle)
-    // proto1.changeState(inactiveObstacle)
-    // proto2.changeState(inactiveObstacle)
-    // proto3.changeState(inactiveObstacle)
     messageWindow.style.visibility = "hidden"
     game.changeState(play)
     loop = requestAnimationFrame(tick)
@@ -861,7 +877,7 @@ function restart(){
 // Start ============================================
 
 sprite.onload = () => {
-    loop = requestAnimationFrame(tick)
+    // loop = requestAnimationFrame(tick)
 }
 sprite.src = spritesheetSrc
 
