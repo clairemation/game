@@ -50,7 +50,7 @@ for (name in assets){
 }
 
 Promise.all(assetPromises).then(val => {
-    ctx.drawImage(assets.titlescreen, 0, 0)
+    game.changeState(titleScreen)
 })
 
 // ==================================================
@@ -192,7 +192,13 @@ game.controls.playControl = new Control({
 // Game object states ===========================
 
 var loading = new State({
-
+    enter: function(){
+        cancelAnimationFrame(loop)
+        bg1.style.visibility = "hidden"
+        fg1.style.visibility = "hidden"
+        scoreboard.style.visibility = "hidden"
+        canvas.visibility = "hidden"
+    },
 })
 
 var titleScreen = new State({
@@ -200,8 +206,8 @@ var titleScreen = new State({
         cancelAnimationFrame(loop)
         fg1.style.visibility = "hidden"
         scoreboard.style.visibility = "hidden"
-        ctx.fillStyle = "#000"
-        ctx.fillRect(0, 0, 320, 240)
+        canvas.style.visibility = "visible"
+        ctx.drawImage(assets.titlescreen, 0, 0)
     },
     message: function(msg){
         switch(msg){
@@ -213,6 +219,7 @@ var titleScreen = new State({
 
 var play = new State({
     enter: function(){
+        canvas.style.visibility = "visible"
         fg1.style.visibility = "visible"
         bg1.style.visibility = "visible"
         scoreboard.style.visibility = "visible"
@@ -831,7 +838,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 // State assignments ============================
 
-game.changeState(titleScreen)
+game.changeState(loading)
 player.changeState(jump)
 player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
