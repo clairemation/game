@@ -101,7 +101,7 @@ const GROUND = 176
 // Globals =========================================
 
 var fgScrollSpeed = 0.12
-var obstacleFrequency = 0.2
+var obstacleFrequency = 0.02
 var sprite = new Image()
 var loop
 var currentScore = 0
@@ -224,6 +224,7 @@ var play = new State({
         fg1.style.visibility = "visible"
         bg1.style.visibility = "visible"
         scoreboard.style.visibility = "visible"
+        reset()
         loop = requestAnimationFrame(tick)
     },
     message: function(msg){
@@ -258,7 +259,6 @@ var lose = new State({
     message: function(msg){
         switch(msg){
             case ("keydown"):
-                reset()
                 this.changeState(play)
         }
     }
@@ -471,15 +471,15 @@ player.controls.altitude = new Control({
     fall: function(){
         this.owner.controls.sprite.setCurrentAnimation("fall")
     },
+    sink: function(){
+        this.yAccel = 1.5
+    },
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
         this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
         this.yAccel += 0.45 * (dt / 30)
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT / 2){
-            this.owner.controls.sprite.setCurrentAnimation("hurt")
-            this.yAccel = 1.5
-            assets.blopAudio.play()
-            game.message("lose")
+            this.owner.changeState(sink)
         }
     }
 })
@@ -504,6 +504,15 @@ var walk = new State({
     },
     update: function(dt){
         this.controls.sprite.update(dt)
+    }
+})
+
+var sink = new State({
+    enter: function(){
+        this.controls.sprite.setCurrentAnimation("hurt")
+        this.controls.altitude.sink()
+        assets.blopAudio.play()
+        game.message("lose")
     }
 })
 
@@ -897,17 +906,14 @@ function tick(timestamp){
 function reset(){
     lastTime = null
     currentScore = 0
-    obstacleFrequency = 0.2
+    obstacleFrequency = 0.02
     fgScrollSpeed = 0.12
     nextScoreMilestone = 50
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [40, 125]
-    game.changeState(play)
     player.changeState(jump)
     player.controls.altitude.gliding = false
     messageWindow.style.visibility = "hidden"
-    game.changeState(play)
-    loop = requestAnimationFrame(tick)
 
 }
 
