@@ -20,6 +20,7 @@ var assets = {
     crunch2Audio: new Audio(),
     blopAudio: new Audio(),
     screechAudio: new Audio(),
+    boingAudio: new Audio(),
     titlescreen: new Image(),
     sprite: new Image()
 }
@@ -32,6 +33,7 @@ var assetSrcs = {
     crunch2Audio: "assets/crunch2.wav",
     screechAudio: "assets/pusou.wav",
     blopAudio: "assets/blop.wav",
+    boingAudio: "assets/boing.wav"
 }
 
 function loadPromise(asset, src){
@@ -654,7 +656,9 @@ proto1.controls.sprite = new Sprite({
 proto1.controls.collider = new Collider({
     owner: proto1,
     hitbox: [3, 31, 31, 48],
-    onHit: protoOnHit
+    onHit: function(){
+        assets.boingAudio.play()
+    }
 })
 proto1.controls.transform = new Transform({owner: proto1})
 proto1.controls.scroller = new Scroller({owner: proto1})
@@ -663,8 +667,8 @@ proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
 proto2.controls.sprite = new Sprite({
     owner: proto2,
     animations: {
-        default: [4],
-        dead: [2,3]
+        default: [2],
+        dead: [3]
     }
 })
 proto2.controls.collider = new Collider({
@@ -679,8 +683,8 @@ proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
 proto3.controls.sprite = new Sprite({
     owner: proto3,
     animations: {
-        default: [4],
-        dead: [2,3]
+        default: [2],
+        dead: [3]
     }
 })
 proto3.controls.collider = new Collider({
