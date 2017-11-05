@@ -391,7 +391,7 @@ scoreCounter.controls.incrementControl = new Control({
         scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
             fgScrollSpeed += 0.01
-            obstacleFrequency = Math.max(obstacleFrequency - 0.01, 0.04)
+            obstacleFrequency = Math.max(obstacleFrequency - 0.005, 0.06)
             nextScoreMilestone += 50
         }
     },
