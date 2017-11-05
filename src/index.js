@@ -911,7 +911,6 @@ function reset(){
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [40, 125]
     player.changeState(jump)
-    player.controls.altitude.gliding = false
     messageWindow.style.visibility = "hidden"
 
 }
