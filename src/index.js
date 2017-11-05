@@ -107,6 +107,7 @@ var loop
 var currentScore = 0
 var currentTime
 var lastTime = 0
+var nextScoreMilestone = 50
 
 // =================================================
 
@@ -329,7 +330,7 @@ class Collider extends Control{
     }
 }
 
-class CollisionReceiver extends Control{
+class PlayerCollider extends Control{
     constructor(args){
         super(args)
         this.engine = gameEnginesObject.collisionEngine
@@ -405,8 +406,6 @@ var message = new GameplayObject({name: "MessageWindow"})
 
 // Score controls ===================================
 
-var nextScoreMilestone = 50
-
 scoreCounter.controls.incrementControl = new Control({
     owner: scoreCounter,
     increment: function(amt){
@@ -446,49 +445,36 @@ player.controls.sprite = new Sprite({
     }
 })
 
-player.controls.collisionReceiver = new CollisionReceiver({
+player.controls.playerCollider = new PlayerCollider({
     owner: player,
     hitBox: [20, 26, 40, 40],
     onHit: function(other){
-        // if (other.owner.controls.transform.position[1] > this.owner.controls.transform.position[1]){
-            this.owner.message("pounce", other)
-        // } else {
-            // this.owner.message("hurt", other)
-        // }
+        this.owner.message("pounce", other)
     }
 })
 
 player.controls.altitude = new Control({
     owner: player,
     yAccel: 0,
-    gliding: false,
     startJump: function(){
         this.yAccel -= 9
         this.gliding = true
     },
     bounce: function(){
         this.yAccel = -7
-        this.gliding = false
     },
     flap: function(){
         this.yAccel -= Math.max(0, this.yAccel * 0.9)
-        this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
         assets.flapAudio.play()
     },
     fall: function(){
-        this.gliding = false
         this.owner.controls.sprite.setCurrentAnimation("fall")
     },
     move: function(dt){
         this.yAccel = Math.max(this.yAccel, -9)
         this.owner.controls.transform.position[1] += this.yAccel * (dt / 30)
-        // if (this.gliding && this.yAccel > 0){
-        //     this.owner.controls.sprite.setCurrentAnimation("glide")
-        //     this.yAccel = (dt / 30)
-        // } else {
-            this.yAccel += 0.45 * (dt / 30)
-        // }
+        this.yAccel += 0.45 * (dt / 30)
         if (this.owner.controls.transform.position[1] >= GROUND - SPRITE_HEIGHT / 2){
             this.owner.controls.sprite.setCurrentAnimation("hurt")
             this.yAccel = 1.5
@@ -802,7 +788,7 @@ function isColliding(a, b){
 
 gameEnginesObject.controls.collisionEngine = new Control({
     owner: gameEnginesObject,
-    playerCollider: player.controls.collisionReceiver,
+    playerCollider: player.controls.playerCollider,
     components: [fern1.controls.collider, fern2.controls.collider, fern3.controls.collider, fern4.controls.collider, fern5.controls.collider, proto1.controls.collider, proto2.controls.collider, proto3.controls.collider],
     update: function(dt){
         var playerBox
@@ -827,7 +813,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
             otherBound[3] = otherBox[3] + otherPos[1]
 
             if (isColliding(playerBound, otherBound)){
-                player.controls.collisionReceiver.onHit(this.components[i])
+                player.controls.playerCollider.onHit(this.components[i])
                 this.components[i].onHit()
             }
         }
