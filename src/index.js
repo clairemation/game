@@ -394,6 +394,9 @@ scoreCounter.controls.incrementControl = new Control({
             obstacleFrequency = Math.max(obstacleFrequency - 0.01, 0.04)
             nextScoreMilestone += 50
         }
+    },
+    update: function(dt){
+        this.increment(dt/30)
     }
 })
 
@@ -696,7 +699,7 @@ var inactiveObstacle = new State({
 var deadEnemy = new State({
     enter: function(){
         this.controls.sprite.setCurrentAnimation("dead", false)
-        scoreCounter.controls.incrementControl.increment(10)
+        // scoreCounter.controls.incrementControl.increment(10)
     },
     update: function(dt){
         this.controls.scroller.update(dt)
