@@ -445,7 +445,7 @@ player.controls.altitude = new Control({
         this.gliding = false
     },
     flap: function(){
-        this.yAccel -= this.yAccel * 0.9
+        this.yAccel -= Math.max(0, this.yAccel * 0.9)
         this.gliding = true
         this.owner.controls.sprite.setCurrentAnimation("jump")
         assets.flapAudio.play()
