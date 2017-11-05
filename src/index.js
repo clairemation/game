@@ -1,38 +1,72 @@
 "use strict";
 
-// DOM resources ===================================
+// DOM links ===================================
 
 var canvas = document.getElementById("canvas")
 var ctx = canvas.getContext("2d")
-
-ctx.mozImageSmoothingEnabled = false;
-ctx.webkitImageSmoothingEnabled = false;
-ctx.msImageSmoothingEnabled = false;
-ctx.imageSmoothingEnabled = false;
-
-ctx.fillStyle = "#000"
-ctx.fillRect(0, 0, 320, 240)
-ctx.fillStyle = "#fff"
-ctx.font = "16px PressStart2P"
-ctx.fillText("Loading...", 50, 50)
 
 var bg1 = document.getElementById("bg1")
 var fg1 = document.getElementById("fg1")
 var scoreboard = document.getElementById("scoreboard")
 var messageWindow = document.getElementById("message")
 
-var assets = {}
+// =================================================
 
-assets.flapAudio = new Audio()
+// Assets ==========================================
+
+var assets = {
+    flapAudio: new Audio(),
+    crunchAudio: new Audio(),
+    crunch2Audio: new Audio(),
+    blopAudio: new Audio(),
+    screechAudio: new Audio(),
+    titlescreen: new Image(),
+    sprite: new Image()
+}
+
+var assetSrcs = {
+    titlescreen: "assets/titlescreen.png",
+    sprite: "assets/spritesheets/sheet00.png",
+    flapAudio: "assets/flap.wav",
+    crunchAudio: "assets/crunch.wav",
+    crunch2Audio: "assets/crunch2.wav",
+    screechAudio: "assets/pusou.wav",
+    blopAudio: "assets/blop.wav",
+}
+
+function loadPromise(asset, src){
+    return new Promise((res, rej) => {
+        asset.onload = res
+        asset.onerror = res
+        asset.oncanplaythrough = res
+        asset.src = src
+    })
+}
+
+var assetPromises = []
+
+for (name in assets){
+    assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
+}
+
+Promise.all(assetPromises).then(val => {
+    ctx.drawImage(assets.titlescreen, 0, 0)
+})
+
+// ==================================================
+
+// Settings ================================
+
+ctx.mozImageSmoothingEnabled = false;
+ctx.webkitImageSmoothingEnabled = false;
+ctx.msImageSmoothingEnabled = false;
+ctx.imageSmoothingEnabled = false;
+
 assets.flapAudio.playbackRate = 4
-assets.crunchAudio = new Audio()
-assets.crunch2Audio = new Audio()
 assets.crunch2Audio.playbackRate = 2
-assets.blopAudio = new Audio()
 assets.blopAudio.playbackRate = 0.5
-assets.screechAudio = new Audio()
-assets.titlescreen = new Image()
-assets.sprite = new Image()
+
+// ==================================================
 
 // Audio setup ======================================
 
@@ -53,37 +87,7 @@ blopSrc.connect(audioCtx.destination)
 var screechSrc = audioCtx.createMediaElementSource(assets.screechAudio)
 screechSrc.connect(audioCtx.destination)
 
-
-
-var assetSrcs = {
-    titlescreen: "assets/titlescreen.png",
-    sprite: "assets/spritesheets/sheet00.png",
-    flapAudio: "assets/flap.wav",
-    crunchAudio: "assets/crunch.wav",
-    crunch2Audio: "assets/crunch2.wav",
-    screechAudio: "assets/pusou.wav",
-    blopAudio: "assets/blop.wav"
-}
-
-function loadPromise(asset, src){
-    return new Promise((res, rej) => {
-        asset.onload = res
-        asset.onerror = res
-        asset.oncanplaythrough = res
-        asset.src = src
-    })
-}
-
-var assetPromises = []
-
-for (name in assets){
-    assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
-}
-
-Promise.all(assetPromises).then(val => {
-    console.log("asdf")
-    ctx.drawImage(assets.titlescreen, 0, 0)
-})
+// ==================================================
 
 // Constants ========================================
 
@@ -103,7 +107,6 @@ var loop
 var currentScore = 0
 var currentTime
 var lastTime = 0
-
 
 // =================================================
 
@@ -137,22 +140,18 @@ class Control{
     }
 }
 
-var sharedStates = {
-    updateAllControls: new State({
-        update: function(dt){
-            for (var controlName in this.controls){
-                this.controls[controlName].update(dt)
-            }
-        }
-    })
-}
-
 class GameObject{
     constructor(args = {}){
         this.name = 'GameObject'
         this.controls = {}
         this.states = {
-            default: sharedStates.updateAllControls
+            default: new State({
+                update: function(dt){ //Update all controls
+                    for (var controlName in this.controls){
+                        this.controls[controlName].update(dt)
+                    }
+                }
+            })
         }
         this.currentState = this.states.default
         Object.assign(this, args)
@@ -192,6 +191,10 @@ game.controls.playControl = new Control({
 
 // Game object states ===========================
 
+var loading = new State({
+
+})
+
 var titleScreen = new State({
     enter: function(){
         cancelAnimationFrame(loop)
@@ -199,13 +202,13 @@ var titleScreen = new State({
         scoreboard.style.visibility = "hidden"
         ctx.fillStyle = "#000"
         ctx.fillRect(0, 0, 320, 240)
-        var startGame = () => {
-            console.log(this)
-            this.changeState(play)
-            document.removeEventListener("click", startGame)
-        }
-        document.addEventListener("click", startGame)
     },
+    message: function(msg){
+        switch(msg){
+            case ("keydown"):
+                this.changeState(play)
+        }
+    }
 })
 
 var play = new State({
@@ -217,6 +220,12 @@ var play = new State({
     },
     message: function(msg){
         switch(msg){
+            case ("keydown"):
+                player.message("jump")
+                break
+            case ("keyup"):
+                player.message("fall")
+                break
             case ("lose"):
                 setTimeout(() => {this.changeState(lose)}, 400)
         }
@@ -237,6 +246,13 @@ var lose = new State({
         cancelAnimationFrame(loop)
         messageWindow.style.visibility = "visible"
         messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
+    },
+    message: function(msg){
+        switch(msg){
+            case ("keydown"):
+                reset()
+                this.changeState(play)
+        }
     }
 
 })
@@ -836,36 +852,28 @@ var keyDown = false
 
 document.addEventListener("keydown", e => {
     if (keyDown == false && e.keyCode == 32){
-        if (game.currentState == lose){
-            restart()
-        } else {
-            player.message("jump")
-            keyDown = true
-        }
+        game.message("keydown")
+        keyDown = true
     }
 })
 
 document.addEventListener("keyup", e => {
     if (keyDown == true && e.keyCode == 32){
-        player.message("fall")
+        game.message("keyup")
         keyDown = false
     }
 })
 
 document.addEventListener("touchstart", e => {
     if (keyDown == false){
-        if (game.currentState == lose){
-            restart()
-        } else {
-            player.message("jump")
-            keyDown = true
-        }
+        game.message("keydown")
+        keyDown = true
     }
 })
 
 document.addEventListener("touchend", e => {
     if (keyDown == true){
-        player.message("fall")
+        game.message("keyup")
         keyDown = false
     }
 })
@@ -893,7 +901,7 @@ function tick(timestamp){
 
 }
 
-function restart(){
+function reset(){
     lastTime = null
     currentScore = 0
     obstacleFrequency = 0.2
@@ -909,13 +917,6 @@ function restart(){
     loop = requestAnimationFrame(tick)
 
 }
-
-// =================================================
-
-// Start ============================================
-
-
-
 
 // =================================================
 
