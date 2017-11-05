@@ -101,7 +101,7 @@ const GROUND = 176
 // Globals =========================================
 
 var fgScrollSpeed = 0.12
-var obstacleFrequency = 0.02
+var obstacleFrequency = 0.15
 var sprite = new Image()
 var loop
 var currentScore = 0
@@ -835,7 +835,6 @@ gameEnginesObject.controls.collisionEngine = new Control({
 
 game.changeState(loading)
 player.changeState(jump)
-player.controls.altitude.gliding = false
 fern1.changeState(inactiveObstacle)
 fern2.changeState(inactiveObstacle)
 fern3.changeState(inactiveObstacle)
@@ -906,7 +905,7 @@ function tick(timestamp){
 function reset(){
     lastTime = null
     currentScore = 0
-    obstacleFrequency = 0.02
+    obstacleFrequency = 0.15
     fgScrollSpeed = 0.12
     nextScoreMilestone = 50
     scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
