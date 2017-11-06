@@ -433,7 +433,7 @@ class Sprite extends Control{
 class Collider extends Control{
     constructor(args){
         super(args)
-        this.hitBox = this.hitBox || [20, 30, 33, 48]
+        // this.hitBox = this.hitBox || [20, 30, 33, 48]
         gameEnginesObject.controls.collisionEngine.components.push(this)
     }
 
@@ -683,6 +683,7 @@ class Fern extends Foothold{
             default: [1],
             dead: [0]
         }
+        this.controls.collider.hitBox = [20, 30, 33, 48]
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
@@ -698,7 +699,7 @@ class Protoceratops extends Foothold{
         this.controls.sprite.animations = {
             default: [4]
         }
-        this.controls.collider.hitbox = [3, 31, 31, 48]
+        this.controls.collider.hitBox = [3, 31, 31, 48]
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 assets.boingAudio.play()
@@ -714,7 +715,7 @@ class ProtoSkeleton extends Foothold{
             default: [2],
             dead: [3]
         }
-        this.controls.collider.hitbox = [3, 31, 31, 48]
+        this.controls.collider.hitBox = [3, 31, 31, 48]
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
