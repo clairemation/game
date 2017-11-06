@@ -21,6 +21,7 @@ var assets = {
     blopAudio: new Audio(),
     screechAudio: new Audio(),
     boingAudio: new Audio(),
+    cawAudio: new Audio(),
     titlescreen: new Image(),
     sprite: new Image()
 }
@@ -33,7 +34,8 @@ var assetSrcs = {
     crunch2Audio: "assets/crunch2.wav",
     screechAudio: "assets/pusou.wav",
     blopAudio: "assets/blop.wav",
-    boingAudio: "assets/boing.wav"
+    boingAudio: "assets/boing.wav",
+    cawAudio: "assets/caw.wav"
 }
 
 function loadPromise(asset, src){
@@ -212,6 +214,9 @@ var titleScreen = new State({
         canvas.style.visibility = "visible"
         ctx.drawImage(assets.titlescreen, 0, 0)
     },
+    exit: function(){
+        assets.cawAudio.play()
+    },
     message: function(msg){
         switch(msg){
             case ("keydown"):
@@ -276,12 +281,116 @@ class GameplayObject extends GameObject{
     }
 }
 
+var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
+
+// Game engine controls =============================
+
+// TODO: Optimize
+gameEnginesObject.controls.obstaclePoolEngine = new Control({
+    owner: gameEnginesObject,
+    nextObjectPlacementTime: 0,
+    activeComponents: [],
+    inactiveComponents: [],
+    returnToPool: function(obj){
+        this.activeComponents.splice(this.activeComponents.indexOf(obj), 1)
+        this.inactiveComponents.push(obj)
+    },
+    update: function(dt){
+        if (currentTime >= this.nextObjectPlacementTime){
+            var rand = Math.random()
+            if (rand < obstacleFrequency) {
+                var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
+                var obj = this.inactiveComponents.splice(r, 1)[0]
+                if (obj) {
+                    this.activeComponents.push(obj)
+                    obj.activate()
+                    this.nextObjectPlacementTime = currentTime + 300
+
+                }
+            }
+        }
+    }
+})
+
+gameEnginesObject.controls.spriteEngine = new Control({
+    owner: gameEnginesObject,
+    components: [],
+    update: function(dt){
+        ctx.clearRect(0, 0, 320, 240)
+        for (var i = 0; i < this.components.length; i++){
+            var position = this.components[i].owner.controls.transform.position
+            var frame = this.components[i].currentFrame
+            ctx.drawImage(assets.sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+        }
+    }
+})
+
+function isColliding(a, b){
+
+    // If a is above b
+    if (a[3] < b[1]) {
+        return false
+    }
+
+    // If a is below b
+    if (a[1] > b[3]) {
+        return false
+    }
+
+    // If a is left of b
+    if (a[2] < b[0]) {
+        return false
+    }
+
+    // If a is right of b
+    if (a[0] > b[2]) {
+        return false
+    }
+
+    // Else collision
+    return true
+}
+
+gameEnginesObject.controls.collisionEngine = new Control({
+    owner: gameEnginesObject,
+    playerCollider: undefined,
+    components: [],
+    update: function(dt){
+        var playerBox
+        var otherBox
+        var playerPos
+        var otherPos
+        var playerBound = []
+        var otherBound = []
+        for (var i = 0; i < this.components.length; i++){
+            playerBox = this.playerCollider.hitBox
+            playerPos = this.playerCollider.owner.controls.transform.position
+            playerBound[0] = playerBox[0] + playerPos[0]
+            playerBound[2] = playerBox[2] + playerPos[0]
+            playerBound[1] = playerBox[1] + playerPos[1]
+            playerBound[3] = playerBox[3] + playerPos[1]
+
+            otherBox = this.components[i].hitBox
+            otherPos = this.components[i].owner.controls.transform.position
+            otherBound[0] = otherBox[0] + otherPos[0]
+            otherBound[2] = otherBox[2] + otherPos[0]
+            otherBound[1] = otherBox[1] + otherPos[1]
+            otherBound[3] = otherBox[3] + otherPos[1]
+
+            if (isColliding(playerBound, otherBound)){
+                player.controls.playerCollider.onHit(this.components[i])
+                this.components[i].onHit()
+            }
+        }
+    }
+})
+
 // GameplayObject Controls ==============================
 
 class Sprite extends Control{
     constructor(args = {}){
         super(args)
-        this.engine = gameEnginesObject.spriteEngine
+        gameEnginesObject.controls.spriteEngine.components.push(this)
         this.currentFrameNum = 0
         this.elapsedTime = 0
         this.looping = true
@@ -325,6 +434,7 @@ class Collider extends Control{
     constructor(args){
         super(args)
         this.hitBox = this.hitBox || [20, 30, 33, 48]
+        gameEnginesObject.controls.collisionEngine.components.push(this)
     }
 
     onHit(other){
@@ -335,7 +445,7 @@ class Collider extends Control{
 class PlayerCollider extends Control{
     constructor(args){
         super(args)
-        this.engine = gameEnginesObject.collisionEngine
+        gameEnginesObject.controls.collisionEngine.playerCollider = this
     }
 
     onHit(other){
@@ -369,6 +479,7 @@ class Scroller extends Control{
 class ObstaclePooler extends Control{
     constructor(args){
         super(args)
+        gameEnginesObject.controls.obstaclePoolEngine.inactiveComponents.push(this)
     }
 
     activate(){
@@ -392,7 +503,6 @@ class ObstaclePooler extends Control{
 // Game Object declarations ========================
 
 var player = new GameplayObject({name: "Player"})
-var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
 var fern1 = new GameplayObject({name: "Fern1"})
 var fern2 = new GameplayObject({name: "Fern2"})
 var fern3 = new GameplayObject({name: "Fern3"})
@@ -568,9 +678,36 @@ var hurt = new State({
 
 function fernOnHit(){
     if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-            this.owner.changeState(deadEnemy)
-            assets.crunch2Audio.play()
+        this.owner.changeState(deadEnemy)
+        assets.crunch2Audio.play()
+    }
+}
+
+class Fern extends GameplayObject{
+    constructor(args){
+        super(args)
+        this.controls = {
+            sprite: new Sprite({
+                owner: this,
+                animations: {
+                    default: [1],
+                    dead: [0]
+                }
+            }),
+            collider: new Collider({
+                owner: this,
+                onHit: function(){
+                    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
+                        this.owner.changeState(deadEnemy)
+                        assets.crunch2Audio.play()
+                    }
+                }
+            }),
+            transform: new Transform({owner: this}),
+            scroller: new Scroller({owner: this}),
+            obstaclePooler: new ObstaclePooler({owner: this})
         }
+    }
 }
 
 fern1.controls.sprite = new Sprite({
@@ -729,110 +866,6 @@ var deadEnemy = new State({
         this.controls.sprite.update(dt)
     }
 })
-// =================================================
-
-// Game engine controls =============================
-
-// TODO: Optimize
-gameEnginesObject.controls.obstaclePoolEngine = new Control({
-    owner: gameEnginesObject,
-    nextObjectPlacementTime: 0,
-    activeComponents: [],
-    inactiveComponents: [fern1.controls.obstaclePooler, fern2.controls.obstaclePooler, fern3.controls.obstaclePooler,fern4.controls.obstaclePooler, fern5.controls.obstaclePooler, proto1.controls.obstaclePooler, proto2.controls.obstaclePooler, proto3.controls.obstaclePooler],
-    returnToPool: function(obj){
-        this.activeComponents.splice(this.activeComponents.indexOf(obj), 1)
-        this.inactiveComponents.push(obj)
-    },
-    update: function(dt){
-        if (currentTime >= this.nextObjectPlacementTime){
-            var rand = Math.random()
-            if (rand < obstacleFrequency) {
-                var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
-                var obj = this.inactiveComponents.splice(r, 1)[0]
-                if (obj) {
-                    this.activeComponents.push(obj)
-                    obj.activate()
-                    this.nextObjectPlacementTime = currentTime + 300
-
-                }
-            }
-        }
-    }
-})
-
-gameEnginesObject.controls.spriteEngine = new Control({
-    owner: gameEnginesObject,
-    components: [player.controls.sprite, fern1.controls.sprite, fern2.controls.sprite, fern3.controls.sprite, fern4.controls.sprite, fern5.controls.sprite, proto1.controls.sprite, proto2.controls.sprite, proto3.controls.sprite],
-    update: function(dt){
-        ctx.clearRect(0, 0, 320, 240)
-        for (var i = 0; i < this.components.length; i++){
-            var position = this.components[i].owner.controls.transform.position
-            var frame = this.components[i].currentFrame
-            ctx.drawImage(assets.sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
-        }
-    }
-})
-
-function isColliding(a, b){
-
-    // If a is above b
-    if (a[3] < b[1]) {
-        return false
-    }
-
-    // If a is below b
-    if (a[1] > b[3]) {
-        return false
-    }
-
-    // If a is left of b
-    if (a[2] < b[0]) {
-        return false
-    }
-
-    // If a is right of b
-    if (a[0] > b[2]) {
-        return false
-    }
-
-    // Else collision
-    return true
-}
-
-gameEnginesObject.controls.collisionEngine = new Control({
-    owner: gameEnginesObject,
-    playerCollider: player.controls.playerCollider,
-    components: [fern1.controls.collider, fern2.controls.collider, fern3.controls.collider, fern4.controls.collider, fern5.controls.collider, proto1.controls.collider, proto2.controls.collider, proto3.controls.collider],
-    update: function(dt){
-        var playerBox
-        var otherBox
-        var playerPos
-        var otherPos
-        var playerBound = []
-        var otherBound = []
-        for (var i = 0; i < this.components.length; i++){
-            playerBox = this.playerCollider.hitBox
-            playerPos = this.playerCollider.owner.controls.transform.position
-            playerBound[0] = playerBox[0] + playerPos[0]
-            playerBound[2] = playerBox[2] + playerPos[0]
-            playerBound[1] = playerBox[1] + playerPos[1]
-            playerBound[3] = playerBox[3] + playerPos[1]
-
-            otherBox = this.components[i].hitBox
-            otherPos = this.components[i].owner.controls.transform.position
-            otherBound[0] = otherBox[0] + otherPos[0]
-            otherBound[2] = otherBox[2] + otherPos[0]
-            otherBound[1] = otherBox[1] + otherPos[1]
-            otherBound[3] = otherBox[3] + otherPos[1]
-
-            if (isColliding(playerBound, otherBound)){
-                player.controls.playerCollider.onHit(this.components[i])
-                this.components[i].onHit()
-            }
-        }
-    }
-})
-
 // =================================================
 
 // State assignments ============================
