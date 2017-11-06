@@ -251,12 +251,6 @@ var play = new State({
     }
 })
 
-var pause = new State({
-    enter: function(){
-        cancelAnimationFrame(loop)
-    }
-})
-
 var lose = new State({
     enter: function(){
         cancelAnimationFrame(loop)
@@ -433,7 +427,6 @@ class Sprite extends Control{
 class Collider extends Control{
     constructor(args){
         super(args)
-        // this.hitBox = this.hitBox || [20, 30, 33, 48]
         gameEnginesObject.controls.collisionEngine.components.push(this)
     }
 
@@ -750,7 +743,6 @@ var inactiveObstacle = new State({
 var deadEnemy = new State({
     enter: function(){
         this.controls.sprite.setCurrentAnimation("dead", false)
-        // scoreCounter.controls.incrementControl.increment(10)
     },
     update: function(dt){
         this.controls.scroller.update(dt)
