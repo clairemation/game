@@ -500,14 +500,6 @@ class ObstaclePooler extends Control{
 
 // =================================================
 
-// Game Object declarations ========================
-
-var proto1 = new GameplayObject({name: "Proto1"})
-var proto2 = new GameplayObject({name: "Proto2"})
-var proto3 = new GameplayObject({name: "Proto3"})
-
-// =================================================
-
 // Score controls ===================================
 
 var scoreCounter = new GameplayObject({name: "Score"})
@@ -669,30 +661,14 @@ var hurt = new State({
 
 // =================================================
 
-// Fern controls ====================================
+// FOOTHOLD OBJECTS ====================================
 
-// TODO: Make Fern class
-
-class Fern extends GameplayObject{
+class Foothold extends GameplayObject{
     constructor(args){
         super(args)
         this.controls = {
-            sprite: new Sprite({
-                owner: this,
-                animations: {
-                    default: [1],
-                    dead: [0]
-                }
-            }),
-            collider: new Collider({
-                owner: this,
-                onHit: function(){
-                    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-                        this.owner.changeState(deadEnemy)
-                        assets.crunch2Audio.play()
-                    }
-                }
-            }),
+            sprite: new Sprite({owner: this}),
+            collider: new Collider({owner: this}),
             transform: new Transform({owner: this}),
             scroller: new Scroller({owner: this}),
             obstaclePooler: new ObstaclePooler({owner: this})
@@ -700,74 +676,57 @@ class Fern extends GameplayObject{
     }
 }
 
-
-
-// =================================================
-
-// Proto controls ===================================
-
-// TODO: Make protoceratops class
-
-function protoOnHit(){
-    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-            this.owner.changeState(deadEnemy)
-            assets.crunchAudio.play()
+class Fern extends Foothold{
+    constructor(args){
+        super(args)
+        this.controls.sprite.animations = {
+            default: [1],
+            dead: [0]
         }
+        this.controls.collider.onHit = function(){
+            if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
+                this.owner.changeState(deadEnemy)
+                assets.crunch2Audio.play()
+            }
+        }
+    }
 }
 
-proto1.controls.sprite = new Sprite({
-    owner: proto1,
-    animations: {
-        default: [4],
-        dead: [2,3]
+class Protoceratops extends Foothold{
+    constructor(args){
+        super(args)
+        this.controls.sprite.animations = {
+            default: [4]
+        }
+        this.controls.collider.hitbox = [3, 31, 31, 48]
+        this.controls.collider.onHit = function(){
+            if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
+                assets.boingAudio.play()
+            }
+        }
     }
-})
-proto1.controls.collider = new Collider({
-    owner: proto1,
-    hitbox: [3, 31, 31, 48],
-    onHit: function(){
-        assets.boingAudio.play()
+}
+
+class ProtoSkeleton extends Foothold{
+    constructor(args){
+        super(args)
+        this.controls.sprite.animations = {
+            default: [2],
+            dead: [3]
+        }
+        this.controls.collider.hitbox = [3, 31, 31, 48]
+        this.controls.collider.onHit = function(){
+            if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
+                this.owner.changeState(deadEnemy)
+                assets.crunchAudio.play()
+            }
+        }
     }
-})
-proto1.controls.transform = new Transform({owner: proto1})
-proto1.controls.scroller = new Scroller({owner: proto1})
-proto1.controls.obstaclePooler = new ObstaclePooler({owner: proto1})
+}
 
-proto2.controls.sprite = new Sprite({
-    owner: proto2,
-    animations: {
-        default: [2],
-        dead: [3]
-    }
-})
-proto2.controls.collider = new Collider({
-    owner: proto2,
-    hitbox: [3, 31, 31, 48],
-    onHit: protoOnHit
-})
-proto2.controls.transform = new Transform({owner: proto2})
-proto2.controls.scroller = new Scroller({owner: proto2})
-proto2.controls.obstaclePooler = new ObstaclePooler({owner: proto2})
+// ==================================================
 
-proto3.controls.sprite = new Sprite({
-    owner: proto3,
-    animations: {
-        default: [2],
-        dead: [3]
-    }
-})
-proto3.controls.collider = new Collider({
-    owner: proto3,
-    hitbox: [3, 31, 31, 48],
-    onHit: protoOnHit
-})
-proto3.controls.transform = new Transform({owner: proto3})
-proto3.controls.scroller = new Scroller({owner: proto3})
-proto3.controls.obstaclePooler = new ObstaclePooler({owner: proto3})
-
-// =================================================
-
-// Fern states ==================================
+// Foothold states ==================================
 
 var activeObstacle = new State({
     enter: function(){
@@ -807,6 +766,9 @@ var fern2 = new Fern({name: "Fern2"})
 var fern3 = new Fern({name: "Fern3"})
 var fern4 = new Fern({name: "Fern4"})
 var fern5 = new Fern({name: "Fern5"})
+var proto1 = new Protoceratops({name: "Proto1"})
+var protoSkel1 = new ProtoSkeleton({name: "ProtoSkel1"})
+var protoSkel2 = new ProtoSkeleton({name: "ProtoSkel2"})
 
 // =================================================
 
@@ -820,8 +782,8 @@ fern3.changeState(inactiveObstacle)
 fern4.changeState(inactiveObstacle)
 fern5.changeState(inactiveObstacle)
 proto1.changeState(inactiveObstacle)
-proto2.changeState(inactiveObstacle)
-proto3.changeState(inactiveObstacle)
+protoSkel1.changeState(inactiveObstacle)
+protoSkel2.changeState(inactiveObstacle)
 
 // =================================================
 
