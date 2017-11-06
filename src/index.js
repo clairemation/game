@@ -502,21 +502,15 @@ class ObstaclePooler extends Control{
 
 // Game Object declarations ========================
 
-var player = new GameplayObject({name: "Player"})
-var fern1 = new GameplayObject({name: "Fern1"})
-var fern2 = new GameplayObject({name: "Fern2"})
-var fern3 = new GameplayObject({name: "Fern3"})
-var fern4 = new GameplayObject({name: "Fern4"})
-var fern5 = new GameplayObject({name: "Fern5"})
 var proto1 = new GameplayObject({name: "Proto1"})
 var proto2 = new GameplayObject({name: "Proto2"})
 var proto3 = new GameplayObject({name: "Proto3"})
-var scoreCounter = new GameplayObject({name: "Score"})
-var message = new GameplayObject({name: "MessageWindow"})
 
 // =================================================
 
 // Score controls ===================================
+
+var scoreCounter = new GameplayObject({name: "Score"})
 
 scoreCounter.controls.incrementControl = new Control({
     owner: scoreCounter,
@@ -536,6 +530,9 @@ scoreCounter.controls.incrementControl = new Control({
 
 // =================================================
 
+// PLAYER ============================
+
+var player = new GameplayObject({name: "Player"})
 
 // Player object controls ===========================
 
@@ -676,13 +673,6 @@ var hurt = new State({
 
 // TODO: Make Fern class
 
-function fernOnHit(){
-    if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-        this.owner.changeState(deadEnemy)
-        assets.crunch2Audio.play()
-    }
-}
-
 class Fern extends GameplayObject{
     constructor(args){
         super(args)
@@ -710,65 +700,7 @@ class Fern extends GameplayObject{
     }
 }
 
-fern1.controls.sprite = new Sprite({
-    owner: fern1,
-    animations: {
-        default: [1],
-        dead: [0]
-    }
-})
-fern1.controls.collider = new Collider({owner: fern1, onHit: fernOnHit})
-fern1.controls.transform = new Transform({owner: fern1})
-fern1.controls.scroller = new Scroller({owner: fern1})
-fern1.controls.obstaclePooler = new ObstaclePooler({owner: fern1})
 
-fern2.controls.sprite = new Sprite({
-    owner: fern2,
-    animations: {
-        default: [1],
-        dead: [0]
-    }
-})
-fern2.controls.collider = new Collider({owner: fern2, onHit: fernOnHit})
-fern2.controls.transform = new Transform({owner: fern2})
-fern2.controls.scroller = new Scroller({owner: fern2})
-fern2.controls.obstaclePooler = new ObstaclePooler({owner: fern2})
-
-fern3.controls.sprite = new Sprite({
-    owner: fern3,
-    animations: {
-        default: [1],
-        dead: [0]
-    }
-})
-fern3.controls.collider = new Collider({owner: fern3, onHit: fernOnHit})
-fern3.controls.transform = new Transform({owner: fern3})
-fern3.controls.scroller = new Scroller({owner: fern3})
-fern3.controls.obstaclePooler = new ObstaclePooler({owner: fern3})
-
-fern4.controls.sprite = new Sprite({
-    owner: fern4,
-    animations: {
-        default: [1],
-        dead: [0]
-    }
-})
-fern4.controls.collider = new Collider({owner: fern4, onHit: fernOnHit})
-fern4.controls.transform = new Transform({owner: fern4})
-fern4.controls.scroller = new Scroller({owner: fern4})
-fern4.controls.obstaclePooler = new ObstaclePooler({owner: fern4})
-
-fern5.controls.sprite = new Sprite({
-    owner: fern5,
-    animations: {
-        default: [1],
-        dead: [0]
-    }
-})
-fern5.controls.collider = new Collider({owner: fern5, onHit: fernOnHit})
-fern5.controls.transform = new Transform({owner: fern5})
-fern5.controls.scroller = new Scroller({owner: fern5})
-fern5.controls.obstaclePooler = new ObstaclePooler({owner: fern5})
 
 // =================================================
 
@@ -866,6 +798,16 @@ var deadEnemy = new State({
         this.controls.sprite.update(dt)
     }
 })
+// =================================================
+
+// Object instantiation ============================
+
+var fern1 = new Fern({name: "Fern1"})
+var fern2 = new Fern({name: "Fern2"})
+var fern3 = new Fern({name: "Fern3"})
+var fern4 = new Fern({name: "Fern4"})
+var fern5 = new Fern({name: "Fern5"})
+
 // =================================================
 
 // State assignments ============================
