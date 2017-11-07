@@ -8,6 +8,8 @@ var ctx = canvas.getContext("2d")
 var bg1 = document.getElementById("bg1")
 var fg1 = document.getElementById("fg1")
 var scoreboard = document.getElementById("scoreboard")
+var titlescreenImg = document.getElementById("title-screen")
+var loadingScreen = document.getElementById("loading-screen")
 var messageWindow = document.getElementById("message")
 
 // =================================================
@@ -22,12 +24,10 @@ var assets = {
     screechAudio: new Audio(),
     boingAudio: new Audio(),
     cawAudio: new Audio(),
-    titlescreen: new Image(),
     sprite: new Image()
 }
 
 var assetSrcs = {
-    titlescreen: "assets/titlescreen.png",
     sprite: "assets/spritesheets/sheet00.png",
     flapAudio: "assets/flap.wav",
     crunchAudio: "assets/crunch.wav",
@@ -37,6 +37,7 @@ var assetSrcs = {
     boingAudio: "assets/boing.wav",
     cawAudio: "assets/caw.wav"
 }
+
 
 function loadPromise(asset, src){
     return new Promise((res, rej) => {
@@ -49,13 +50,13 @@ function loadPromise(asset, src){
 
 var assetPromises = []
 
-for (name in assets){
-    assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
-}
+function loadAssets(){
+    for (name in assets){
+        assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
+    }
 
-Promise.all(assetPromises).then(val => {
-    game.changeState(titleScreen)
-})
+    Promise.all(assetPromises).then(() => game.changeState(play))
+}
 
 // ==================================================
 
@@ -203,24 +204,26 @@ var loading = new State({
         fg1.style.visibility = "hidden"
         scoreboard.style.visibility = "hidden"
         canvas.visibility = "hidden"
+        titlescreenImg.visibility = "hidden"
+        loadingScreen.visibility = "visible"
+        loadAssets()
     },
 })
 
 var titleScreen = new State({
     enter: function(){
         cancelAnimationFrame(loop)
+        bg1.style.visibility = "hidden"
         fg1.style.visibility = "hidden"
         scoreboard.style.visibility = "hidden"
-        canvas.style.visibility = "visible"
-        ctx.drawImage(assets.titlescreen, 0, 0)
-    },
-    exit: function(){
-        assets.cawAudio.play()
+        canvas.style.visibility = "hidden"
+        titlescreenImg.visibility = "visible"
+        loadingScreen.visibility = "hidden"
     },
     message: function(msg){
         switch(msg){
             case ("keydown"):
-                this.changeState(play)
+                this.changeState(loading)
         }
     }
 })
@@ -231,7 +234,10 @@ var play = new State({
         fg1.style.visibility = "visible"
         bg1.style.visibility = "visible"
         scoreboard.style.visibility = "visible"
+        titlescreenImg.visibility = "hidden"
+        loadingScreen.visibility = "hidden"
         reset()
+        assets.cawAudio.play()
         loop = requestAnimationFrame(tick)
     },
     message: function(msg){
@@ -767,7 +773,7 @@ var protoSkel2 = new ProtoSkeleton({name: "ProtoSkel2"})
 
 // State assignments ============================
 
-game.changeState(loading)
+game.changeState(titleScreen)
 player.changeState(jump)
 fern1.changeState(inactiveObstacle)
 fern2.changeState(inactiveObstacle)
