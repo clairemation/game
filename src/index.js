@@ -45,6 +45,9 @@ function loadPromise(asset, src){
         asset.onerror = res
         asset.oncanplaythrough = res
         asset.src = src
+        if (asset.play) {
+            asset.load()
+        }
     })
 }
 
@@ -75,22 +78,28 @@ assets.blopAudio.playbackRate = 0.5
 
 // Audio setup ======================================
 
-var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+// var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
-var flapSrc = audioCtx.createMediaElementSource(assets.flapAudio)
-flapSrc.connect(audioCtx.destination)
+// var flapSrc = audioCtx.createMediaElementSource(assets.flapAudio)
+// flapSrc.connect(audioCtx.destination)
 
-var crunchSrc = audioCtx.createMediaElementSource(assets.crunchAudio)
-crunchSrc.connect(audioCtx.destination)
+// var crunchSrc = audioCtx.createMediaElementSource(assets.crunchAudio)
+// crunchSrc.connect(audioCtx.destination)
 
-var crunch2Src = audioCtx.createMediaElementSource(assets.crunch2Audio)
-crunch2Src.connect(audioCtx.destination)
+// var crunch2Src = audioCtx.createMediaElementSource(assets.crunch2Audio)
+// crunch2Src.connect(audioCtx.destination)
 
-var blopSrc = audioCtx.createMediaElementSource(assets.blopAudio)
-blopSrc.connect(audioCtx.destination)
+// var blopSrc = audioCtx.createMediaElementSource(assets.blopAudio)
+// blopSrc.connect(audioCtx.destination)
 
-var screechSrc = audioCtx.createMediaElementSource(assets.screechAudio)
-screechSrc.connect(audioCtx.destination)
+// var screechSrc = audioCtx.createMediaElementSource(assets.screechAudio)
+// screechSrc.connect(audioCtx.destination)
+
+// var boingSrc = audioCtx.createMediaElementSource(assets.boingAudio)
+// boingSrc.connect(audioCtx.destination)
+
+// var cawSrc = audioCtx.createMediaElementSource(assets.cawAudio)
+// cawSrc.connect(audioCtx.destination)
 
 // ==================================================
 
@@ -203,9 +212,9 @@ var loading = new State({
         bg1.style.visibility = "hidden"
         fg1.style.visibility = "hidden"
         scoreboard.style.visibility = "hidden"
-        canvas.visibility = "hidden"
-        titlescreenImg.visibility = "hidden"
-        loadingScreen.visibility = "visible"
+        canvas.style.visibility = "hidden"
+        titlescreenImg.style.visibility = "hidden"
+        loadingScreen.style.visibility = "visible"
         loadAssets()
     },
 })
@@ -217,8 +226,8 @@ var titleScreen = new State({
         fg1.style.visibility = "hidden"
         scoreboard.style.visibility = "hidden"
         canvas.style.visibility = "hidden"
-        titlescreenImg.visibility = "visible"
-        loadingScreen.visibility = "hidden"
+        titlescreenImg.style.visibility = "visible"
+        loadingScreen.style.visibility = "hidden"
     },
     message: function(msg){
         switch(msg){
@@ -234,8 +243,8 @@ var play = new State({
         fg1.style.visibility = "visible"
         bg1.style.visibility = "visible"
         scoreboard.style.visibility = "visible"
-        titlescreenImg.visibility = "hidden"
-        loadingScreen.visibility = "hidden"
+        titlescreenImg.style.visibility = "hidden"
+        loadingScreen.style.visibility = "hidden"
         reset()
         assets.cawAudio.play()
         loop = requestAnimationFrame(tick)
