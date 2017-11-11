@@ -28,36 +28,9 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.msImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
-assetLoader.assets.flapAudio.playbackRate = 4
-assetLoader.assets.crunch2Audio.playbackRate = 2
-assetLoader.assets.blopAudio.playbackRate = 0.5
-
-// ==================================================
-
-// Audio setup ======================================
-
-// var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-
-// var flapSrc = audioCtx.createMediaElementSource(assetLoader.assets.flapAudio)
-// flapSrc.connect(audioCtx.destination)
-
-// var crunchSrc = audioCtx.createMediaElementSource(assetLoader.assets.crunchAudio)
-// crunchSrc.connect(audioCtx.destination)
-
-// var crunch2Src = audioCtx.createMediaElementSource(assetLoader.assets.crunch2Audio)
-// crunch2Src.connect(audioCtx.destination)
-
-// var blopSrc = audioCtx.createMediaElementSource(assetLoader.assets.blopAudio)
-// blopSrc.connect(audioCtx.destination)
-
-// var screechSrc = audioCtx.createMediaElementSource(assetLoader.assets.screechAudio)
-// screechSrc.connect(audioCtx.destination)
-
-// var boingSrc = audioCtx.createMediaElementSource(assetLoader.assets.boingAudio)
-// boingSrc.connect(audioCtx.destination)
-
-// var cawSrc = audioCtx.createMediaElementSource(assetLoader.assets.cawAudio)
-// cawSrc.connect(audioCtx.destination)
+// assetLoader.assets.flapAudio.playbackRate = 4
+// assetLoader.assets.crunch2Audio.playbackRate = 2
+// assetLoader.assets.blopAudio.playbackRate = 0.5
 
 // ==================================================
 
@@ -83,6 +56,10 @@ var nextScoreMilestone = 50
 
 // =================================================
 
+
+function playSound(sound){
+    assetLoader.play(sound)
+}
 
 // GAME OBJECT ======================================
 
@@ -143,7 +120,8 @@ var play = new State({
         titlescreenImg.style.visibility = "hidden"
         loadingScreen.style.visibility = "hidden"
         reset()
-        assetLoader.assets.cawAudio.play()
+        console.log(assetLoader.assets.caw)
+        playSound(assetLoader.assets.caw)
         loop = requestAnimationFrame(tick)
     },
     message: function(msg){
@@ -472,7 +450,7 @@ player.controls.altitude = new Control({
     flap: function(){
         this.yAccel -= Math.max(0, this.yAccel * 0.9)
         this.owner.controls.sprite.setCurrentAnimation("jump")
-        assetLoader.assets.flapAudio.play()
+        playSound(assetLoader.assets.flap)
     },
     fall: function(){
         this.owner.controls.sprite.setCurrentAnimation("fall")
@@ -517,7 +495,7 @@ var sink = new State({
     enter: function(){
         this.controls.sprite.setCurrentAnimation("hurt")
         this.controls.altitude.sink()
-        assetLoader.assets.blopAudio.play()
+        playSound(assetLoader.assets.slime)
         game.message("lose")
     }
 })
@@ -551,7 +529,7 @@ var jump = new State({
 
 var hurt = new State({
     enter: function(){
-        assetLoader.assets.screechAudio.play()
+        playSound(assetLoader.assets.screech)
         this.controls.altitude.bounce()
         this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
@@ -592,7 +570,7 @@ class Fern extends Foothold{
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
-                assetLoader.assets.crunch2Audio.play()
+                playSound(assetLoader.assets.crunch2)
             }
         }
     }
@@ -607,7 +585,7 @@ class Protoceratops extends Foothold{
         this.controls.collider.hitBox = [3, 31, 31, 48]
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-                assetLoader.assets.boingAudio.play()
+                playSound(assetLoader.assets.boing)
             }
         }
     }
@@ -624,7 +602,7 @@ class ProtoSkeleton extends Foothold{
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
-                assetLoader.assets.crunchAudio.play()
+                playSound(assetLoader.assets.crunch)
             }
         }
     }
