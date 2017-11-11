@@ -1,5 +1,10 @@
 "use strict";
 
+var State = require("./classes/state.js")
+var Control = require("./classes/control.js")
+var GameObject = require("./classes/gameobject.js")
+var assetLoader = require("./assetloader.js")
+
 // DOM links ===================================
 
 var canvas = document.getElementById("canvas")
@@ -14,53 +19,6 @@ var messageWindow = document.getElementById("message")
 
 // =================================================
 
-// Assets ==========================================
-
-var assets = {
-    flapAudio: new Audio(),
-    crunchAudio: new Audio(),
-    crunch2Audio: new Audio(),
-    blopAudio: new Audio(),
-    screechAudio: new Audio(),
-    boingAudio: new Audio(),
-    cawAudio: new Audio(),
-    sprite: new Image()
-}
-
-var assetSrcs = {
-    sprite: "assets/spritesheets/sheet00.png",
-    flapAudio: "assets/flap.wav",
-    crunchAudio: "assets/crunch.wav",
-    crunch2Audio: "assets/crunch2.wav",
-    screechAudio: "assets/pusou.wav",
-    blopAudio: "assets/blop.wav",
-    boingAudio: "assets/boing.wav",
-    cawAudio: "assets/caw.wav"
-}
-
-
-function loadPromise(asset, src){
-    return new Promise((res, rej) => {
-        asset.onload = res
-        asset.onerror = res
-        asset.oncanplaythrough = res
-        asset.src = src
-        if (asset.play) {
-            asset.load()
-        }
-    })
-}
-
-var assetPromises = []
-
-function loadAssets(){
-    for (name in assets){
-        assetPromises.push(loadPromise(assets[name], assetSrcs[name]))
-    }
-
-    Promise.all(assetPromises).then(() => game.changeState(play))
-}
-
 // ==================================================
 
 // Settings ================================
@@ -70,9 +28,9 @@ ctx.webkitImageSmoothingEnabled = false;
 ctx.msImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
 
-assets.flapAudio.playbackRate = 4
-assets.crunch2Audio.playbackRate = 2
-assets.blopAudio.playbackRate = 0.5
+assetLoader.assets.flapAudio.playbackRate = 4
+assetLoader.assets.crunch2Audio.playbackRate = 2
+assetLoader.assets.blopAudio.playbackRate = 0.5
 
 // ==================================================
 
@@ -80,25 +38,25 @@ assets.blopAudio.playbackRate = 0.5
 
 // var audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
-// var flapSrc = audioCtx.createMediaElementSource(assets.flapAudio)
+// var flapSrc = audioCtx.createMediaElementSource(assetLoader.assets.flapAudio)
 // flapSrc.connect(audioCtx.destination)
 
-// var crunchSrc = audioCtx.createMediaElementSource(assets.crunchAudio)
+// var crunchSrc = audioCtx.createMediaElementSource(assetLoader.assets.crunchAudio)
 // crunchSrc.connect(audioCtx.destination)
 
-// var crunch2Src = audioCtx.createMediaElementSource(assets.crunch2Audio)
+// var crunch2Src = audioCtx.createMediaElementSource(assetLoader.assets.crunch2Audio)
 // crunch2Src.connect(audioCtx.destination)
 
-// var blopSrc = audioCtx.createMediaElementSource(assets.blopAudio)
+// var blopSrc = audioCtx.createMediaElementSource(assetLoader.assets.blopAudio)
 // blopSrc.connect(audioCtx.destination)
 
-// var screechSrc = audioCtx.createMediaElementSource(assets.screechAudio)
+// var screechSrc = audioCtx.createMediaElementSource(assetLoader.assets.screechAudio)
 // screechSrc.connect(audioCtx.destination)
 
-// var boingSrc = audioCtx.createMediaElementSource(assets.boingAudio)
+// var boingSrc = audioCtx.createMediaElementSource(assetLoader.assets.boingAudio)
 // boingSrc.connect(audioCtx.destination)
 
-// var cawSrc = audioCtx.createMediaElementSource(assets.cawAudio)
+// var cawSrc = audioCtx.createMediaElementSource(assetLoader.assets.cawAudio)
 // cawSrc.connect(audioCtx.destination)
 
 // ==================================================
@@ -125,67 +83,6 @@ var nextScoreMilestone = 50
 
 // =================================================
 
-// Base Classes =======================
-
-class State{
-    constructor(args = {}){
-        Object.assign(this, args)
-    }
-    enter(){
-        //Override
-    }
-    exit(){
-        //Override
-    }
-    message(msg){
-        //Override
-    }
-    update(deltaTime){
-        //Override
-    }
-}
-
-class Control{
-    constructor(args = {}){
-        Object.assign(this, args)
-    }
-
-    update(deltaTime){
-        //Override
-    }
-}
-
-class GameObject{
-    constructor(args = {}){
-        this.name = 'GameObject'
-        this.controls = {}
-        this.states = {
-            default: new State({
-                update: function(dt){ //Update all controls
-                    for (var controlName in this.controls){
-                        this.controls[controlName].update(dt)
-                    }
-                }
-            })
-        }
-        this.currentState = this.states.default
-        Object.assign(this, args)
-    }
-
-    update(dt){
-        this.currentState.update.call(this, dt)
-    }
-
-    message(msg){
-        this.currentState.message.call(this, msg)
-    }
-
-    changeState(newState){
-        this.currentState.exit.call(this, newState)
-        newState.enter.call(this, this.currentState)
-        this.currentState = newState
-    }
-}
 
 // GAME OBJECT ======================================
 
@@ -215,7 +112,7 @@ var loading = new State({
         canvas.style.visibility = "hidden"
         titlescreenImg.style.visibility = "hidden"
         loadingScreen.style.visibility = "visible"
-        loadAssets()
+        assetLoader.load().then(() => this.changeState(play))
     },
 })
 
@@ -246,7 +143,7 @@ var play = new State({
         titlescreenImg.style.visibility = "hidden"
         loadingScreen.style.visibility = "hidden"
         reset()
-        assets.cawAudio.play()
+        assetLoader.assets.cawAudio.play()
         loop = requestAnimationFrame(tick)
     },
     message: function(msg){
@@ -329,7 +226,7 @@ gameEnginesObject.controls.spriteEngine = new Control({
         for (var i = 0; i < this.components.length; i++){
             var position = this.components[i].owner.controls.transform.position
             var frame = this.components[i].currentFrame
-            ctx.drawImage(assets.sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
+            ctx.drawImage(assetLoader.assets.sprite, frame*SPRITE_WIDTH, 0, SPRITE_WIDTH, SPRITE_HEIGHT, position[0], position[1], SPRITE_WIDTH, SPRITE_HEIGHT)
         }
     }
 })
@@ -575,7 +472,7 @@ player.controls.altitude = new Control({
     flap: function(){
         this.yAccel -= Math.max(0, this.yAccel * 0.9)
         this.owner.controls.sprite.setCurrentAnimation("jump")
-        assets.flapAudio.play()
+        assetLoader.assets.flapAudio.play()
     },
     fall: function(){
         this.owner.controls.sprite.setCurrentAnimation("fall")
@@ -620,7 +517,7 @@ var sink = new State({
     enter: function(){
         this.controls.sprite.setCurrentAnimation("hurt")
         this.controls.altitude.sink()
-        assets.blopAudio.play()
+        assetLoader.assets.blopAudio.play()
         game.message("lose")
     }
 })
@@ -654,7 +551,7 @@ var jump = new State({
 
 var hurt = new State({
     enter: function(){
-        assets.screechAudio.play()
+        assetLoader.assets.screechAudio.play()
         this.controls.altitude.bounce()
         this.controls.sprite.setCurrentAnimation("hurt")
         game.message("lose")
@@ -695,7 +592,7 @@ class Fern extends Foothold{
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
-                assets.crunch2Audio.play()
+                assetLoader.assets.crunch2Audio.play()
             }
         }
     }
@@ -710,7 +607,7 @@ class Protoceratops extends Foothold{
         this.controls.collider.hitBox = [3, 31, 31, 48]
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
-                assets.boingAudio.play()
+                assetLoader.assets.boingAudio.play()
             }
         }
     }
@@ -727,7 +624,7 @@ class ProtoSkeleton extends Foothold{
         this.controls.collider.onHit = function(){
             if (player.currentState == jump && player.controls.transform.position[1] < this.owner.controls.transform.position[1]){
                 this.owner.changeState(deadEnemy)
-                assets.crunchAudio.play()
+                assetLoader.assets.crunchAudio.play()
             }
         }
     }
@@ -802,30 +699,28 @@ var keyDown = false
 
 document.addEventListener("keydown", e => {
     if (keyDown == false && e.keyCode == 32){
-        game.message("keydown")
+        e.preventDefault()
         keyDown = true
+        game.message("keydown")
     }
 })
 
 document.addEventListener("keyup", e => {
-    if (keyDown == true && e.keyCode == 32){
-        game.message("keyup")
+    if (e.keyCode == 32){
+        e.preventDefault()
         keyDown = false
+        game.message("keyup")
     }
 })
 
 document.addEventListener("touchstart", e => {
-    if (keyDown == false){
-        game.message("keydown")
-        keyDown = true
-    }
+    game.message("keydown")
+    e.preventDefault()
 })
 
 document.addEventListener("touchend", e => {
-    if (keyDown == true){
-        game.message("keyup")
-        keyDown = false
-    }
+    game.message("keyup")
+    e.preventDefault()
 })
 
 // =================================================

@@ -1035,34 +1035,28 @@ protoSkel2.changeState(inactiveObstacle);
 
 // Key listeners ===================================
 
-var keyDown = false;
-
 document.addEventListener("keydown", function (e) {
-    if (keyDown == false && e.keyCode == 32) {
+    if (e.keyCode == 32) {
         game.message("keydown");
-        keyDown = true;
+        e.preventDefault();
     }
 });
 
 document.addEventListener("keyup", function (e) {
-    if (keyDown == true && e.keyCode == 32) {
+    if (e.keyCode == 32) {
         game.message("keyup");
-        keyDown = false;
+        e.preventDefault();
     }
 });
 
 document.addEventListener("touchstart", function (e) {
-    if (keyDown == false) {
-        game.message("keydown");
-        keyDown = true;
-    }
+    game.message("keydown");
+    e.preventDefault();
 });
 
 document.addEventListener("touchend", function (e) {
-    if (keyDown == true) {
-        game.message("keyup");
-        keyDown = false;
-    }
+    game.message("keyup");
+    e.preventDefault();
 });
 
 // =================================================

@@ -9,7 +9,7 @@ module.exports = {
     filename: 'bundle.js',
     library: 'App'
   },
-  // devtool: "eval-source-map",
+  devtool: "eval-source-map",
   module: {
     rules:[
       {
