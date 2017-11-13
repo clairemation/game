@@ -1,36 +1,32 @@
 "use strict";
 
-var State = require("./classes/state.js")
-var Control = require("./classes/control.js")
-var GameObject = require("./classes/gameobject.js")
-var assetLoader = require("./assetloader.js")
+const State = require("./classes/state.js")
+const Control = require("./classes/control.js")
+const GameObject = require("./classes/gameobject.js")
+const assetLoader = require("./assetloader.js")
+const {game, GameplayObject} = require("./gameobject.js")
+const SpriteDrawer = require("./spritedrawer.js")
 
 // DOM links ===================================
 
-var canvas = document.getElementById("canvas")
-var ctx = canvas.getContext("2d")
+const canvas = document.getElementById("canvas")
+const ctx = canvas.getContext("2d")
 
-var bg1 = document.getElementById("bg1")
-var fg1 = document.getElementById("fg1")
-var scoreboard = document.getElementById("scoreboard")
-var titlescreenImg = document.getElementById("title-screen")
-var loadingScreen = document.getElementById("loading-screen")
-var messageWindow = document.getElementById("message")
+const bg1 = document.getElementById("bg1")
+const fg1 = document.getElementById("fg1")
+const scoreboard = document.getElementById("scoreboard")
+const titlescreenImg = document.getElementById("title-screen")
+const loadingScreen = document.getElementById("loading-screen")
+const messageWindow = document.getElementById("message")
 
 // =================================================
 
-// ==================================================
-
-// Settings ================================
+// DOM settings ================================
 
 ctx.mozImageSmoothingEnabled = false;
 ctx.webkitImageSmoothingEnabled = false;
 ctx.msImageSmoothingEnabled = false;
 ctx.imageSmoothingEnabled = false;
-
-// assetLoader.assets.flapAudio.playbackRate = 4
-// assetLoader.assets.crunch2Audio.playbackRate = 2
-// assetLoader.assets.blopAudio.playbackRate = 0.5
 
 // ==================================================
 
@@ -56,27 +52,9 @@ var nextScoreMilestone = 50
 
 // =================================================
 
-
 function playSound(sound){
-    assetLoader.play(sound)
+    assetLoader.play(sound, currentTime)
 }
-
-// GAME OBJECT ======================================
-
-var game = new GameObject({name: "Game"})
-
-// Game object controls =============================
-
-game.controls.playControl = new Control({
-    components: [],
-    update: function(dt){
-        for (var i = 0; i < this.components.length; i++){
-            this.components[i].update(dt)
-        }
-    }
-})
-
-// =================================================
 
 // Game object states ===========================
 
@@ -120,7 +98,6 @@ var play = new State({
         titlescreenImg.style.visibility = "hidden"
         loadingScreen.style.visibility = "hidden"
         reset()
-        console.log(assetLoader.assets.caw)
         playSound(assetLoader.assets.caw)
         loop = requestAnimationFrame(tick)
     },
@@ -157,13 +134,6 @@ var lose = new State({
 })
 
 // =================================================
-
-class GameplayObject extends GameObject{
-    constructor(args){
-        super(args)
-        game.controls.playControl.components.push(this)
-    }
-}
 
 var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
 
