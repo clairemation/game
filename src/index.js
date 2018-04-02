@@ -135,13 +135,13 @@ var lose = new State({
 
 // =================================================
 
-var gameEnginesObject = new GameplayObject({name: "GameEnginesObject"})
+var gameEngine = new GameplayObject({name: "GameEnginesObject"})
 
 // Game engine controls =============================
 
 // TODO: Optimize
-gameEnginesObject.controls.obstaclePoolEngine = new Control({
-    owner: gameEnginesObject,
+gameEngine.controls.obstaclePoolEngine = new Control({
+    owner: gameEngine,
     nextObjectPlacementTime: 0,
     activeComponents: [],
     inactiveComponents: [],
@@ -166,8 +166,8 @@ gameEnginesObject.controls.obstaclePoolEngine = new Control({
     }
 })
 
-gameEnginesObject.controls.spriteEngine = new Control({
-    owner: gameEnginesObject,
+gameEngine.controls.spriteEngine = new Control({
+    owner: gameEngine,
     components: [],
     update: function(dt){
         ctx.clearRect(0, 0, 320, 240)
@@ -179,36 +179,34 @@ gameEnginesObject.controls.spriteEngine = new Control({
     }
 })
 
-function isColliding(a, b){
-
-    // If a is above b
-    if (a[3] < b[1]) {
-        return false
-    }
-
-    // If a is below b
-    if (a[1] > b[3]) {
-        return false
-    }
-
-    // If a is left of b
-    if (a[2] < b[0]) {
-        return false
-    }
-
-    // If a is right of b
-    if (a[0] > b[2]) {
-        return false
-    }
-
-    // Else collision
-    return true
-}
-
-gameEnginesObject.controls.collisionEngine = new Control({
-    owner: gameEnginesObject,
+gameEngine.controls.collisionEngine = new Control({
+    owner: gameEngine,
     playerCollider: undefined,
     components: [],
+    isColliding: function(a, b){
+        // If a is above b
+        if (a[3] < b[1]) {
+            return false
+        }
+
+        // If a is below b
+        if (a[1] > b[3]) {
+            return false
+        }
+
+        // If a is left of b
+        if (a[2] < b[0]) {
+            return false
+        }
+
+        // If a is right of b
+        if (a[0] > b[2]) {
+            return false
+        }
+
+        // Else collision
+        return true
+    },
     update: function(dt){
         var playerBox
         var otherBox
@@ -231,7 +229,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
             otherBound[1] = otherBox[1] + otherPos[1]
             otherBound[3] = otherBox[3] + otherPos[1]
 
-            if (isColliding(playerBound, otherBound)){
+            if (this.isColliding(playerBound, otherBound)){
                 player.controls.playerCollider.onHit(this.components[i])
                 this.components[i].onHit()
             }
@@ -244,7 +242,7 @@ gameEnginesObject.controls.collisionEngine = new Control({
 class Sprite extends Control{
     constructor(args = {}){
         super(args)
-        gameEnginesObject.controls.spriteEngine.components.push(this)
+        gameEngine.controls.spriteEngine.components.push(this)
         this.currentFrameNum = 0
         this.elapsedTime = 0
         this.looping = true
@@ -287,7 +285,7 @@ class Sprite extends Control{
 class Collider extends Control{
     constructor(args){
         super(args)
-        gameEnginesObject.controls.collisionEngine.components.push(this)
+        gameEngine.controls.collisionEngine.components.push(this)
     }
 
     onHit(other){
@@ -298,7 +296,7 @@ class Collider extends Control{
 class PlayerCollider extends Control{
     constructor(args){
         super(args)
-        gameEnginesObject.controls.collisionEngine.playerCollider = this
+        gameEngine.controls.collisionEngine.playerCollider = this
     }
 
     onHit(other){
@@ -332,7 +330,7 @@ class Scroller extends Control{
 class ObstaclePooler extends Control{
     constructor(args){
         super(args)
-        gameEnginesObject.controls.obstaclePoolEngine.inactiveComponents.push(this)
+        gameEngine.controls.obstaclePoolEngine.inactiveComponents.push(this)
     }
 
     activate(){
@@ -340,7 +338,7 @@ class ObstaclePooler extends Control{
     }
 
     deactivate(){
-        gameEnginesObject.controls.obstaclePoolEngine.returnToPool(this)
+        gameEngine.controls.obstaclePoolEngine.returnToPool(this)
         this.owner.changeState(inactiveObstacle)
     }
 
@@ -596,7 +594,7 @@ var activeObstacle = new State({
 var inactiveObstacle = new State({
     enter: function(){
         this.controls.transform.position = [-SPRITE_WIDTH, GROUND - SPRITE_HEIGHT]
-        gameEnginesObject.controls.obstaclePoolEngine.returnToPool()
+        gameEngine.controls.obstaclePoolEngine.returnToPool()
     }
 })
 
