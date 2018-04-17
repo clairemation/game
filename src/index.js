@@ -12,13 +12,6 @@ const SpriteDrawer = require("./spritedrawer.js")
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext("2d")
 
-const bg1 = document.getElementById("bg1")
-const fg1 = document.getElementById("fg1")
-const scoreboard = document.getElementById("scoreboard")
-const titlescreenImg = document.getElementById("title-screen")
-const loadingScreen = document.getElementById("loading-screen")
-const messageWindow = document.getElementById("message")
-
 // =================================================
 
 // DOM settings ================================
@@ -61,12 +54,6 @@ function playSound(sound){
 var loading = new State({
     enter: function(){
         cancelAnimationFrame(loop)
-        bg1.style.visibility = "hidden"
-        fg1.style.visibility = "hidden"
-        scoreboard.style.visibility = "hidden"
-        canvas.style.visibility = "hidden"
-        titlescreenImg.style.visibility = "hidden"
-        loadingScreen.style.visibility = "visible"
         assetLoader.load().then(() => this.changeState(play))
     },
 })
@@ -74,12 +61,6 @@ var loading = new State({
 var titleScreen = new State({
     enter: function(){
         cancelAnimationFrame(loop)
-        bg1.style.visibility = "hidden"
-        fg1.style.visibility = "hidden"
-        scoreboard.style.visibility = "hidden"
-        canvas.style.visibility = "hidden"
-        titlescreenImg.style.visibility = "visible"
-        loadingScreen.style.visibility = "hidden"
     },
     message: function(msg){
         switch(msg){
@@ -91,12 +72,6 @@ var titleScreen = new State({
 
 var play = new State({
     enter: function(){
-        canvas.style.visibility = "visible"
-        fg1.style.visibility = "visible"
-        bg1.style.visibility = "visible"
-        scoreboard.style.visibility = "visible"
-        titlescreenImg.style.visibility = "hidden"
-        loadingScreen.style.visibility = "hidden"
         reset()
         playSound(assetLoader.assets.caw)
         loop = requestAnimationFrame(tick)
@@ -121,8 +96,6 @@ var play = new State({
 var lose = new State({
     enter: function(){
         cancelAnimationFrame(loop)
-        messageWindow.style.visibility = "visible"
-        messageWindow.innerHTML = `<p style='text-align: center; line-height: 30px'>Final score: ${Math.floor(currentScore)}<br/>SPACE to restart</p>`
     },
     message: function(msg){
         switch(msg){
@@ -359,7 +332,6 @@ scoreCounter.controls.incrementControl = new Control({
     owner: scoreCounter,
     increment: function(amt){
         currentScore += amt
-        scoreboard.innerHTML = `SCORE:\n${Math.floor(currentScore)}`
         if (currentScore > nextScoreMilestone){
             fgScrollSpeed += 0.01
             obstacleFrequency = Math.max(obstacleFrequency - 0.005, 0.06)
@@ -685,10 +657,6 @@ function tick(timestamp){
     currentTime = timestamp
     game.update(dt);
     lastTime = timestamp
-    bgX = (bgX - 3 * (dt/30)) % 640
-    bg1.style.left = `${bgX}px`
-    fgX = (fgX - fgScrollSpeed * dt * 2) % 640
-    fg1.style.left = `${fgX}px`
 
 }
 
@@ -698,10 +666,8 @@ function reset(){
     obstacleFrequency = 0.15
     fgScrollSpeed = 0.12
     nextScoreMilestone = 50
-    scoreboard.innerHTML = `SCORE: ${Math.floor(currentScore)}`
     player.controls.transform.position = [40, 125]
     player.changeState(jump)
-    messageWindow.style.visibility = "hidden"
 
 }
 
