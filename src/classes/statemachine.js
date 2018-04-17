@@ -1,6 +1,6 @@
 var State = require("./state.js")
 
-class GameObject{
+class StateMachine{
     constructor(args = {}){
         this.name = 'GameObject'
         this.controls = {}
@@ -32,4 +32,4 @@ class GameObject{
     }
 }
 
-module.exports = GameObject
+module.exports = StateMachine

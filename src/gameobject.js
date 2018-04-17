@@ -1,9 +1,9 @@
 const Control = require("./classes/control.js")
-const GameObject = require("./classes/gameobject.js")
+const StateMachine = require("./classes/statemachine.js")
 
 // GAME OBJECT ======================================
 
-var game = new GameObject({name: "Game"})
+var game = new StateMachine({name: "Game"})
 
 // Game object controls =============================
 
@@ -18,11 +18,11 @@ game.controls.playControl = new Control({
 
 // =================================================
 
-class GameplayObject extends GameObject{
+class GameObject extends StateMachine{
     constructor(args){
         super(args)
         game.controls.playControl.components.push(this)
     }
 }
 
-module.exports = {game, GameplayObject}
+module.exports = {game, GameObject}

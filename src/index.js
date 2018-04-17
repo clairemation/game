@@ -2,9 +2,9 @@
 
 const State = require("./classes/state.js")
 const Control = require("./classes/control.js")
-const GameObject = require("./classes/gameobject.js")
+const StateMachine = require("./classes/statemachine.js")
 const assetLoader = require("./assetloader.js")
-const {game, GameplayObject} = require("./gameobject.js")
+const {game, GameObject} = require("./gameobject.js")
 const SpriteDrawer = require("./spritedrawer.js")
 
 // DOM links ===================================
@@ -108,7 +108,7 @@ var lose = new State({
 
 // =================================================
 
-var gameEngine = new GameplayObject({name: "GameEnginesObject"})
+var gameEngine = new GameObject({name: "GameEnginesObject"})
 
 // Game engine controls =============================
 
@@ -210,7 +210,7 @@ gameEngine.controls.collisionEngine = new Control({
     }
 })
 
-// GameplayObject Controls ==============================
+// GameObject Controls ==============================
 
 class Sprite extends Control{
     constructor(args = {}){
@@ -326,7 +326,7 @@ class ObstaclePooler extends Control{
 
 // Score controls ===================================
 
-var scoreCounter = new GameplayObject({name: "Score"})
+var scoreCounter = new GameObject({name: "Score"})
 
 scoreCounter.controls.incrementControl = new Control({
     owner: scoreCounter,
@@ -347,7 +347,7 @@ scoreCounter.controls.incrementControl = new Control({
 
 // PLAYER ============================
 
-var player = new GameplayObject({name: "Player"})
+var player = new GameObject({name: "Player"})
 
 // Player object controls ===========================
 
@@ -486,7 +486,7 @@ var hurt = new State({
 
 // FOOTHOLD OBJECTS ====================================
 
-class Foothold extends GameplayObject{
+class Foothold extends GameObject{
     constructor(args){
         super(args)
         this.controls = {
@@ -675,4 +675,4 @@ function reset(){
 
 // Export module ===================================
 
-module.exports = {GameObject}
+module.exports = {StateMachine}
