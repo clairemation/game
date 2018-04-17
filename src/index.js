@@ -46,7 +46,7 @@ var nextScoreMilestone = 50
 // =================================================
 
 function playSound(sound){
-    assetLoader.play(sound, currentTime)
+    assetLoader.play(sound)
 }
 
 // Game object states ===========================

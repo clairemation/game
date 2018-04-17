@@ -6,13 +6,13 @@ var audioCtx = new AudioContext()
 
 var assets = {
     sprite: new Image(),
-    boing: {buffer: null, lastPlayed: 0},
-    caw: {buffer: null, lastPlayed: 0},
-    crunch: {buffer: null, lastPlayed: 0},
-    crunch2: {buffer: null, lastPlayed: 0},
-    flap: {buffer: null, lastPlayed: 0},
-    screech: {buffer: null, lastPlayed: 0},
-    slime: {buffer: null, lastPlayed: 0},
+    boing: {buffer: null},
+    caw: {buffer: null},
+    crunch: {buffer: null},
+    crunch2: {buffer: null},
+    flap: {buffer: null},
+    screech: {buffer: null},
+    slime: {buffer: null},
 }
 
 var assetSrcs = {
@@ -27,11 +27,9 @@ var assetSrcs = {
 }
 
 function play(audioBuffer, currentTime){
-    if (currentTime - audioBuffer.lastPlayed < 100) return
     var src = audioCtx.createBufferSource()
     src.buffer = audioBuffer.buffer
     src.connect(audioCtx.destination)
-    audioBuffer.lastPlayed = currentTime
     src.start(0)
 }
 
