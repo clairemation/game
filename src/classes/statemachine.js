@@ -2,7 +2,6 @@ var State = require("./state.js")
 
 class StateMachine{
     constructor(args = {}){
-        this.name = 'GameObject'
         this.controls = {}
         this.states = {
             default: new State({
