@@ -4,18 +4,6 @@ const AUDIO_REGEX = /.*\.(wav|mp3)/
 window.AudioContext = window.AudioContext || window.webkitAudioContext
 var audioCtx = new AudioContext()
 
-// Asset list follows this form:
-// var assets = {
-//     sprite: new Image(),
-//     boing: {buffer: null},
-//     caw: {buffer: null},
-//     crunch: {buffer: null},
-//     crunch2: {buffer: null},
-//     flap: {buffer: null},
-//     screech: {buffer: null},
-//     slime: {buffer: null},
-// }
-
 // Asset src list follows this form:
 // var assetSrcs = {
 //     sprite: "assets/spritesheets/sheet00.png",
@@ -44,6 +32,8 @@ class AssetManager {
         return Promise.all(assetLoadPromises)
     }
 
+    onLoadIncrement(loadPercent){}
+
     play(clipName){
         var src = audioCtx.createBufferSource()
         src.buffer = this.assets[clipName]
@@ -65,7 +55,7 @@ class AssetManager {
 
     _incrementLoadPercent(){
         this.loadPercent = Math.ceil(this.loadPercent + (1 / Object.keys(this.assetSrcs).length * 100))
-        console.log(this.loadPercent)
+        this.onLoadIncrement(this.loadPercent)
     }
 
     // TODO: Load error handling

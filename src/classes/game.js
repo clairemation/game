@@ -14,13 +14,14 @@ class Game {
       return instance
     }
     this.scenes = new Stack()
+    this.tick = this.tick.bind(this)
 
     instance = this
 
     // This feels like a bad idea
     Scene.push = scene => {
-      this.scenes.push(scene)
       scene.enter()
+      this.scenes.push(scene)
     }
 
     Scene.pop = () => {
@@ -37,7 +38,7 @@ class Game {
   }
 
   start(){
-    loop = requestAnimationFrame(tick)
+    loop = requestAnimationFrame(this.tick)
   }
 
   stop(){
@@ -45,7 +46,7 @@ class Game {
   }
 
   tick(timestamp){
-    loop = requestAnimationFrame(tick);
+    // loop = requestAnimationFrame(this.tick);
     this.currentTime = timestamp
     if (!lastTime){
         lastTime = timestamp
@@ -56,7 +57,7 @@ class Game {
   }
 
   update(dt){
-    this.scenes.top.update(dt)
+    this.scenes.peek().update(dt)
   }
 }
 
