@@ -62,7 +62,7 @@ class AssetManager {
     _resolveImgLoad(img, src, resolve, reject){
         img.onload = () => {
             this._incrementLoadPercent();
-            resolve
+            resolve()
         }
         img.onerror = reject
         img.src = src
