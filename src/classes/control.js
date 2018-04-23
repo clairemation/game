@@ -1,10 +1,10 @@
 class Control{
     constructor(args = {}){
-        Object.assign(this, args)
+      // Override
     }
 
     update(deltaTime){
-        //Override
+      //Override
     }
 }
 

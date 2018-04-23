@@ -1,32 +1,35 @@
 const Control = require("./control.js")
 const StateMachine = require("./statemachine.js")
+const AssetManager = require('./assetmanager')
+
+var count = 1
 
 class SceneObject extends StateMachine{
     constructor(args){
         super(args)
         this.scene = args.scene
-        game.controls.playControl.components.push(this)
+        this.scene.objects.push(this)
+        this.objectIndices[this] = this.scene.objects.length - 1
     }
 }
 
 class Scene extends StateMachine{
     constructor(args){
         super(args)
-
-        this.controls.playControl = new Control({
-            components: [],
-            update: function(dt){
-                for (var i = 0; i < this.components.length; i++){
-                    this.components[i].update(dt)
-                }
-            }
-        })
-
-        this.Object = function(args = {}){
-            args.scene = this
-            return new SceneObject(args)
-        }
+        this.name = this.name || "Scene" + count++
+        this.objectIndices = {}
+        this.objects = []
+        this.assetManager = new AssetManager(args.assetList)
     }
+
+     Object(args = {}){
+        args.scene = this
+        return new SceneObject(args)
+    }
+
+    enter(){}
+
+    exit(){}
 }
 
 // =================================================
