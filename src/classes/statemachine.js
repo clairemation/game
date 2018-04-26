@@ -5,17 +5,8 @@ var count = 1
 class StateMachine{
     constructor(args = {}){
         this.name = args.name || "StateMachine" + count++
-        this.controls = {}
-        this.states = {
-            updateAllControls: new State({
-                update: function(dt){ //Update all controls
-                    for (var controlName in this.controls){
-                        this.controls[controlName].update(dt)
-                    }
-                }
-            })
-        }
-        this.currentState = this.states.updateAllControls
+        this.controls = args.controls || {}
+        this.states = args.states || {}
     }
 
     update(dt){

@@ -24,6 +24,10 @@ class AssetManager {
         this.loadPercent = 0
     }
 
+    dump(){
+        this.assets = {}
+    }
+
     load(){
         var assetLoadPromises = []
         for (name in this.assetSrcs){
@@ -32,7 +36,7 @@ class AssetManager {
         return Promise.all(assetLoadPromises)
     }
 
-    onLoadIncrement(loadPercent){}
+    onLoadProgress(loadPercent){}
 
     play(clipName){
         var src = audioCtx.createBufferSource()
@@ -55,7 +59,7 @@ class AssetManager {
 
     _incrementLoadPercent(){
         this.loadPercent = Math.ceil(this.loadPercent + (1 / Object.keys(this.assetSrcs).length * 100))
-        this.onLoadIncrement(this.loadPercent)
+        this.onLoadProgress(this.loadPercent)
     }
 
     // TODO: Load error handling

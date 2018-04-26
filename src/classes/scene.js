@@ -19,7 +19,7 @@ class Scene extends StateMachine{
         this.name = this.name || "Scene" + count++
         this.objectIndices = {}
         this.objects = []
-        this.assetManager = new AssetManager(args.assetList)
+        this.assetManager = new AssetManager(args.assets)
     }
 
      Object(args = {}){

@@ -25,8 +25,7 @@ class Game {
     }
 
     Scene.pop = () => {
-      this.scenes.top.exit()
-      this.scenes.pop
+      this.scenes.pop().exit()
     }
 
     Scene.replaceTop = scene => {
@@ -46,7 +45,7 @@ class Game {
   }
 
   tick(timestamp){
-    // loop = requestAnimationFrame(this.tick);
+    loop = requestAnimationFrame(this.tick);
     this.currentTime = timestamp
     if (!lastTime){
         lastTime = timestamp

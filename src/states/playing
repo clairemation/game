@@ -1,0 +1,9 @@
+const State = require('../classes/state')
+
+var playing = new State({
+  enter: function(){
+    this.assetManager.play('blop')
+  }
+})
+
+module.exports = playing
