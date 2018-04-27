@@ -3,7 +3,7 @@ var State = require("./state.js")
 var count = 1
 
 class StateMachine{
-    constructor(args = {}){
+    constructor(game, scene, args = {}){
         this.name = args.name || "StateMachine" + count++
         this.controls = args.controls || {}
         this.states = args.states || {}
@@ -13,14 +13,14 @@ class StateMachine{
         this.currentState.update.call(this, game, scene)
     }
 
-    message(msg){
+    message(game, scene, msg){
         this.currentState.message.call(this, msg)
     }
 
-    changeState(newStateName){
-        this.currentState.exit.call(this, this.states[newStateName])
+    changeState(game, scene, newStateName){
+        this.currentState.exit.call(this, game, scene)
         this.currentState = this.states[newStateName]
-        this.currentState.enter.call(this, this.currentState)
+        this.currentState.enter.call(this, game, scene)
     }
 }
 

@@ -20,20 +20,20 @@ class Game {
 
   push(scene){
     if (this.currentScene){
-      this.currentScene.exit()
+      this.currentScene.exit(this, this.currentScene)
     }
     this.scenes.push(scene)
     this.updateCurrent()
   }
 
   pop(scene){
-    this.currentScene.exit()
+    this.currentScene.exit(this, this.currentScene)
     this.scenes.pop()
     this.updateCurrent()
   }
 
   replaceTop(scene){
-    this.currentScene.exit()
+    this.currentScene.exit(this, this.currentScene)
     this.currentScene.pop()
     this.scenes.push(scene)
     this.updateCurrent()
@@ -41,7 +41,7 @@ class Game {
 
   updateCurrent(){
     this.currentScene = this.scenes.peek()
-    this.currentScene.enter()
+    this.currentScene.enter(this, this.currentScene)
   }
 
   start(){

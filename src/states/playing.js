@@ -1,7 +1,7 @@
 const State = require('../classes/state')
 
 var playing = new State({
-  enter: function(){
+  enter: function(game, scene){
     this.assetManager.play('blop')
   }
 })

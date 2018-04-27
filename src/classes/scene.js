@@ -5,9 +5,9 @@ const AssetManager = require('./assetmanager')
 var count = 1
 
 class SceneObject extends StateMachine{
-    constructor(args){
+    constructor(game, scene, args){
         super(args)
-        this.scene = args.scene
+        this.scene = scene
         this.scene.registerObject(this)
     }
 
@@ -17,12 +17,16 @@ class SceneObject extends StateMachine{
 }
 
 class Scene extends StateMachine{
-    constructor(args){
-        super(args)
+    constructor(game, args){
+        super(game, null, args)
         this.name = this.name || "Scene" + count++
         this.objectIndices = {}
         this.objects = []
         this.assetManager = new AssetManager(args.assets)
+    }
+
+    changeState(game, newSceneName){
+        super.changeState(game, this, newSceneName)
     }
 
     getControlsByName(name){
@@ -41,9 +45,9 @@ class Scene extends StateMachine{
         this.objectIndices[obj.name] = this.objects.length - 1
     }
 
-     createObject(args = {}){
+     createObject(game, scene, args = {}){
         args.scene = this
-        return new SceneObject(args)
+        return new SceneObject(game, this, args)
     }
 
     enter(){}
