@@ -34,7 +34,7 @@ class Game {
 
   replaceTop(scene){
     this.currentScene.exit(this, this.currentScene)
-    this.currentScene.pop()
+    this.scenes.pop()
     this.scenes.push(scene)
     this.updateCurrent()
   }
