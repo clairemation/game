@@ -9,7 +9,7 @@ class SceneObject extends StateMachine{
         super(args)
         this.scene = args.scene
         this.scene.objects.push(this)
-        this.objectIndices[this] = this.scene.objects.length - 1
+        this.scene.objectIndices[this] = this.scene.objects.length - 1
     }
 }
 
@@ -22,7 +22,7 @@ class Scene extends StateMachine{
         this.assetManager = new AssetManager(args.assets)
     }
 
-     Object(args = {}){
+     createObject(args = {}){
         args.scene = this
         return new SceneObject(args)
     }

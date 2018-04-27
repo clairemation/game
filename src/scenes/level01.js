@@ -1,13 +1,13 @@
-const Scene = require('../../classes/scene')
+const Scene = require('../classes/scene')
 
-const loading = require('../../states/loading')
-const playing = require('../../states/playing')
+const loading = require('../states/loading')
+const playing = require('../states/playing')
 
 var scene01 = new Scene({
   assets: {
-    sound: '../../../assets/Arpent.mp3',
-    bg: '../../../assets/bg.png',
-    blop: '../../../assets/blop.wav'
+    sound: '../../assets/Arpent.mp3',
+    bg: '../../assets/bg.png',
+    blop: '../../assets/blop.wav'
   },
   states: {
     loading,
