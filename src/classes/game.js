@@ -15,25 +15,33 @@ class Game {
     }
     this.scenes = new Stack()
     this.tick = this.tick.bind(this)
-
     instance = this
+  }
 
-    // This feels like a bad idea
-    Scene.push = scene => {
-      scene.enter()
-      this.scenes.push(scene)
+  push(scene){
+    if (this.currentScene){
+      this.currentScene.exit()
     }
+    this.scenes.push(scene)
+    this.updateCurrent()
+  }
 
-    Scene.pop = () => {
-      this.scenes.pop().exit()
-    }
+  pop(scene){
+    this.currentScene.exit()
+    this.scenes.pop()
+    this.updateCurrent()
+  }
 
-    Scene.replaceTop = scene => {
-      Scene.pop()
-      Scene.push(scene)
-    }
+  replaceTop(scene){
+    this.currentScene.exit()
+    this.currentScene.pop()
+    this.scenes.push(scene)
+    this.updateCurrent()
+  }
 
-    Scene.peek = this.scenes.peek
+  updateCurrent(){
+    this.currentScene = this.scenes.peek()
+    this.currentScene.enter()
   }
 
   start(){
@@ -50,13 +58,14 @@ class Game {
     if (!lastTime){
         lastTime = timestamp
     }
-    var dt = timestamp - lastTime
-    this.update(dt);
+    this.dt = timestamp - lastTime
+    this.update();
     lastTime = timestamp
   }
 
-  update(dt){
-    this.scenes.peek().update(dt)
+  update(){
+    var scene = this.scenes.peek()
+    scene.update(this, scene)
   }
 }
 

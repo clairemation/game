@@ -8,8 +8,11 @@ class SceneObject extends StateMachine{
     constructor(args){
         super(args)
         this.scene = args.scene
-        this.scene.objects.push(this)
-        this.scene.objectIndices[this] = this.scene.objects.length - 1
+        this.scene.registerObject(this)
+    }
+
+    getControlsByName(name){
+        return this.controls.filter(control => control.name == name)
     }
 }
 
@@ -20,6 +23,22 @@ class Scene extends StateMachine{
         this.objectIndices = {}
         this.objects = []
         this.assetManager = new AssetManager(args.assets)
+    }
+
+    getControlsByName(name){
+        var arr = []
+        for (let i = 0; i < objects.length; i++){
+            arr.push(...(objects[i].getControlsByName(name)))
+        }
+    }
+
+    getObjectByName(name){
+        return objects[objectIndices[name]]
+    }
+
+    registerObject(obj){
+        this.objects.push(obj)
+        this.objectIndices[obj.name] = this.objects.length - 1
     }
 
      createObject(args = {}){

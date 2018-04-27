@@ -9,8 +9,8 @@ class StateMachine{
         this.states = args.states || {}
     }
 
-    update(dt){
-        this.currentState.update.call(this, dt)
+    update(game, scene){
+        this.currentState.update.call(this, game, scene)
     }
 
     message(msg){

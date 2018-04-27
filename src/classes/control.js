@@ -3,7 +3,7 @@ class Control{
       // Override
     }
 
-    update(deltaTime){
+    update(game, scene){
       //Override
     }
 }

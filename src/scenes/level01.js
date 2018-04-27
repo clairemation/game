@@ -22,5 +22,13 @@ scene01.enter = function() {
   this.assetManager.load().then(() => this.changeState('playing'))
 }
 
+var systems = scene01.createObject({name: 'systems'})
+
+systems.controls.spriteRenderer = {
+  components: [],
+  owner: systems,
+
+}
+
 
 module.exports = scene01

@@ -1,19 +1,11 @@
 const Game = require('./classes/game')
 const Scene = require('./classes/scene')
 const AssetManager = require('./classes/assetmanager')
-const scene01 = require('./scenes/level01')
-
-const canvas = document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
-
-ctx.webkitImageSmoothingEnabled = false;
-ctx.msImageSmoothingEnabled = false;
-ctx.imageSmoothingEnabled = false;
+const level01 = require('./scenes/level01')
 
 var game = new Game()
 
-Scene.push(scene01)
-
+game.push(level01)
 game.start()
 
 
