@@ -14,7 +14,8 @@ class TitleScreen extends Scene{
         titlescreen: './assets/titlescreen.png',
         bg: './assets/bg.png',
         arpent: './assets/Arpent.mp3',
-        light: './assets/LightInfusor.mp3'
+        light: './assets/LightInfusor.mp3',
+        blop: '../../assets/blop.wav'
       },
       states: {
         loading
@@ -27,10 +28,8 @@ class TitleScreen extends Scene{
 
     this.enter = function(game) {
       this.currentState = loading
-      this.assetManager.load().then(() => {
-        this.assetManager.load()
-
-      })
+      level01.assetManager.load()
+      input.addKeyDownListener(() => game.push(level01))
     }
   }
 }

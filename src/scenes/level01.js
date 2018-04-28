@@ -6,8 +6,10 @@ class Level01 extends Scene{
   constructor(game){
     var args = {
       assets: {
-        sound: '../../assets/Arpent.mp3',
-        bg: '../../assets/bg.png',
+        titlescreen: './assets/titlescreen.png',
+        bg: './assets/bg.png',
+        arpent: './assets/Arpent.mp3',
+        light: './assets/LightInfusor.mp3',
         blop: '../../assets/blop.wav'
       },
       states: {
