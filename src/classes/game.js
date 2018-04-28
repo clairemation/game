@@ -13,7 +13,7 @@ class Game {
       console.warn('Trying to instantiate more than one Game, returning original instance')
       return instance
     }
-    this.scenes = new Stack()
+    this.sceneStack = new Stack()
     this.tick = this.tick.bind(this)
     instance = this
   }
@@ -22,25 +22,25 @@ class Game {
     if (this.currentScene){
       this.currentScene.exit(this, this.currentScene)
     }
-    this.scenes.push(scene)
+    this.sceneStack.push(scene)
     this.updateCurrent()
   }
 
   pop(scene){
     this.currentScene.exit(this, this.currentScene)
-    this.scenes.pop()
+    this.sceneStack.pop()
     this.updateCurrent()
   }
 
   replaceTop(scene){
     this.currentScene.exit(this, this.currentScene)
-    this.scenes.pop()
-    this.scenes.push(scene)
+    this.sceneStack.pop()
+    this.sceneStack.push(scene)
     this.updateCurrent()
   }
 
   updateCurrent(){
-    this.currentScene = this.scenes.peek()
+    this.currentScene = this.sceneStack.peek()
     this.currentScene.enter(this, this.currentScene)
   }
 
@@ -64,7 +64,7 @@ class Game {
   }
 
   update(){
-    var scene = this.scenes.peek()
+    var scene = this.sceneStack.peek()
     scene.update(this, scene)
   }
 }

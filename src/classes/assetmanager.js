@@ -33,7 +33,12 @@ class AssetManager {
         for (name in this.assetSrcs){
             assetLoadPromises.push(this._assetLoadPromise(name, this.assetSrcs[name]))
         }
-        return Promise.all(assetLoadPromises)
+        return new Promise((res, rej) => {
+            Promise.all(assetLoadPromises).then(() => {
+                this.loadPercent = 0
+                res()
+            })
+        })
     }
 
     onLoadProgress(loadPercent){}
@@ -48,10 +53,8 @@ class AssetManager {
     _assetLoadPromise(name, src){
         return new Promise((res, rej) => {
             if (src.match(IMG_REGEX)){
-                this.assets[name] = new Image()
-                this._resolveImgLoad(this.assets[name], src, res, rej)
+                this._resolveImgLoad(name, src, res, rej)
             } else if (src.match(AUDIO_REGEX)) {
-                this.assets[name] = null
                 this._resolveAudioLoad(name, src, res, rej)
             }
         })
@@ -63,27 +66,39 @@ class AssetManager {
     }
 
     // TODO: Load error handling
-    _resolveImgLoad(img, src, resolve, reject){
-        img.onload = () => {
-            this._incrementLoadPercent();
+    _resolveImgLoad(name, src, resolve, reject){
+        if (this.assets[name]){
+            this._incrementLoadPercent()
             resolve()
+        } else {
+            var img = new Image()
+            img.onload = () => {
+                this._incrementLoadPercent()
+                this.assets[name] = img
+                resolve()
+            }
+            img.onerror = reject
+            img.src = src
         }
-        img.onerror = reject
-        img.src = src
     }
 
-    _resolveAudioLoad(audioName, src, resolve, reject){
-        var req = new XMLHttpRequest()
-        req.open('GET', src, true)
-        req.responseType ='arraybuffer'
-        req.onload = () => {
-            audioCtx.decodeAudioData(req.response, buffer => {
-                this._incrementLoadPercent()
-                this.assets[audioName] = buffer
-                resolve()
-            })
+    _resolveAudioLoad(name, src, resolve, reject){
+        if (this.assets[name]){
+            this._incrementLoadPercent()
+            resolve()
+        } else {
+            var req = new XMLHttpRequest()
+            req.open('GET', src, true)
+            req.responseType ='arraybuffer'
+            req.onload = () => {
+                audioCtx.decodeAudioData(req.response, buffer => {
+                    this._incrementLoadPercent()
+                    this.assets[name] = buffer
+                    resolve()
+                })
+            }
+            req.send()
         }
-        req.send()
     }
 }
 

@@ -11,7 +11,10 @@ class TitleScreen extends Scene{
   constructor(game){
     var args = {
       assets: {
-        titlescreen: './assets/titlescreen.png'
+        titlescreen: './assets/titlescreen.png',
+        bg: './assets/bg.png',
+        arpent: './assets/Arpent.mp3',
+        light: './assets/LightInfusor.mp3'
       },
       states: {
         loading
@@ -20,11 +23,12 @@ class TitleScreen extends Scene{
 
     super(game, args)
 
+    this.assetManager.onLoadProgress = percent => console.log(percent)
+
     this.enter = function(game) {
       this.currentState = loading
       this.assetManager.load().then(() => {
-        renderer.drawImage(this.assetManager.assets.titlescreen, 0, 0)
-        input.addKeyDownListener(() => game.replaceTop(level01))
+        this.assetManager.load()
 
       })
     }
