@@ -5,6 +5,7 @@ const renderer = require('../core/renderer')
 const input = require('../core/input')
 
 var titlescreen = new Scene({
+  name: 'TitleScreen',
   assets: {
     titlescreen: './assets/titlescreen.png'
   },

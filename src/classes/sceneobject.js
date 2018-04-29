@@ -3,8 +3,8 @@ const StateMachine = require('./statemachine')
 class SceneObject extends StateMachine{
     constructor(args){
         super(args)
-        this.scene = scene
-        this.scene.registerObject(this)
+        this.scene = args.scene
+        this.scene.controls.play.registerObject(this)
     }
 
     getControlsByName(name){
