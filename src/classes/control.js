@@ -1,9 +1,9 @@
 class Control{
-    constructor(game, scene, args = {}){
+    constructor(args = {}){
       // Override
     }
 
-    update(game, scene){
+    update(){
       //Override
     }
 }

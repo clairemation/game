@@ -44,6 +44,10 @@ class AssetManager {
     onLoadProgress(loadPercent){}
 
     play(clipName){
+        if (!this.assets[clipName]){
+            console.error(`Asset ${clipName} does not exist!`)
+            return
+        }
         var src = audioCtx.createBufferSource()
         src.buffer = this.assets[clipName]
         src.connect(audioCtx.destination)

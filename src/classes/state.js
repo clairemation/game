@@ -2,16 +2,16 @@ class State{
     constructor(args = {}){
         Object.assign(this, args)
     }
-    enter(game, scene){
+    enter(){
         //Override
     }
-    exit(game, scene){
+    exit(){
         //Override
     }
-    message(game, scene, msg){
+    message(e){
         //Override
     }
-    update(game, scene){
+    update(){
         //Override
     }
 }
