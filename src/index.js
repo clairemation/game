@@ -12,8 +12,8 @@ var game = new Game({
   }
 })
 
-game.push('titlescreen')
 game.start()
+game.push('titlescreen')
 
 
 

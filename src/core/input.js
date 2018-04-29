@@ -5,9 +5,9 @@ var keyDownHandlers = []
 var keyUpHandlerIndices = {}
 var keyUpHandlers = []
 
-function handleEvent(handlers){
+function handleEvent(handlers, e){
   for (let i = 0; i < handlers.length; i++){
-    handlers[i]()
+    handlers[i](e)
   }
 }
 
@@ -27,7 +27,7 @@ document.addEventListener("keydown", e => {
     if (!keyDown && e.keyCode == 32){
         e.preventDefault()
         keyDown = true
-        handleEvent(keyDownHandlers)
+        handleEvent(keyDownHandlers, e)
     }
 })
 
@@ -35,7 +35,7 @@ document.addEventListener("keyup", e => {
     if (e.keyCode == 32){
         e.preventDefault()
         keyDown = false
-        handleEvent(keyUpHandlers)
+        handleEvent(keyUpHandlers, e)
     }
 })
 

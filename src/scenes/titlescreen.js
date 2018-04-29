@@ -17,11 +17,10 @@ class TitleScreen extends Scene{
 
     super(game, args)
 
-    this.assetManager.onLoadProgress = percent => console.log(percent)
-
     this.enter = function(game) {
+      game.stop()
       this.currentState = loading
-
+      this.assetManager.load().then(() => renderer.drawImage(this.assetManager.assets.titlescreen, 0, 0))
       game.scenes.level01.assetManager.load()
       input.addKeyDownListener(() => game.push('level01'))
     }

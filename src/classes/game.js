@@ -1,6 +1,7 @@
 const Stack = require('../lib/stack')
 const StateMachine = require('./statemachine')
 const Scene = require('./scene')
+const renderer = require('../core/renderer')
 
 var instance
 var loop
@@ -15,6 +16,8 @@ class Game {
     }
     this.scenes = args.scenes || {}
     this.sceneStack = new Stack()
+    this.currentTime = 0
+    this.dt = 0
     this.tick = this.tick.bind(this)
     instance = this
   }
@@ -65,8 +68,8 @@ class Game {
   }
 
   update(){
-    var scene = this.sceneStack.peek()
-    scene.update(this, scene)
+    renderer.clearRect(0, 0, 320, 240)
+    this.currentScene.update(this, this.currentScene)
   }
 }
 
