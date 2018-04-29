@@ -18,6 +18,7 @@ class Game {
     this.sceneStack = new Stack()
     this.currentTime = 0
     this.dt = 0
+    this.running = false
     this.tick = this.tick.bind(this)
     instance = this
   }
@@ -49,11 +50,19 @@ class Game {
   }
 
   start(){
+    if (this.running){
+      return
+    }
     loop = requestAnimationFrame(this.tick)
+    this.running = true
   }
 
   stop(){
+    if (!this.running){
+      return
+    }
     cancelAnimationFrame(loop)
+    this.running = false
   }
 
   tick(timestamp){
