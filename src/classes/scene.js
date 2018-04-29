@@ -14,6 +14,10 @@ class SceneObject extends StateMachine{
     getControlsByName(name){
         return this.controls.filter(control => control.name == name)
     }
+
+    getGame(){
+        return this.scene.game
+    }
 }
 
 class Scene extends StateMachine{
@@ -40,6 +44,10 @@ class Scene extends StateMachine{
     registerObject(obj){
         this.objects.push(obj)
         this.objectIndices[obj.name] = this.objects.length - 1
+    }
+
+    setGame(game){
+        this.game = game
     }
 
     enter(game){}

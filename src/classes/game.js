@@ -19,7 +19,13 @@ class Game {
     this.currentTime = 0
     this.dt = 0
     this.running = false
+
+    for (var i in this.scenes){
+      this.scenes[i].setGame(this)
+    }
+
     this.tick = this.tick.bind(this)
+
     instance = this
   }
 
@@ -46,7 +52,6 @@ class Game {
 
   updateCurrent(){
     this.currentScene = this.sceneStack.peek()
-    this.currentScene.game = this
     this.currentScene.enter(this, this.currentScene)
   }
 
