@@ -22,6 +22,4 @@ level01.enter = function() {
 }
 
 
-
-
 module.exports = level01
