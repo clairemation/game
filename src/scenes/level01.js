@@ -9,7 +9,7 @@ var level01 = new Scene({
     bg: './assets/bg.png',
     arpent: './assets/Arpent.mp3',
     light: './assets/LightInfusor.mp3',
-    blop: '../../assets/blop.wav'
+    blop: './assets/blop.wav'
   },
   states: {
     loading,
