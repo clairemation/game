@@ -21,6 +21,7 @@ class AssetManager {
     constructor(assetSrcs){
         this.assets = {}
         this.assetSrcs = assetSrcs
+        this.currentlyPlayingTracks = {}
         this.loadPercent = 0
     }
 
@@ -42,6 +43,27 @@ class AssetManager {
     }
 
     onLoadProgress(loadPercent){}
+
+    loop(clipName){
+        if (!this.assets[clipName]){
+            console.error(`Asset ${clipName} does not exist!`)
+            return
+        }
+        var src = audioCtx.createBufferSource()
+        src.buffer = this.assets[clipName]
+        src.connect(audioCtx.destination)
+        src.loop = true
+        src.start(0)
+        this.currentlyPlayingTracks[clipName] = src
+    }
+
+    stop(clipName){
+        if (!this.currentlyPlayingTracks[clipName]){
+            return
+        }
+        this.currentlyPlayingTracks[clipName].stop()
+        delete this.currentlyPlayingTracks[clipName]
+    }
 
     play(clipName){
         if (!this.assets[clipName]){

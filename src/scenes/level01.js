@@ -18,7 +18,9 @@ var level01 = new Scene({
 })
 
 level01.enter = function() {
-  Scene.prototype.enter.call(this).then(() => this.assetManager.play('blop'))
+  Scene.prototype.enter.call(this).then(() => {
+    this.assetManager.play('blop')
+  })
 }
 
 var player = new SceneObject({
