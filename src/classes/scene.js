@@ -44,8 +44,8 @@ class Play extends Control{
 
     getControlsByName(name){
         var arr = []
-        for (let i = 0; i < objects.length; i++){
-            arr.push(...(objects[i].getControlsByName(name)))
+        for (let i = 0; i < this.objects.length; i++){
+            arr.push(...(this.objects[i].getControlsByName(name)))
         }
         return arr
     }

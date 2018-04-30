@@ -19,9 +19,16 @@ titlescreen.enter = function() {
   this.currentState = loading
   this.assetManager.load().then(() => renderer.drawImage(this.assetManager.assets.titlescreen, 0, 0))
   this.game.scenes.level01.assetManager.load()
-  input.addKeyDownListener(() => this.game.push('level01'))
+  input.addKeyDownListener(pushLevel)
 }
 
+titlescreen.exit = function(){
+  input.removeKeyDownListener(pushLevel)
+}
+
+function pushLevel(){
+  titlescreen.game.push('level01')
+}
 
 
 module.exports = titlescreen
