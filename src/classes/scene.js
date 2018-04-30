@@ -1,28 +1,13 @@
-const Control = require("./control")
-const State = require('./state')
-const StateMachine = require("./statemachine")
 const AssetManager = require('./assetmanager')
 
 var count = 1
 
-class Scene extends StateMachine{
+class Scene {
     constructor(args){
-        super(args)
         this.name = args.name || "Scene" + count++
-        this.controls.play = new Play({owner: this})
         this.game = null
-        this.states = {
-            loading: new State(),
-            playing: new State({
-              enter: function(){
-                this.assetManager.play('blop')
-                this.game.start()
-              },
-              update: function(){
-                this.controls.play.update()
-              }
-            })
-        }
+        this.objectIndices = {}
+        this.objects = []
         this.assetManager = new AssetManager(args.assets)
     }
 
@@ -30,17 +15,12 @@ class Scene extends StateMachine{
         this.game = game
     }
 
-    enter(game){}
-
-    exit(game){}
-}
-
-class Play extends Control{
-    constructor(args){
-        super(args)
-        this.objectIndices = {}
-        this.objects = []
+    enter(){
+        this.game.stop()
+        return this.assetManager.load().then(() => this.game.start()) // return for Promise chainability
     }
+
+    exit(){}
 
     getControlsByName(name){
         var arr = []

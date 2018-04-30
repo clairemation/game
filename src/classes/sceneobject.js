@@ -4,7 +4,7 @@ class SceneObject extends StateMachine{
     constructor(args){
         super(args)
         this.scene = args.scene
-        this.scene.controls.play.registerObject(this)
+        this.scene.registerObject(this)
     }
 
     getControlsByName(name){
