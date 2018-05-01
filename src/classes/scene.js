@@ -8,12 +8,17 @@ class Scene {
         this.game = null
         this.objectIndices = {}
         this.objects = []
+        this.systemsObject = null
         this.initialized = false
         this.assetManager = new AssetManager(args.assets)
     }
 
     setGame(game){
         this.game = game
+    }
+
+    setSystemsObject(obj){
+        this.systemsObject = obj
     }
 
     enter(){

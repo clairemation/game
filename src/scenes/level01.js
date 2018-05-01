@@ -3,6 +3,7 @@ const SceneObject = require('../classes/sceneobject')
 const Sprite = require('../controls/sprite')
 const renderer = require('../core/renderer')
 const Control = require('../classes/control')
+const SystemsObject = require('../classes/systemsobject')
 const SpriteEngine = require('../controls/sprite-engine')
 const raptorSpritesheetData = require('../spritesheet-data/raptor')
 
