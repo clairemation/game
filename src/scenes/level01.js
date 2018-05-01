@@ -44,9 +44,6 @@ player.controls.sprite.setCurrentAnimation('walk')
 
 player.update = function(){
   this.controls.sprite.update()
-  var frameName = this.controls.sprite.currentFrame
-  var frameCoords = raptorSpritesheetData.frames[frameName]
-  renderer.drawImage(this.scene.assetManager.assets.raptorSpritesheet, frameCoords.x, frameCoords.y, frameCoords.w, frameCoords.h, 0, 0, frameCoords.w, frameCoords.h)
 }
 
 var systems = new SceneObject({
@@ -54,7 +51,9 @@ var systems = new SceneObject({
   scene: level01
 })
 
-systems.update = function(){}
+systems.update = function(){
+  this.controls.spriteEngine.update()
+}
 
 systems.controls.spriteEngine = new Control({
   name: 'spriteEngine',
@@ -64,7 +63,16 @@ systems.controls.spriteEngine = new Control({
 
 systems.controls.spriteEngine.init = function(){
   this.components = this.owner.scene.getControlsByName('sprite')
-  console.log(this.components)
+}
+
+systems.controls.spriteEngine.update = function(){
+  var frameName, frameCoords, spritesheetName
+  for (let i = 0; i < this.components.length; i++){
+    spritesheetName = this.components[i].spritesheetName
+    frameName = this.components[i].currentFrame
+    var frameCoords = this.components[i].spritesheetData.frames[frameName]
+    renderer.drawImage(this.owner.scene.assetManager.assets[spritesheetName], frameCoords.x, frameCoords.y, frameCoords.w, frameCoords.h, 0, 0, frameCoords.w, frameCoords.h)
+  }
 }
 
 module.exports = level01
