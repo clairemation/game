@@ -3,6 +3,7 @@ const SceneObject = require('../classes/sceneobject')
 const Sprite = require('../controls/sprite')
 const renderer = require('../core/renderer')
 const Control = require('../classes/control')
+const SpriteEngine = require('../controls/sprite-engine')
 const raptorSpritesheetData = require('../spritesheet-data/raptor')
 
 var level01 = new Scene({
@@ -55,24 +56,8 @@ systems.update = function(){
   this.controls.spriteEngine.update()
 }
 
-systems.controls.spriteEngine = new Control({
-  name: 'spriteEngine',
-  owner: systems,
-  components: []
+systems.controls.spriteEngine = new SpriteEngine({
+  owner: systems
 })
-
-systems.controls.spriteEngine.init = function(){
-  this.components = this.owner.scene.getControlsByName('sprite')
-}
-
-systems.controls.spriteEngine.update = function(){
-  var frameName, frameCoords, spritesheetName
-  for (let i = 0; i < this.components.length; i++){
-    spritesheetName = this.components[i].spritesheetName
-    frameName = this.components[i].currentFrame
-    var frameCoords = this.components[i].spritesheetData.frames[frameName]
-    renderer.drawImage(this.owner.scene.assetManager.assets[spritesheetName], frameCoords.x, frameCoords.y, frameCoords.w, frameCoords.h, 0, 0, frameCoords.w, frameCoords.h)
-  }
-}
 
 module.exports = level01
