@@ -8,7 +8,7 @@ class SceneObject extends StateMachine{
     }
 
     getControlsByName(name){
-        return this.controls.filter(control => control.name == name)
+        return Object.values(this.controls).filter(control => control.name == name)
     }
 
     getGame(){

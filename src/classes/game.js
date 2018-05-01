@@ -22,6 +22,7 @@ class Game {
 
     for (var i in this.scenes){
       this.scenes[i].setGame(this)
+      this.scenes[i].init()
     }
 
     this.tick = this.tick.bind(this)

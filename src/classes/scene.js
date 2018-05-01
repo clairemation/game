@@ -38,6 +38,7 @@ class Scene {
         for (let i = 0; i < this.objects.length; i++){
             arr.push(...Object.values(this.objects[i].controls))
         }
+        return arr
     }
 
     getControlsByName(name){

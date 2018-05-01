@@ -1,6 +1,7 @@
 class Control{
     constructor(args = {}){
       this.owner = args.owner
+      this.name = args.name
       // Override
     }
 
