@@ -8,6 +8,7 @@ class Scene {
         this.game = null
         this.objectIndices = {}
         this.objects = []
+        this.initialized = false
         this.assetManager = new AssetManager(args.assets)
     }
 
@@ -21,6 +22,23 @@ class Scene {
     }
 
     exit(){}
+
+    init(){
+        if (this.initialized){
+            return
+        }
+        var controls = this.getAllControls()
+        for (let i = 0; i < controls.length; i++){
+            controls[i].init()
+        }
+    }
+
+    getAllControls(){
+        var arr = []
+        for (let i = 0; i < this.objects.length; i++){
+            arr.push(...Object.values(this.objects[i].controls))
+        }
+    }
 
     getControlsByName(name){
         var arr = []
