@@ -49,7 +49,7 @@ player.controls.sprite = new Sprite({
 player.controls.sprite.setCurrentAnimation('walk')
 
 player.update = function(){
-  this.controls.transform.position.x += 0.25
+  this.controls.transform.moveRight(0.25)
   this.controls.sprite.update()
 }
 
