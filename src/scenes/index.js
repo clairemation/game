@@ -1,5 +1,3 @@
-"use strict";
-
 const State = require("./classes/state.js")
 const Control = require("./classes/control.js")
 const StateMachine = require("./classes/statemachine.js")

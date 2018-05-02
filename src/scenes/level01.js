@@ -28,6 +28,9 @@ var player = new SceneObject({
   scene: level01
 })
 
+player.transform.x = 50
+player.transform.y = 50
+
 player.controls.sprite = new Sprite({
   name: 'sprite',
   owner: player,

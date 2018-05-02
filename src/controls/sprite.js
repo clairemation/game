@@ -17,11 +17,13 @@ class Sprite extends Control{
         this.elapsedTime = 0
         this.looping = true
         this.finished = false
+        this.shouldDraw = false
         this.onFinished = function(){}
     }
 
     update(){
         this.advanceFrame()
+        this.shouldDraw = true
     }
 
     advanceFrame(){
@@ -42,13 +44,11 @@ class Sprite extends Control{
         this.looping = looping
         this.finished = false
         this.onFinished = onFinished
-        if (this.currentAnimation != this.animations[name]){
-            this.currentAnimation = this.animations[name]
-            this.currentFrameNum = 0
-            this.currentFrame = this.currentAnimation[this.currentFrameNum]
-            this.numFrames = this.currentAnimation.length
-            this.elapsedTime = 0
-        }
+        this.currentAnimation = this.animations[name]
+        this.currentFrameNum = 0
+        this.currentFrame = this.currentAnimation[this.currentFrameNum]
+        this.numFrames = this.currentAnimation.length
+        this.elapsedTime = 0
     }
 }
 
