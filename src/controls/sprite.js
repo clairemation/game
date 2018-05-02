@@ -10,6 +10,7 @@ const ANIM_FRAMERATE = 200
 class Sprite extends Control{
     constructor(args = {}){
         super(args)
+        this.name = 'sprite'
         this.spritesheetName = args.spritesheetName
         this.spritesheetData = args.spritesheetData
         this.animations = args.animations

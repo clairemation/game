@@ -21,7 +21,15 @@ class SpriteEngine extends Control{
       spritesheetName = this.components[i].spritesheetName
       frameName = this.components[i].currentFrame
       var frameCoords = this.components[i].spritesheetData.frames[frameName]
-      renderer.drawImage(this.owner.scene.assetManager.assets[spritesheetName], frameCoords.x, frameCoords.y, frameCoords.w, frameCoords.h, this.owner.transform.x, this.owner.transform.y, frameCoords.w, frameCoords.h)
+      renderer.drawImage(this.owner.scene.assetManager.assets[spritesheetName],
+        frameCoords.x,
+        frameCoords.y,
+        frameCoords.w,
+        frameCoords.h,
+        this.components[i].owner.controls.transform.position.x,
+        this.components[i].owner.controls.transform.position.y,
+        frameCoords.w,
+        frameCoords.h)
       this.components[i].shouldDraw = false
     }
   }

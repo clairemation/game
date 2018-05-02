@@ -4,6 +4,7 @@ const Sprite = require('../controls/sprite')
 const renderer = require('../core/renderer')
 const Control = require('../classes/control')
 const SpriteEngine = require('../controls/sprite-engine')
+const Transform = require('../controls/transform')
 const raptorSpritesheetData = require('../spritesheet-data/raptor')
 
 var level01 = new Scene({
@@ -28,11 +29,12 @@ var player = new SceneObject({
   scene: level01
 })
 
-player.transform.x = 50
-player.transform.y = 50
+player.controls.transform = new Transform({
+  owner: player,
+  position: {x: 50.0, y: 50.0}
+})
 
 player.controls.sprite = new Sprite({
-  name: 'sprite',
   owner: player,
   spritesheetName: 'raptorSpritesheet',
   spritesheetData: raptorSpritesheetData,
@@ -47,6 +49,7 @@ player.controls.sprite = new Sprite({
 player.controls.sprite.setCurrentAnimation('walk')
 
 player.update = function(){
+  this.controls.transform.position.x += 0.25
   this.controls.sprite.update()
 }
 

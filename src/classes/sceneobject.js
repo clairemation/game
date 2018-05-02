@@ -4,7 +4,6 @@ class SceneObject extends StateMachine{
     constructor(args){
         super(args)
         this.scene = args.scene
-        this.transform = {x: 0, y: 0}
         this.scene.registerObject(this)
     }
 
