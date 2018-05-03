@@ -3,6 +3,9 @@ const StateMachine = require('./statemachine')
 const Scene = require('./scene')
 const renderer = require('../core/renderer')
 
+var screenWidth = 320
+var screenHeight = 280
+
 var instance
 var loop
 var lastTime
@@ -28,6 +31,22 @@ class Game {
     this.tick = this.tick.bind(this)
 
     instance = this
+  }
+
+  static getScreenWidth(){
+    return screenWidth
+  }
+
+  static getScreenHeight(){
+    return screenHeight
+  }
+
+  static setScreenWidth(value){
+    screenWidth = value
+  }
+
+  static getScreenHeight(value){
+    screenWidth = value
   }
 
   push(sceneName){

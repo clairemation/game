@@ -49,9 +49,30 @@ player.controls.sprite = new Sprite({
 player.controls.sprite.setCurrentAnimation('walk')
 
 player.update = function(){
-  this.controls.transform.moveRight(0.25)
   this.controls.sprite.update()
 }
+
+// var psit = new SceneObject({
+//   name: 'psittacosaurus',
+//   scene: level01
+// })
+
+// psit.controls.transform = new Transform({
+//   owner: psit,
+//   position: {x: 100, y: 100}
+// })
+
+// psit.controls.sprite = new Sprite({
+//   owner: psit,
+//   spritesheetName: 'raptorSpritesheet',
+//   spritesheetData: raptorSpritesheetData,
+//   animations: {
+//     stand: ['walk00'],
+//     walk: ['walk00', 'walk01'],
+//     jump: ['flap00'],
+//     fall: ['flap01']
+//   }
+// })
 
 var systems = new SceneObject({
   name: 'systems',
