@@ -4,7 +4,7 @@ const Scene = require('./scene')
 const renderer = require('../core/renderer')
 
 var screenWidth = 320
-var screenHeight = 280
+var screenHeight = 240
 
 var instance
 var loop

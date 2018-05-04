@@ -40,7 +40,7 @@ var player = new SceneObject({
     transform: {
       kind: Transform,
       args: {
-        position: {x: 50, y: 50}
+        position: {x: 50.0, y: 50.0}
       }
     },
 
@@ -57,6 +57,50 @@ var player = new SceneObject({
         },
         initialAnimation: ['walk', true]
       }
+    }
+  }
+})
+
+var obstacle = new SceneObject({
+  name: 'obstacle01',
+  scene: level01,
+
+  states: {
+    normal: new State({
+      update: function(){
+        this.controls.scroller.update()
+        this.controls.sprite.update()
+      }
+    })
+  },
+  initialState: 'normal',
+
+  controls: {
+
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 300.0, y: 50.0}
+      }
+    },
+
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'raptorSpritesheet',
+        spritesheetData: raptorSpritesheetData,
+        animations: {
+          stand: ['walk00'],
+          walk: ['walk00', 'walk01'],
+          jump: ['flap00'],
+          fall: ['flap01']
+        },
+        initialAnimation: ['walk', true]
+      }
+    },
+
+    scroller: {
+      kind: require('../controls/scroller'),
     }
   }
 })

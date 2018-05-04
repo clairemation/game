@@ -1,12 +1,11 @@
 const Control = require('../classes/control')
 
-var fgScrollSpeed = 5.0
+var fgScrollSpeed = 0.25
 
 class Scroller extends Control{
     constructor(args){
         super(args)
         this.name = 'scroller'
-        this.reset()
     }
 
     static setFgScrollSpeed(amt){
