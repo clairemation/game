@@ -6,13 +6,13 @@ class StateMachine{
     constructor(args = {}){
         this.name = args.name || "StateMachine" + count++
         this.states = args.states || {}
-        this.currentState = args.initialState
+        this.currentState = this.states[args.initialState]
 
         this.controls = {}
         var control, controlArgs
         for (var name in args.controls){
             control = args.controls[name]
-            controlArgs = control.args
+            controlArgs = control.args || {}
             controlArgs.owner = this
             this.controls[name] = new control.kind(controlArgs)
         }

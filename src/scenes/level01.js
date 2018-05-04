@@ -1,3 +1,4 @@
+const State = require('../classes/state')
 const Scene = require('../classes/scene')
 const SceneObject = require('../classes/sceneobject')
 const Sprite = require('../controls/sprite')
@@ -32,7 +33,7 @@ var player = new SceneObject({
   states: {
     walking
   },
-  initialState: walking,
+  initialState: 'walking',
 
   controls: {
 
@@ -60,60 +61,32 @@ var player = new SceneObject({
   }
 })
 
-console.log(player)
-
-// player.controls.transform = new Transform({
-//   owner: player,
-//   position: {x: 50.0, y: 50.0}
-// })
-
-// player.controls.sprite = new Sprite({
-//   owner: player,
-//   spritesheetName: 'raptorSpritesheet',
-//   spritesheetData: raptorSpritesheetData,
-//   animations: {
-//     stand: ['walk00'],
-//     walk: ['walk00', 'walk01'],
-//     jump: ['flap00'],
-//     fall: ['flap01']
-//   },
-//   initialAnimation: ['walk', true]
-// })
-
-
-// var psit = new SceneObject({
-//   name: 'psittacosaurus',
-//   scene: level01
-// })
-
-// psit.controls.transform = new Transform({
-//   owner: psit,
-//   position: {x: 100, y: 100}
-// })
-
-// psit.controls.sprite = new Sprite({
-//   owner: psit,
-//   spritesheetName: 'raptorSpritesheet',
-//   spritesheetData: raptorSpritesheetData,
-//   animations: {
-//     stand: ['walk00'],
-//     walk: ['walk00', 'walk01'],
-//     jump: ['flap00'],
-//     fall: ['flap01']
-//   }
-// })
-
 var systems = new SceneObject({
   name: 'systems',
-  scene: level01
+  scene: level01,
+
+  states: {
+    normal: new State({
+      update: function(){
+        this.controls.spriteEngine.update()
+      }
+    })
+  },
+  initialState: 'normal',
+
+  controls: {
+    spriteEngine: {
+      kind: SpriteEngine
+    }
+  }
 })
 
-systems.update = function(){
-  this.controls.spriteEngine.update()
-}
+// systems.update = function(){
+//   this.controls.spriteEngine.update()
+// }
 
-systems.controls.spriteEngine = new SpriteEngine({
-  owner: systems
-})
+// systems.controls.spriteEngine = new SpriteEngine({
+//   owner: systems
+// })
 
 module.exports = level01
