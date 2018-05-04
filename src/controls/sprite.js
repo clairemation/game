@@ -20,6 +20,7 @@ class Sprite extends Control{
         this.finished = false
         this.shouldDraw = false
         this.onFinished = function(){}
+        this.setCurrentAnimation(...args.initialAnimation)
     }
 
     update(){

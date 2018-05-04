@@ -28,32 +28,58 @@ level01.enter = function() {
 var player = new SceneObject({
   name: 'player',
   scene: level01,
-  states: {walking}
-})
 
-player.currentState = player.states.walking
+  states: {
+    walking
+  },
+  initialState: walking,
 
-player.controls.transform = new Transform({
-  owner: player,
-  position: {x: 50.0, y: 50.0}
-})
+  controls: {
 
-player.controls.sprite = new Sprite({
-  owner: player,
-  spritesheetName: 'raptorSpritesheet',
-  spritesheetData: raptorSpritesheetData,
-  animations: {
-    stand: ['walk00'],
-    walk: ['walk00', 'walk01'],
-    jump: ['flap00'],
-    fall: ['flap01']
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 50, y: 50}
+      }
+    },
+
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'raptorSpritesheet',
+        spritesheetData: raptorSpritesheetData,
+        animations: {
+          stand: ['walk00'],
+          walk: ['walk00', 'walk01'],
+          jump: ['flap00'],
+          fall: ['flap01']
+        },
+        initialAnimation: ['walk', true]
+      }
+    }
   }
 })
 
-player.controls.sprite.setCurrentAnimation('walk')
-// player.update = function(){
-//   this.controls.sprite.update()
-// }
+console.log(player)
+
+// player.controls.transform = new Transform({
+//   owner: player,
+//   position: {x: 50.0, y: 50.0}
+// })
+
+// player.controls.sprite = new Sprite({
+//   owner: player,
+//   spritesheetName: 'raptorSpritesheet',
+//   spritesheetData: raptorSpritesheetData,
+//   animations: {
+//     stand: ['walk00'],
+//     walk: ['walk00', 'walk01'],
+//     jump: ['flap00'],
+//     fall: ['flap01']
+//   },
+//   initialAnimation: ['walk', true]
+// })
+
 
 // var psit = new SceneObject({
 //   name: 'psittacosaurus',
