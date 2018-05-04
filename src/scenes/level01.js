@@ -26,7 +26,7 @@ var level01 = new Scene({
 })
 
 
-var player = new SceneObject({
+new SceneObject({
   name: 'player',
   scene: level01,
 
@@ -61,19 +61,23 @@ var player = new SceneObject({
   }
 })
 
-var obstacle = new SceneObject({
+new SceneObject({
   name: 'obstacle01',
   scene: level01,
 
   states: {
-    normal: new State({
+    active: new State({
       update: function(){
         this.controls.scroller.update()
+        this.controls.objectPooler.update()
         this.controls.sprite.update()
       }
+    }),
+    inactive: new State({
+      update: function(){}
     })
   },
-  initialState: 'normal',
+  initialState: 'inactive',
 
   controls: {
 
@@ -101,17 +105,22 @@ var obstacle = new SceneObject({
 
     scroller: {
       kind: require('../controls/scroller'),
+    },
+
+    objectPooler: {
+      kind: require('../controls/objectpooler')
     }
   }
 })
 
-var systems = new SceneObject({
+new SceneObject({
   name: 'systems',
   scene: level01,
 
   states: {
     normal: new State({
       update: function(){
+        this.controls.obstaclePoolEngine.update()
         this.controls.spriteEngine.update()
       }
     })
@@ -121,6 +130,9 @@ var systems = new SceneObject({
   controls: {
     spriteEngine: {
       kind: SpriteEngine
+    },
+    obstaclePoolEngine: {
+      kind: require('../controls/objectpool-engine')
     }
   }
 })
