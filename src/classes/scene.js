@@ -10,6 +10,8 @@ class Scene {
         this.objects = []
         this.initialized = false
         this.assetManager = new AssetManager(args.assets)
+        this.enter = args.enter || this.enter
+        this.exit = args.exit || this.exit
     }
 
     setGame(game){

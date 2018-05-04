@@ -17,14 +17,14 @@ var level01 = new Scene({
     arpent: './assets/Arpent.mp3',
     light: './assets/LightInfusor.mp3',
     blop: './assets/blop.wav'
+  },
+  enter: function(){
+    Scene.prototype.enter.call(this).then(() => {
+      this.assetManager.play('blop')
+    })
   }
 })
 
-level01.enter = function() {
-  Scene.prototype.enter.call(this).then(() => {
-    this.assetManager.play('blop')
-  })
-}
 
 var player = new SceneObject({
   name: 'player',
@@ -80,13 +80,5 @@ var systems = new SceneObject({
     }
   }
 })
-
-// systems.update = function(){
-//   this.controls.spriteEngine.update()
-// }
-
-// systems.controls.spriteEngine = new SpriteEngine({
-//   owner: systems
-// })
 
 module.exports = level01
