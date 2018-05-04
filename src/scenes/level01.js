@@ -6,6 +6,7 @@ const Control = require('../classes/control')
 const SpriteEngine = require('../controls/sprite-engine')
 const Transform = require('../controls/transform')
 const raptorSpritesheetData = require('../spritesheet-data/raptor')
+const walking = require('../states/walking')
 
 var level01 = new Scene({
   name: 'Level01',
@@ -26,8 +27,11 @@ level01.enter = function() {
 
 var player = new SceneObject({
   name: 'player',
-  scene: level01
+  scene: level01,
+  states: {walking}
 })
+
+player.currentState = player.states.walking
 
 player.controls.transform = new Transform({
   owner: player,
@@ -47,10 +51,9 @@ player.controls.sprite = new Sprite({
 })
 
 player.controls.sprite.setCurrentAnimation('walk')
-
-player.update = function(){
-  this.controls.sprite.update()
-}
+// player.update = function(){
+//   this.controls.sprite.update()
+// }
 
 // var psit = new SceneObject({
 //   name: 'psittacosaurus',
