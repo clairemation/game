@@ -8,6 +8,7 @@ const SpriteEngine = require('../controls/sprite-engine')
 const Transform = require('../controls/transform')
 const raptorSpritesheetData = require('../spritesheet-data/raptor')
 const walking = require('../states/walking')
+const Player = require('../sceneobjects/player')
 
 var level01 = new Scene({
   name: 'Level01',
@@ -26,39 +27,8 @@ var level01 = new Scene({
 })
 
 
-new SceneObject({
-  name: 'player',
-  scene: level01,
-
-  states: {
-    walking
-  },
-  initialState: 'walking',
-
-  controls: {
-
-    transform: {
-      kind: Transform,
-      args: {
-        position: {x: 50.0, y: 50.0}
-      }
-    },
-
-    sprite: {
-      kind: Sprite,
-      args: {
-        spritesheetName: 'raptorSpritesheet',
-        spritesheetData: raptorSpritesheetData,
-        animations: {
-          stand: ['walk00'],
-          walk: ['walk00', 'walk01'],
-          jump: ['flap00'],
-          fall: ['flap01']
-        },
-        initialAnimation: ['walk', true]
-      }
-    }
-  }
+new Player({
+  scene: level01
 })
 
 new SceneObject({
