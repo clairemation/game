@@ -38,7 +38,7 @@ class Player extends SceneObject{
         collider: {
           kind: require('../controls/collider'),
           args: {
-            hitbox: [0, 0, 30, 30],
+            hitbox: [0, 0, 30, 30]
           }
         }
       }
