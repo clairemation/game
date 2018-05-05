@@ -40,6 +40,10 @@ class Player extends SceneObject{
           args: {
             hitbox: [0, 0, 30, 30]
           }
+        },
+
+        altitude: {
+          kind: require('../controls/altitude')
         }
       }
     }

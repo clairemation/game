@@ -3,6 +3,7 @@ const Scene = require('../classes/scene')
 const SceneObject = require('../classes/sceneobject')
 const Sprite = require('../controls/sprite')
 const renderer = require('../core/renderer')
+const input = require('../core/input')
 const Control = require('../classes/control')
 const SpriteEngine = require('../controls/sprite-engine')
 const Transform = require('../controls/transform')
@@ -22,12 +23,21 @@ var level01 = new Scene({
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
+      input.addKeyDownListener(flap)
     })
+  },
+  exit: function(){
+    input.removeKeyDownListener(flap)
   },
   objects: [
     require('../sceneobjects/player')
   ]
 })
+
+function flap(e){
+  var player = level01.objects[level01.objectIndices['player']]
+  player.controls.altitude.startJump()
+}
 
 // new SceneObject({
 //   name: 'obstacle01',
