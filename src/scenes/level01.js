@@ -77,6 +77,14 @@ new SceneObject({
 
     objectPooler: {
       kind: require('../controls/objectpooler')
+    },
+
+    collider: {
+      kind: require('../controls/collider'),
+      args: {
+        hitbox: [0, 0, 40, 40],
+        onHit: function(){console.log("object hit")}
+      }
     }
   }
 })
@@ -89,6 +97,7 @@ new SceneObject({
     normal: new State({
       update: function(){
         this.controls.obstaclePoolEngine.update()
+        this.controls.collisionEngine.update()
         this.controls.spriteEngine.update()
       }
     })
@@ -101,6 +110,9 @@ new SceneObject({
     },
     obstaclePoolEngine: {
       kind: require('../controls/objectpool-engine')
+    },
+    collisionEngine: {
+      kind: require('../controls/collision-engine')
     }
   }
 })

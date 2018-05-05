@@ -7,6 +7,7 @@ class StateMachine{
         this.name = args.name || "StateMachine" + count++
         this.states = args.states || {}
         this.currentState = this.states[args.initialState]
+        this.currentStateName = args.initialState
 
         this.controls = {}
         var control, controlArgs
@@ -29,6 +30,7 @@ class StateMachine{
     changeState(newStateName, e){
         this.currentState.exit.call(this, e)
         this.currentState = this.states[newStateName]
+        this.currentStateName = newStateName
         this.currentState.enter.call(this, e)
     }
 }

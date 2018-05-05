@@ -33,6 +33,13 @@ class Player extends SceneObject{
             },
             initialAnimation: ['walk', true]
           }
+        },
+
+        collider: {
+          kind: require('../controls/collider'),
+          args: {
+            hitbox: [0, 0, 30, 30],
+          }
         }
       }
     }
