@@ -23,12 +23,10 @@ var level01 = new Scene({
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
     })
-  }
-})
-
-
-new Player({
-  scene: level01
+  },
+  objects: [
+    require('../sceneobjects/player')
+  ]
 })
 
 new SceneObject({

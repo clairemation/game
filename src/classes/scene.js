@@ -12,6 +12,12 @@ class Scene {
         this.assetManager = new AssetManager(args.assets)
         this.enter = args.enter || this.enter
         this.exit = args.exit || this.exit
+        if (args.objects){
+            for (let i = 0; i < args.objects.length; i++){
+                new args.objects[i]({scene: this})
+            }
+
+        }
     }
 
     setGame(game){
