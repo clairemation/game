@@ -2,8 +2,9 @@ const Control = require('../classes/control')
 
 class ObjectPooler extends Control{
     constructor(args){
-        args.name = 'objectpooler'
         super(args)
+        this.name = 'objectpooler'
+        this.tag = args.tag
     }
 
     activate(){

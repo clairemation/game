@@ -38,64 +38,67 @@ function flap(e){
   level01.objects[level01.objectIndices['player']].message('keyDown')
 }
 
-// new SceneObject({
-//   name: 'obstacle01',
-//   scene: level01,
+new SceneObject({
+  name: 'obstacle01',
+  scene: level01,
 
-//   states: {
-//     active: new State({
-//       update: function(){
-//         this.controls.scroller.update()
-//         this.controls.objectPooler.update()
-//         this.controls.sprite.update()
-//       }
-//     }),
-//     inactive: new State({
-//       update: function(){}
-//     })
-//   },
-//   initialState: 'inactive',
+  states: {
+    active: new State({
+      update: function(){
+        this.controls.scroller.update()
+        this.controls.objectPooler.update()
+        this.controls.sprite.update()
+      }
+    }),
+    inactive: new State({
+      update: function(){}
+    })
+  },
+  initialState: 'inactive',
 
-//   controls: {
+  controls: {
 
-//     transform: {
-//       kind: Transform,
-//       args: {
-//         position: {x: 300.0, y: 50.0}
-//       }
-//     },
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 300.0, y: 50.0}
+      }
+    },
 
-//     sprite: {
-//       kind: Sprite,
-//       args: {
-//         spritesheetName: 'raptorSpritesheet',
-//         spritesheetData: raptorSpritesheetData,
-//         animations: {
-//           stand: ['walk00'],
-//           walk: ['walk00', 'walk01'],
-//           jump: ['flap00'],
-//           fall: ['flap01']
-//         },
-//         initialAnimation: ['walk', true]
-//       }
-//     },
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'raptorSpritesheet',
+        spritesheetData: raptorSpritesheetData,
+        animations: {
+          stand: ['walk00'],
+          walk: ['walk00', 'walk01'],
+          jump: ['flap00'],
+          fall: ['flap01']
+        },
+        initialAnimation: ['walk', true]
+      }
+    },
 
-//     scroller: {
-//       kind: require('../controls/scroller'),
-//     },
+    scroller: {
+      kind: require('../controls/scroller'),
+    },
 
-//     objectPooler: {
-//       kind: require('../controls/objectpooler')
-//     },
+    objectPooler: {
+      kind: require('../controls/objectpooler'),
+      args: {
+        tag: 'groundLevel'
+      }
+    },
 
-//     collider: {
-//       kind: require('../controls/collider'),
-//       args: {
-//         hitbox: [0, 0, 40, 40]
-//       }
-//     }
-//   }
-// })
+    collider: {
+      kind: require('../controls/collider'),
+      args: {
+        hitbox: [0, 0, 40, 40]
+      }
+    }
+  }
+})
 
 new SceneObject({
   name: 'systems',
@@ -117,7 +120,10 @@ new SceneObject({
       kind: SpriteEngine
     },
     obstaclePoolEngine: {
-      kind: require('../controls/objectpool-engine')
+      kind: require('../controls/objectpool-engine'),
+      args: {
+        tag: 'groundLevel'
+      }
     },
     collisionEngine: {
       kind: require('../controls/collision-engine')

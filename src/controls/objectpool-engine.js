@@ -3,6 +3,7 @@ const Control = require('../classes/control')
 class ObjectPoolEngine extends Control{
     constructor(args){
         super(args)
+        this.tag = args.tag
         this.nextObjectPlacementTime = 0
         this.activeComponents = []
         this.inactiveComponents = []
@@ -11,7 +12,7 @@ class ObjectPoolEngine extends Control{
     }
 
     init(){
-        this.inactiveComponents = this.owner.scene.getControlsByName('objectpooler')
+        this.inactiveComponents = this.owner.scene.getControlsByName('objectpooler').filter(objPooler => objPooler.tag == this.tag)
         for (let i = 0; i < this.inactiveComponents.length; i++){
             this.inactiveComponents[i].setObjectPool(this)
         }
