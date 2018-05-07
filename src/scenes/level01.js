@@ -35,8 +35,7 @@ var level01 = new Scene({
 })
 
 function flap(e){
-  var player = level01.objects[level01.objectIndices['player']]
-  player.controls.altitude.startJump()
+  level01.objects[level01.objectIndices['player']].message('keyDown')
 }
 
 // new SceneObject({

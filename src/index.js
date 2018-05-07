@@ -13,7 +13,7 @@ var game = new Game({
 })
 
 game.start()
-game.push('titlescreen')
+game.push('level01')
 
 
 

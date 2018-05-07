@@ -7,7 +7,8 @@ class Player extends SceneObject{
       scene: args.scene,
 
       states: {
-        walking: require('../states/walking')
+        walking: require('../states/walking'),
+        flying: require('../states/flying')
       },
       initialState: 'walking',
 
