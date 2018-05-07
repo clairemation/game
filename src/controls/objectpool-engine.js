@@ -7,8 +7,8 @@ class ObjectPoolEngine extends Control{
         this.nextObjectPlacementTime = 0
         this.activeComponents = []
         this.inactiveComponents = []
-        this.step = args.step || 300
-        this.objectFrequency = args.step || 2
+        this.step = args.step || 500
+        this.objectFrequency = args.step || 0.25
     }
 
     init(){

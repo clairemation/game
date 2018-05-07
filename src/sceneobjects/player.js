@@ -10,7 +10,7 @@ class Player extends SceneObject{
         walking: require('../states/walking'),
         flying: require('../states/flying')
       },
-      initialState: 'walking',
+      initialState: 'flying',
 
       controls: {
 

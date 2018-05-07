@@ -15,9 +15,7 @@ var level01 = new Scene({
   name: 'Level01',
   assets: {
     raptorSpritesheet: './assets/raptor.png',
-    bg: './assets/bg.png',
-    arpent: './assets/Arpent.mp3',
-    light: './assets/LightInfusor.mp3',
+    groundSpritesheet: './assets/ground.png',
     blop: './assets/blop.wav'
   },
   enter: function(){
@@ -38,8 +36,70 @@ function flap(e){
   level01.objects[level01.objectIndices['player']].message('keyDown')
 }
 
+// new SceneObject({
+//   name: 'obstacle01',
+//   scene: level01,
+
+//   states: {
+//     active: new State({
+//       update: function(){
+//         this.controls.scroller.update()
+//         this.controls.objectPooler.update()
+//         this.controls.sprite.update()
+//       }
+//     }),
+//     inactive: new State({
+//       update: function(){}
+//     })
+//   },
+//   initialState: 'inactive',
+
+//   controls: {
+
+//     transform: {
+//       kind: Transform,
+//       args: {
+//         position: {x: 300.0, y: 50.0}
+//       }
+//     },
+
+//     sprite: {
+//       kind: Sprite,
+//       args: {
+//         spritesheetName: 'raptorSpritesheet',
+//         spritesheetData: raptorSpritesheetData,
+//         animations: {
+//           stand: ['walk00'],
+//           walk: ['walk00', 'walk01'],
+//           jump: ['flap00'],
+//           fall: ['flap01']
+//         },
+//         initialAnimation: ['walk', true]
+//       }
+//     },
+
+//     scroller: {
+//       kind: require('../controls/scroller'),
+//     },
+
+//     objectPooler: {
+//       kind: require('../controls/objectpooler'),
+//       args: {
+//         tag: 'groundLevel'
+//       }
+//     },
+
+//     collider: {
+//       kind: require('../controls/collider'),
+//       args: {
+//         hitbox: [0, 0, 40, 40]
+//       }
+//     }
+//   }
+// })
+
 new SceneObject({
-  name: 'obstacle01',
+  name: 'ground',
   scene: level01,
 
   states: {
@@ -68,15 +128,12 @@ new SceneObject({
     sprite: {
       kind: Sprite,
       args: {
-        spritesheetName: 'raptorSpritesheet',
-        spritesheetData: raptorSpritesheetData,
+        spritesheetName: 'groundSpritesheet',
+        spritesheetData: require('../spritesheet-data/ground'),
         animations: {
-          stand: ['walk00'],
-          walk: ['walk00', 'walk01'],
-          jump: ['flap00'],
-          fall: ['flap01']
+          default: ['default'],
         },
-        initialAnimation: ['walk', true]
+        initialAnimation: ['default', true]
       }
     },
 
@@ -87,18 +144,200 @@ new SceneObject({
     objectPooler: {
       kind: require('../controls/objectpooler'),
       args: {
-        tag: 'groundLevel'
+        tag: 'ground',
+        originalPosition: {x: 360, y: 150}
       }
     },
 
     collider: {
       kind: require('../controls/collider'),
       args: {
-        hitbox: [0, 0, 40, 40]
+        hitbox: [0, 0, 128, 50]
       }
     }
   }
 })
+
+new SceneObject({
+  name: 'ground',
+  scene: level01,
+
+  states: {
+    active: new State({
+      update: function(){
+        this.controls.scroller.update()
+        this.controls.objectPooler.update()
+        this.controls.sprite.update()
+      }
+    }),
+    inactive: new State({
+      update: function(){}
+    })
+  },
+  initialState: 'inactive',
+
+  controls: {
+
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 300.0, y: 50.0}
+      }
+    },
+
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'groundSpritesheet',
+        spritesheetData: require('../spritesheet-data/ground'),
+        animations: {
+          default: ['default'],
+        },
+        initialAnimation: ['default', true]
+      }
+    },
+
+    scroller: {
+      kind: require('../controls/scroller'),
+    },
+
+    objectPooler: {
+      kind: require('../controls/objectpooler'),
+      args: {
+        tag: 'ground',
+        originalPosition: {x: 360, y: 150}
+      }
+    },
+
+    collider: {
+      kind: require('../controls/collider'),
+      args: {
+        hitbox: [0, 0, 128, 50]
+      }
+    }
+  }
+})
+
+new SceneObject({
+  name: 'ground',
+  scene: level01,
+
+  states: {
+    active: new State({
+      update: function(){
+        this.controls.scroller.update()
+        this.controls.objectPooler.update()
+        this.controls.sprite.update()
+      }
+    }),
+    inactive: new State({
+      update: function(){}
+    })
+  },
+  initialState: 'inactive',
+
+  controls: {
+
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 300.0, y: 50.0}
+      }
+    },
+
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'groundSpritesheet',
+        spritesheetData: require('../spritesheet-data/ground'),
+        animations: {
+          default: ['default'],
+        },
+        initialAnimation: ['default', true]
+      }
+    },
+
+    scroller: {
+      kind: require('../controls/scroller'),
+    },
+
+    objectPooler: {
+      kind: require('../controls/objectpooler'),
+      args: {
+        tag: 'ground',
+        originalPosition: {x: 360, y: 150}
+      }
+    },
+
+    collider: {
+      kind: require('../controls/collider'),
+      args: {
+        hitbox: [0, 0, 128, 50]
+      }
+    }
+  }
+})
+
+new SceneObject({
+  name: 'ground',
+  scene: level01,
+
+  states: {
+    active: new State({
+      update: function(){
+        this.controls.scroller.update()
+        this.controls.objectPooler.update()
+        this.controls.sprite.update()
+      }
+    }),
+    inactive: new State({
+      update: function(){}
+    })
+  },
+  initialState: 'inactive',
+
+  controls: {
+
+    transform: {
+      kind: Transform,
+      args: {
+        position: {x: 300.0, y: 50.0}
+      }
+    },
+
+    sprite: {
+      kind: Sprite,
+      args: {
+        spritesheetName: 'groundSpritesheet',
+        spritesheetData: require('../spritesheet-data/ground'),
+        animations: {
+          default: ['default'],
+        },
+        initialAnimation: ['default', true]
+      }
+    },
+
+    scroller: {
+      kind: require('../controls/scroller'),
+    },
+
+    objectPooler: {
+      kind: require('../controls/objectpooler'),
+      args: {
+        tag: 'ground',
+        originalPosition: {x: 360, y: 150}
+      }
+    },
+
+    collider: {
+      kind: require('../controls/collider'),
+      args: {
+        hitbox: [0, 0, 128, 50]
+      }
+    }
+  }
+})
+
 
 new SceneObject({
   name: 'systems',
@@ -107,7 +346,8 @@ new SceneObject({
   states: {
     normal: new State({
       update: function(){
-        this.controls.obstaclePoolEngine.update()
+        // this.controls.groundLevelObstaclePool.update()
+        this.controls.groundPool.update()
         this.controls.collisionEngine.update()
         this.controls.spriteEngine.update()
       }
@@ -119,10 +359,16 @@ new SceneObject({
     spriteEngine: {
       kind: SpriteEngine
     },
-    obstaclePoolEngine: {
+    // groundLevelObstaclePool: {
+    //   kind: require('../controls/objectpool-engine'),
+    //   args: {
+    //     tag: 'groundLevel'
+    //   }
+    // },
+    groundPool: {
       kind: require('../controls/objectpool-engine'),
       args: {
-        tag: 'groundLevel'
+        tag: 'ground'
       }
     },
     collisionEngine: {

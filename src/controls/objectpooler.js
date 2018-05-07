@@ -5,11 +5,13 @@ class ObjectPooler extends Control{
         super(args)
         this.name = 'objectpooler'
         this.tag = args.tag
+        this.originalPosition = args.originalPosition
     }
 
     activate(){
         this.owner.changeState('active')
-        this.owner.controls.transform.position.x = 300
+        this.owner.controls.transform.position.x = this.originalPosition.x
+        this.owner.controls.transform.position.y = this.originalPosition.y
     }
 
     setObjectPool(value){
@@ -22,7 +24,7 @@ class ObjectPooler extends Control{
     }
 
     update(){
-        if (this.owner.controls.transform.position.x < -100){
+        if (this.owner.controls.transform.position.x < -128){
             this.deactivate()
         }
     }
