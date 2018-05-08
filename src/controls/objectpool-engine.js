@@ -11,8 +11,7 @@ class ObjectPoolEngine extends Control{
         this.deltaPixels = 0
         this.lastObjectWidth = 0
         this.layer = args.layer || 'foreground'
-        this.step = args.step || 500
-        this.objectFrequency = args.step || 0.25
+        this.objectFrequency = args.objectFrequency || 0.25
     }
 
     init(){
