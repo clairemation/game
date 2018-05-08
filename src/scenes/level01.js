@@ -33,6 +33,9 @@ var level01 = new Scene({
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
+    require('../sceneobjects/ground'),
+    require('../sceneobjects/ground'),
+    require('../sceneobjects/ground'),
     require('../sceneobjects/player')
   ]
 })
