@@ -13,6 +13,10 @@ class Transform extends Control{
     return [this.position.x, this.position.y, this.position.x + this.width, this.position.y + this.height]
   }
 
+  getCenter(){
+    return {x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}
+  }
+
   moveUp(amt){
     this.position.y -= amt
   }

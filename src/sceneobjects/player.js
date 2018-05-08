@@ -45,8 +45,10 @@ class Player extends SceneObject{
             hitbox: [0, 0, 48, 34],
             onHit: function(other){
               if (other.owner.tag == 'ground'){
-                this.owner.controls.transform.position.y = other.owner.controls.transform.position.y - this.owner.controls.transform.height
-                this.owner.changeState('walking')
+                if (this.owner.controls.transform.position.y <= other.owner.controls.transform.position.y){
+                  this.owner.controls.transform.position.y = other.owner.controls.transform.position.y - this.owner.controls.transform.height
+                  this.owner.changeState('walking')
+                }
               }
             }
           },
@@ -63,6 +65,8 @@ class Player extends SceneObject{
               return this.owner.controls.transform.getBounds()[3] > Game.getScreenHeight()
             },
             result: function(){
+              this.owner.scene.game.stop()
+              console.log("LOSE")
             }
           }
         }
