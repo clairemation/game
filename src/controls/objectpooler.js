@@ -12,7 +12,8 @@ class ObjectPooler extends Control{
     activate(){
         this.owner.changeState('active')
         this.owner.controls.transform.position.x = this.spawnPosition.x
-        this.owner.controls.transform.position.y = this.spawnPosition.y
+        var rand = Math.abs(Math.floor(Math.random() * 50))
+        this.owner.controls.transform.position.y = this.spawnPosition.y + rand
     }
 
     setObjectPool(value){
