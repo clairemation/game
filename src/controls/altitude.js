@@ -11,12 +11,12 @@ class Altitude extends Control{
   }
 
   startJump(){
-    this.yAccel -= 9
+    this.yAccel -= 8
     this.owner.changeState('flying')
   }
 
   startBounce(){
-    this.yAccel = -7
+    this.yAccel = -5
   }
 
   flap(){
@@ -29,9 +29,9 @@ class Altitude extends Control{
   }
 
   update(){
-      this.yAccel = Math.max(this.yAccel, -9)
+      // this.yAccel = Math.max(this.yAccel, -9)
       this.owner.controls.transform.moveDown(this.yAccel * (this.getGame().dt / 30))
-      this.yAccel += 0.45 * (this.getGame().dt / 30)
+      this.yAccel += 0.6 * (this.getGame().dt / 30)
   }
 }
 
