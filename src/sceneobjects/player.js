@@ -47,6 +47,7 @@ class Player extends SceneObject{
               if (other.owner.tag == 'ground'){
                 if (this.owner.controls.transform.prevPosition.y + this.owner.controls.transform.height <= other.owner.controls.transform.position.y){
                   this.owner.controls.transform.position.y = other.owner.controls.transform.position.y - this.owner.controls.transform.height
+                  this.owner.controls.altitude.resetFall()
                   this.owner.changeState('walking')
                 }
               }

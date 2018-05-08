@@ -28,6 +28,9 @@ class StateMachine{
     }
 
     changeState(newStateName, e){
+        if (this.currentStateName == newStateName){
+            return
+        }
         this.currentState.exit.call(this, e)
         this.currentState = this.states[newStateName]
         this.currentStateName = newStateName
