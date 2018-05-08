@@ -16,10 +16,22 @@ var input = {
     keyDownHandlers.push(handler)
     keyDownHandlerIndices[handler] = keyDownHandlers.length - 1
   },
+
   removeKeyDownListener: function(handler){
     keyDownHandlers[keyDownHandlerIndices[handler]] = keyDownHandlers[keyDownHandlers.length - 1]
     keyDownHandlers.splice(keyDownHandlers.length - 1, 1)
     delete keyDownHandlerIndices[handler]
+  },
+
+  addKeyUpListener: function(handler){
+    keyUpHandlers.push(handler)
+    keyUpHandlerIndices[handler] = keyUpHandlers.length - 1
+  },
+
+  removeKeyUpListener: function(handler){
+    keyUpHandlers[keyDownHandlerIndices[handler]] = keyUpHandlers[keyUpHandlers.length - 1]
+    keyUpHandlers.splice(keyUpHandlers.length - 1, 1)
+    delete keyUpHandlerIndices[handler]
   }
 }
 

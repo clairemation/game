@@ -3,6 +3,7 @@ const State = require('../classes/state')
 var walking = new State({
   enter: function(){
     this.controls.altitude.resetFall()
+    this.controls.sprite.setCurrentAnimation('walk')
   },
   update: function(){
     this.controls.altitude.update()

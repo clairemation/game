@@ -43,6 +43,9 @@ class Sprite extends Control{
     }
 
     setCurrentAnimation(name, looping = true, onFinished = function(){}){
+        if (this.currentAnimation == this.animations[name]){
+            return
+        }
         this.looping = looping
         this.finished = false
         this.onFinished = onFinished

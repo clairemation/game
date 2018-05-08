@@ -13,6 +13,7 @@ class Altitude extends Control{
   startJump(){
     this.yAccel -= 12
     this.owner.changeState('flying')
+    this.owner.controls.sprite.setCurrentAnimation('jump')
   }
 
   startBounce(){
@@ -21,11 +22,11 @@ class Altitude extends Control{
 
   flap(){
     this.yAccel -= Math.max(0, this.yAccel * 0.9)
-    // this.owner.controls.sprite.setCurrentAnimation("jump")
+    this.owner.controls.sprite.setCurrentAnimation("jump")
   }
 
   fall(){
-    // this.owner.controls.sprite.setCurrentAnimation("fall")
+    this.owner.controls.sprite.setCurrentAnimation("fall")
   }
 
   update(){

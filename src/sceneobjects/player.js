@@ -32,8 +32,8 @@ class Player extends SceneObject{
             animations: {
               stand: ['walk00'],
               walk: ['walk00', 'walk01'],
-              jump: ['flap00'],
-              fall: ['flap01']
+              fall: ['flap00'],
+              jump: ['flap01']
             },
             initialAnimation: ['walk', true]
           }

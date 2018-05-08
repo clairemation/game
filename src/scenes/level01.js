@@ -22,10 +22,12 @@ var level01 = new Scene({
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
       input.addKeyDownListener(flap)
+      input.addKeyUpListener(release)
     })
   },
   exit: function(){
     input.removeKeyDownListener(flap)
+    input.removeKeyUpListener(release)
   },
   objects: [
     require('../sceneobjects/pre-systems'),
@@ -42,6 +44,10 @@ var level01 = new Scene({
 
 function flap(e){
   level01.getObjectByName('player').message('keyDown')
+}
+
+function release(e){
+  level01.getObjectByName('player').message('keyUp')
 }
 
 // new SceneObject({
