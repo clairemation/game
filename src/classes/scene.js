@@ -58,7 +58,7 @@ class Scene {
     }
 
     getObjectByName(name){
-        return objects[objectIndices[name]]
+        return this.objects[this.objectIndices[name]]
     }
 
     registerObject(obj){

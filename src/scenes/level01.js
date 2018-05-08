@@ -36,7 +36,7 @@ var level01 = new Scene({
 })
 
 function flap(e){
-  level01.objects[level01.objectIndices['player']].message('keyDown')
+  level01.getObjectByName('player').message('keyDown')
 }
 
 // new SceneObject({
