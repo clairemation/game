@@ -45,7 +45,7 @@ class Game {
     screenWidth = value
   }
 
-  static getScreenHeight(value){
+  static setScreenHeight(value){
     screenWidth = value
   }
 

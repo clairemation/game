@@ -1,4 +1,5 @@
 const SceneObject = require('../classes/sceneobject')
+const Game = require('../classes/game')
 
 class Player extends SceneObject{
   constructor(args){
@@ -45,6 +46,18 @@ class Player extends SceneObject{
 
         altitude: {
           kind: require('../controls/altitude')
+        },
+
+        loseChecker: {
+          kind: require('../controls/condition-checker'),
+          args: {
+            condition: function(){
+              return this.owner.controls.transform.getBounds()[3] > Game.getScreenHeight()
+            },
+            result: function(){
+              console.log('lose')
+            }
+          }
         }
       }
     }

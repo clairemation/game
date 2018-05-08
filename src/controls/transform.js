@@ -5,6 +5,12 @@ class Transform extends Control{
     super(args)
     this.name = "transform"
     this.position = args.position || {x: 0, y:0}
+    this.width = args.width || 0
+    this.height = args.height || 0
+  }
+
+  getBounds(){
+    return [this.position.x, this.position.y, this.position.x + this.width, this.position.y + this.height]
   }
 
   moveUp(amt){
