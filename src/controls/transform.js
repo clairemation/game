@@ -7,6 +7,7 @@ class Transform extends Control{
     this.position = args.position || {x: 0, y:0}
     this.width = args.width || 0
     this.height = args.height || 0
+    this.prevPosition = {x: this.position.x, y: this.position.y}
   }
 
   getBounds(){
@@ -18,19 +19,28 @@ class Transform extends Control{
   }
 
   moveUp(amt){
+    this._setPrevPosition()
     this.position.y -= amt
   }
 
   moveDown(amt){
+    this._setPrevPosition()
     this.position.y += amt
   }
 
   moveLeft(amt){
+    this._setPrevPosition()
     this.position.x -= amt
   }
 
   moveRight(amt){
+    this._setPrevPosition()
     this.position.x += amt
+  }
+
+  _setPrevPosition(){
+    this.prevPosition.x = this.position.x
+    this.prevPosition.y = this.position.y
   }
 }
 

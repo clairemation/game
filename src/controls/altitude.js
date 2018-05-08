@@ -7,11 +7,11 @@ class Altitude extends Control{
   }
 
   resetFall(){
-    this.yAccel = 0
+    this.yAccel = 4
   }
 
   startJump(){
-    this.yAccel -= 8
+    this.yAccel -= 12
     this.owner.changeState('flying')
   }
 

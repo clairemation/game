@@ -45,7 +45,7 @@ class Player extends SceneObject{
             hitbox: [0, 0, 48, 34],
             onHit: function(other){
               if (other.owner.tag == 'ground'){
-                if (this.owner.controls.transform.position.y <= other.owner.controls.transform.position.y){
+                if (this.owner.controls.transform.prevPosition.y + this.owner.controls.transform.height <= other.owner.controls.transform.position.y){
                   this.owner.controls.transform.position.y = other.owner.controls.transform.position.y - this.owner.controls.transform.height
                   this.owner.changeState('walking')
                 }
