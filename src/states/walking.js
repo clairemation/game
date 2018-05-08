@@ -1,6 +1,9 @@
 const State = require('../classes/state')
 
 var walking = new State({
+  enter: function(){
+    this.controls.altitude.resetFall()
+  },
   update: function(){
     this.controls.altitude.update()
     this.controls.loseChecker.update()

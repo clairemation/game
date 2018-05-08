@@ -5,10 +5,8 @@ class Collider extends Control{
     args.name = 'collider'
     super(args)
     this.hitbox = args.hitbox
-    this.onHit = args.onHit || this.onHit
+    this.onHit = args.onHit || (() => {})
   }
-
-  onHit(){}
 }
 
 module.exports = Collider

@@ -18,7 +18,9 @@ class Player extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 50.0, y: 50.0}
+            position: {x: 50.0, y: 50.0},
+            width: 48,
+            height: 34
           }
         },
 
@@ -40,8 +42,14 @@ class Player extends SceneObject{
         collider: {
           kind: require('../controls/collider'),
           args: {
-            hitbox: [0, 0, 30, 30]
-          }
+            hitbox: [0, 0, 48, 34],
+            onHit: function(other){
+              if (other.owner.tag == 'ground'){
+                this.owner.controls.transform.position.y = other.owner.controls.transform.position.y - this.owner.controls.transform.height
+                this.owner.changeState('walking')
+              }
+            }
+          },
         },
 
         altitude: {
@@ -55,7 +63,6 @@ class Player extends SceneObject{
               return this.owner.controls.transform.getBounds()[3] > Game.getScreenHeight()
             },
             result: function(){
-              console.log('lose')
             }
           }
         }

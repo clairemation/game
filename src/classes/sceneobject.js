@@ -4,6 +4,7 @@ class SceneObject extends StateMachine{
     constructor(args){
         super(args)
         this.scene = args.scene
+        this.tag = args.tag || ''
         this.scene.registerObject(this)
     }
 
