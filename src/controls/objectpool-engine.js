@@ -9,10 +9,12 @@ class ObjectPoolEngine extends Control{
         this.inactiveComponents = []
         this.scrollingEngine = null
         this.deltaPixels = 0
-        this.lastObjectWidth = 0
+        this.waitTime = 0
         this.layer = args.layer || 'foreground'
-        this.objectFrequency = args.objectFrequency || 0.1
-        this.step = args.step || 128
+        this.objectFrequency = args.objectFrequency || 0.5
+        this.minInterval = args.minInterval || 50
+        this.maxInterval = args.maxInterval || 200
+        this.sinceLastObject = 0
     }
 
     init(){
@@ -36,11 +38,8 @@ class ObjectPoolEngine extends Control{
     update(){
 
         this.deltaPixels += this.scrollingEngine.scrollAmt
-        if (this.deltaPixels < this.lastObjectWidth - 3){ //Fudge factor
+        if (this.deltaPixels < this.waitTime - 2){ //Fudge factor
             return
-        }
-        if (Math.abs(this.deltaPixels) - this.step < Math.E){
-            // return
         }
 
         var rand = Math.random()
@@ -50,10 +49,13 @@ class ObjectPoolEngine extends Control{
             if (obj) {
                 this.activeComponents.push(obj)
                 obj.activate()
-                this.lastObjectWidth = obj.owner.controls.transform.width
-                // this.deltaPixels = 0
+                this.waitTime = obj.owner.controls.transform.width
+                this.deltaPixels = 0
 
             }
+        } else {
+            this.waitTime = this.minInterval
+            this.deltaPixels = 0
         }
     }
 }
