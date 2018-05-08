@@ -5,7 +5,7 @@ class ScrollingEngine extends Control{
   constructor(args){
     super(args)
     this.name = 'scrollingEngine'
-    this.tag = args.tag || ''
+    this.layer = args.layer || 'foreground'
     this.components = []
     this.scrollRate = args.scrollRate || 0.25
     this.scrollAmt = 0

@@ -4,12 +4,13 @@ class Scroller extends Control{
     constructor(args){
         super(args)
         this.name = 'scroller'
-        this.tag = args.tag || ''
-        this.engine = undefined
+        this.layer = args.layer || 'foreground'
+        this.multiplier = args.multiplier || 1.0
+        this.engine = null
     }
 
     update(dt){
-        this.owner.controls.transform.moveLeft(this.engine.scrollAmt)
+        this.owner.controls.transform.moveLeft(Math.ceil(this.engine.scrollAmt * this.multiplier))
     }
 }
 

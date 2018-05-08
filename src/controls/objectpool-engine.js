@@ -7,15 +7,23 @@ class ObjectPoolEngine extends Control{
         this.nextObjectPlacementTime = 0
         this.activeComponents = []
         this.inactiveComponents = []
+        this.scrollingEngine = null
+        this.layer = args.layer || 'foreground'
         this.step = args.step || 500
         this.objectFrequency = args.step || 0.25
     }
 
     init(){
-        this.inactiveComponents = this.owner.scene.getControlsByName('objectpooler').filter(objPooler => objPooler.tag == this.tag)
+        var components = this.owner.scene.getControlsByName('objectpooler').filter(objPooler => objPooler.tag == this.tag)
+        this.inactiveComponents = components.filter(c => c.owner.currentStateName == 'inactive')
+        this.activeComponents = components.filter(c => c.owner.currentStateName != 'inactive')
         for (let i = 0; i < this.inactiveComponents.length; i++){
             this.inactiveComponents[i].setObjectPool(this)
         }
+        for (let i = 0; i < this.activeComponents.length; i++){
+            this.activeComponents[i].setObjectPool(this)
+        }
+        this.scrollingEngine = this.owner.scene.getControlsByName('scrollingEngine').find(e => e.layer == this.layer)
     }
 
     returnToPool(obj){
