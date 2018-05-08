@@ -13,8 +13,8 @@ class ObjectPoolEngine extends Control{
         this.layer = args.layer || 'foreground'
         this.objectFrequency = args.objectFrequency || 0.5
         this.minInterval = args.minInterval || 50
-        this.maxInterval = args.maxInterval || 200
-        this.sinceLastObject = 0
+        this.maxInterval = args.maxInterval || 100
+        this.intervalWidth = 0
     }
 
     init(){
@@ -42,7 +42,7 @@ class ObjectPoolEngine extends Control{
             return
         }
 
-        var rand = Math.random()
+        var rand = this.intervalWidth >= this.maxInterval ? 0 : Math.random()
         if (rand < this.objectFrequency) {
             var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
             var obj = this.inactiveComponents.splice(r, 1)[0]
@@ -51,11 +51,13 @@ class ObjectPoolEngine extends Control{
                 obj.activate()
                 this.waitTime = obj.owner.controls.transform.width
                 this.deltaPixels = 0
+                this.intervalWidth = 0
 
             }
         } else {
             this.waitTime = this.minInterval
             this.deltaPixels = 0
+            this.intervalWidth += this.minInterval
         }
     }
 }
