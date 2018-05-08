@@ -1,17 +1,18 @@
 const Control = require('../classes/control')
+const Game = require('../classes/game')
 
 class ObjectPooler extends Control{
     constructor(args){
         super(args)
         this.name = 'objectpooler'
         this.tag = args.tag
-        this.originalPosition = args.originalPosition
+        this.spawnPosition = args.spawnPosition || {x: Game.getScreenWidth(), y: 200}
     }
 
     activate(){
         this.owner.changeState('active')
-        this.owner.controls.transform.position.x = this.originalPosition.x
-        this.owner.controls.transform.position.y = this.originalPosition.y
+        this.owner.controls.transform.position.x = this.spawnPosition.x
+        this.owner.controls.transform.position.y = this.spawnPosition.y
     }
 
     setObjectPool(value){

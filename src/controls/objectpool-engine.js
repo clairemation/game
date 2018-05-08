@@ -8,6 +8,8 @@ class ObjectPoolEngine extends Control{
         this.activeComponents = []
         this.inactiveComponents = []
         this.scrollingEngine = null
+        this.deltaPixels = 0
+        this.lastObjectWidth = 0
         this.layer = args.layer || 'foreground'
         this.step = args.step || 500
         this.objectFrequency = args.step || 0.25
@@ -32,17 +34,22 @@ class ObjectPoolEngine extends Control{
     }
 
     update(){
-        if (this.getGame().currentTime >= this.nextObjectPlacementTime){
-            var rand = Math.random()
-            if (rand < this.objectFrequency) {
-                var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
-                var obj = this.inactiveComponents.splice(r, 1)[0]
-                if (obj) {
-                    this.activeComponents.push(obj)
-                    obj.activate()
-                    this.nextObjectPlacementTime = this.getGame().currentTime + this.step
 
-                }
+        this.deltaPixels += this.scrollingEngine.scrollAmt
+        if (this.deltaPixels < this.lastObjectWidth - 3){ //Fudge factor
+            return
+        }
+
+        var rand = Math.random()
+        if (rand < this.objectFrequency) {
+            var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
+            var obj = this.inactiveComponents.splice(r, 1)[0]
+            if (obj) {
+                this.activeComponents.push(obj)
+                obj.activate()
+                this.lastObjectWidth = obj.owner.controls.transform.width
+                this.deltaPixels = 0
+
             }
         }
     }

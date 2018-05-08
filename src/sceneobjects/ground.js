@@ -20,7 +20,9 @@ class Ground extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 300.0, y: 50.0}
+            position: {x: 300.0, y: 50.0},
+            width: 128,
+            height: 50
           }
         },
 
