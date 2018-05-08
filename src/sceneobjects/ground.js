@@ -38,6 +38,9 @@ class Ground extends SceneObject{
 
         scroller: {
           kind: require('../controls/scroller'),
+          args: {
+            tag: 'foreground'
+          }
         },
 
         objectPooler: {

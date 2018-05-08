@@ -1,19 +1,15 @@
 const Control = require('../classes/control')
 
-var fgScrollSpeed = 0.25
-
 class Scroller extends Control{
     constructor(args){
         super(args)
         this.name = 'scroller'
-    }
-
-    static setFgScrollSpeed(amt){
-        fgScrollSpeed = amt
+        this.tag = args.tag || ''
+        this.engine = undefined
     }
 
     update(dt){
-        this.owner.controls.transform.moveLeft(fgScrollSpeed * this.getGame().dt)
+        this.owner.controls.transform.moveLeft(this.engine.scrollAmt)
     }
 }
 

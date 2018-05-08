@@ -28,6 +28,7 @@ var level01 = new Scene({
     input.removeKeyDownListener(flap)
   },
   objects: [
+    require('../sceneobjects/pre-systems'),
     require('../sceneobjects/player'),
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
@@ -104,7 +105,7 @@ function flap(e){
 
 
 new SceneObject({
-  name: 'systems',
+  name: 'post-systems',
   scene: level01,
 
   states: {
