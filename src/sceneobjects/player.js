@@ -20,7 +20,7 @@ class Player extends SceneObject{
           args: {
             position: {x: 50.0, y: 50.0},
             width: 48,
-            height: 34
+            height: 33
           }
         },
 
