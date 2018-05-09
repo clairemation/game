@@ -12,8 +12,8 @@ class ObjectPoolEngine extends Control{
         this.waitTime = 0
         this.layer = args.layer || 'foreground'
         this.objectFrequency = args.objectFrequency || 0.5
-        this.minInterval = args.minInterval || 50
-        this.maxInterval = args.maxInterval || 100
+        this.minInterval = args.minInterval || 75
+        this.maxInterval = args.maxInterval || 90
         this.intervalWidth = 0
     }
 
