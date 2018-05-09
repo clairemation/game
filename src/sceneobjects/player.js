@@ -9,7 +9,8 @@ class Player extends SceneObject{
 
       states: {
         walking: require('../states/walking'),
-        flying: require('../states/flying')
+        flying: require('../states/flying'),
+        dying: require('../states/dying')
       },
       initialState: 'flying',
 
@@ -28,12 +29,13 @@ class Player extends SceneObject{
           kind: require('../controls/sprite'),
           args: {
             spritesheetName: 'raptorSpritesheet',
-            spritesheetData: require('../spritesheet-data/raptor'),
+            spritesheetData: require('../spritesheet-data/raptorSpritesheet'),
             animations: {
               stand: ['walk00'],
               walk: ['walk00', 'walk01'],
               fall: ['flap00'],
-              jump: ['flap01']
+              jump: ['flap01'],
+              hurt: ['hurt']
             },
             initialAnimation: ['walk', true]
           }
@@ -66,7 +68,7 @@ class Player extends SceneObject{
               return this.owner.controls.transform.getBounds()[3] > Game.getScreenHeight()
             },
             result: function(){
-              this.owner.scene.game.stop()
+              this.owner.changeState('dying')
               console.log("LOSE")
             }
           }

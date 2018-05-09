@@ -14,10 +14,11 @@ const Player = require('../sceneobjects/player')
 var level01 = new Scene({
   name: 'Level01',
   assets: {
-    raptorSpritesheet: './assets/raptor.png',
+    raptorSpritesheet: './assets/raptorSpritesheet.png',
     groundSpritesheet: './assets/ground.png',
     background: './assets/bg.png',
-    blop: './assets/blop.wav'
+    blop: './assets/blop.wav',
+    screech: './assets/pusou.wav'
   },
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {
