@@ -16,6 +16,7 @@ var level01 = new Scene({
   assets: {
     raptorSpritesheet: './assets/raptor.png',
     groundSpritesheet: './assets/ground.png',
+    background: './assets/bg.png',
     blop: './assets/blop.wav'
   },
   enter: function(){
@@ -31,6 +32,8 @@ var level01 = new Scene({
   },
   objects: [
     require('../sceneobjects/pre-systems'),
+    require('../sceneobjects/background'),
+    require('../sceneobjects/background'),
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),

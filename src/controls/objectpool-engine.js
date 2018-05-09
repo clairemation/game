@@ -12,7 +12,7 @@ class ObjectPoolEngine extends Control{
         this.deltaPixels = 0
         this.waitTime = 0
         this.layer = args.layer || 'foreground'
-        this.objectFrequency = args.objectFrequency || 0.5
+        this.objectFrequency = args.objectFrequency || 0.75
         this.minInterval = args.minInterval || 75
         this.maxInterval = args.maxInterval || 90
         this.lastOffset = 0

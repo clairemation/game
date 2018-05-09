@@ -11,6 +11,7 @@ class PreSystems extends SceneObject{
         normal: new State({
           update: function(){
             this.controls.foregroundScrollingEngine.update()
+            this.controls.backgroundScrollingEngine.update()
           }
         })
       },
@@ -20,7 +21,15 @@ class PreSystems extends SceneObject{
         foregroundScrollingEngine: {
           kind: require('../controls/scrolling-engine'),
           args: {
-            tag: 'foreground'
+            layer: 'foreground',
+            multiplier: 1.0
+          }
+        },
+        backgroundScrollingEngine: {
+          kind: require('../controls/scrolling-engine'),
+          args: {
+            layer: 'background',
+            multiplier: 0.25
           }
         }
       }
