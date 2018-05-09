@@ -9,10 +9,10 @@ class ObjectPooler extends Control{
         this.spawnPosition = args.spawnPosition || {x: Game.getScreenWidth(), y: 200}
     }
 
-    activate(){
+    activate(yOffset){
         this.owner.changeState('active')
         this.owner.controls.transform.position.x = this.spawnPosition.x
-        this.owner.controls.transform.position.y = this.spawnPosition.y
+        this.owner.controls.transform.position.y = this.spawnPosition.y - yOffset
     }
 
     setObjectPool(value){

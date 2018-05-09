@@ -1,4 +1,5 @@
 const Control = require('../classes/control')
+const Math2 = require('../lib/math2')
 
 class ObjectPoolEngine extends Control{
     constructor(args){
@@ -14,6 +15,7 @@ class ObjectPoolEngine extends Control{
         this.objectFrequency = args.objectFrequency || 0.5
         this.minInterval = args.minInterval || 75
         this.maxInterval = args.maxInterval || 90
+        this.lastOffset = 0
         this.intervalWidth = 0
     }
 
@@ -48,7 +50,9 @@ class ObjectPoolEngine extends Control{
             var obj = this.inactiveComponents.splice(r, 1)[0]
             if (obj) {
                 this.activeComponents.push(obj)
-                obj.activate()
+                var offset = this.intervalWidth == 0 ? this.lastOffset : Math2.clamp(this.lastOffset + Math.ceil(Math.random() * 50 - 25), 10, 200)
+                this.lastOffset = offset
+                obj.activate(offset)
                 this.waitTime = obj.owner.controls.transform.width
                 this.deltaPixels = 0
                 this.intervalWidth = 0
