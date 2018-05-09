@@ -18,7 +18,7 @@ class Player extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 50.0, y: 50.0},
+            position: {x: 50.0, y: 167.0},
             width: 48,
             height: 33
           }

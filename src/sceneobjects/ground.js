@@ -13,14 +13,14 @@ class Ground extends SceneObject{
         active: require('../states/activeGround'),
         inactive: require('../states/inactive')
       },
-      initialState: 'inactive',
+      initialState: 'active',
 
       controls: {
 
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 300.0, y: 50.0},
+            position: {x: 320 - 128 * count, y: 200.0},
             width: 128,
             height: 50
           }
