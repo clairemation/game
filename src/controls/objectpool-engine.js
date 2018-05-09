@@ -15,6 +15,8 @@ class ObjectPoolEngine extends Control{
         this.objectFrequency = args.objectFrequency || 0.75
         this.minInterval = args.minInterval || 75
         this.maxInterval = args.maxInterval || 90
+        this.minOffset = args.minOffset || 0
+        this.maxOffset = args.maxOffset || 0
         this.lastOffset = 0
         this.intervalWidth = 0
     }
@@ -50,7 +52,7 @@ class ObjectPoolEngine extends Control{
             var obj = this.inactiveComponents.splice(r, 1)[0]
             if (obj) {
                 this.activeComponents.push(obj)
-                var offset = this.intervalWidth == 0 ? this.lastOffset : Math2.clamp(this.lastOffset + Math.ceil(Math.random() * 50 - 25), 10, 200)
+                var offset = this.intervalWidth == 0 ? this.lastOffset : Math2.clamp(this.lastOffset + Math.ceil(Math.random() * 50 - 25), this.minOffset, this.maxOffset)
                 this.lastOffset = offset
                 obj.activate(offset)
                 this.waitTime = obj.owner.controls.transform.width

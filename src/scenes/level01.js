@@ -42,7 +42,9 @@ var level01 = new Scene({
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
     require('../sceneobjects/ground'),
-    require('../sceneobjects/player')
+    require('../sceneobjects/player'),
+    require('../sceneobjects/protoceratops'),
+    require('../sceneobjects/protoceratops'),
   ]
 })
 
@@ -127,6 +129,7 @@ new SceneObject({
       update: function(){
         // this.controls.groundLevelObstaclePool.update()
         this.controls.groundPool.update()
+        this.controls.groundLevelObstaclePool.update()
         this.controls.collisionEngine.update()
         this.controls.spriteEngine.update()
       }
@@ -138,12 +141,12 @@ new SceneObject({
     spriteEngine: {
       kind: SpriteEngine
     },
-    // groundLevelObstaclePool: {
-    //   kind: require('../controls/objectpool-engine'),
-    //   args: {
-    //     tag: 'groundLevel'
-    //   }
-    // },
+    groundLevelObstaclePool: {
+      kind: require('../controls/objectpool-engine'),
+      args: {
+        tag: 'groundLevel'
+      }
+    },
     groundPool: {
       kind: require('../controls/objectpool-engine'),
       args: {
