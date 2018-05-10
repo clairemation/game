@@ -6,6 +6,7 @@ class Collider extends Control{
     super(args)
     this.hitbox = args.hitbox
     this.bounceFactor = args.bounceFactor || 0
+    this.rays = args.rays || [[this.hitbox[0], this.hitbox[1], this.hitbox[2], this.hitbox[1]]]
     this.onHit = args.onHit || (() => {})
   }
 }

@@ -1,4 +1,6 @@
 const Control = require('../classes/control')
+const $ = require('../lib/coolgebra')
+const intersection = require('../lib/intersection')
 
 class CollisionEngine extends Control{
     constructor(args){
@@ -16,7 +18,7 @@ class CollisionEngine extends Control{
         this.components = colliders
     }
 
-    isColliding(a, b){
+    isCollidingBroadPhase(a, b){
         // If a is above b
         if (a[3] < b[1]) {
             return false
@@ -39,6 +41,30 @@ class CollisionEngine extends Control{
 
         // Else collision
         return true
+    }
+
+    narrowPhaseCollision(collider){
+        var playerRay = this.getPlayerRay()
+        var inter = null
+        for (let i = 0; i < collider.rays.length; i++){
+            inter = intersection(...playerRay, ...($(collider.rays[i]).plusVector([collider.owner.controls.transform.position.x, collider.owner.controls.transform.position.y, collider.owner.controls.transform.position.x, collider.owner.controls.transform.position.y]).$))
+            if (inter){
+                return inter
+            }
+        }
+        return null
+    }
+
+    getPlayerRay(){
+        var offset = [this.playerCollider.owner.controls.transform.width / 2, this.playerCollider.owner.controls.transform.height]
+        var pivot = $([this.playerCollider.owner.controls.transform.position.x, this.playerCollider.owner.controls.transform.position.y]).plusVector(offset).$
+        var upper = [this.playerCollider.owner.controls.transform.prevPosition.x + offset[0], 0]
+        return [...upper, ...pivot]
+
+    }
+
+    getPivot(pos){
+        return $(pos).plusVector([this.playerCollider.owner.controls.transform.width / 2, this.playerCollider.owner.controls.transform.height / 2]).$
     }
 
     update(){
@@ -67,10 +93,13 @@ class CollisionEngine extends Control{
             otherBound[1] = otherBox[1] + otherPos.y
             otherBound[3] = otherBox[3] + otherPos.y
 
-            if (this.isColliding(playerBound, otherBound)){
-                this.playerCollider.onHit(this.components[i])
-                this.components[i].onHit()
-            }
+            // if (this.isCollidingBroadPhase(playerBound, otherBound)){
+                var collisionPoint = this.narrowPhaseCollision(this.components[i])
+                if (collisionPoint){
+                    this.playerCollider.onHit(this.components[i], collisionPoint)
+                    this.components[i].onHit()
+                }
+            // }
         }
     }
 }
