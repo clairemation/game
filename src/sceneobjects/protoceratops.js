@@ -22,7 +22,7 @@ class Protoceratops extends SceneObject{
           args: {
             position: {x: 0, y: 0},
             width: 48,
-            height: 48
+            height: 34
           }
         },
 
@@ -49,14 +49,15 @@ class Protoceratops extends SceneObject{
           kind: require('../controls/objectpooler'),
           args: {
             tag: 'groundLevel',
-            spawnPosition: {x: 360, y: 152}
+            spawnPosition: {x: 360, y: 166}
           }
         },
 
         collider: {
           kind: require('../controls/collider'),
           args: {
-            hitbox: [0, 0, 48, 50]
+            hitbox: [0, 20, 48, 50],
+            onHit: () => console.log('asdf')
           }
         }
       }
