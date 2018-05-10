@@ -46,13 +46,14 @@ class Player extends SceneObject{
           args: {
             hitbox: [0, 0, 48, 34],
             onHit: function(other, collisionPoint){
-              // if (other.owner.tag == 'ground'){
-                console.log(collisionPoint)
+              if (this.owner.currentStateName == 'dying'){
+                return
+              }
+              if (other.owner.tag == 'ground'){
                   this.owner.controls.transform.position.y = collisionPoint[1] - this.owner.controls.transform.height
                   this.owner.controls.altitude.resetFall()
                   this.owner.changeState('walking')
-                // }
-              // }
+              }
             }
           },
         },

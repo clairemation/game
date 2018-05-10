@@ -93,13 +93,13 @@ class CollisionEngine extends Control{
             otherBound[1] = otherBox[1] + otherPos.y
             otherBound[3] = otherBox[3] + otherPos.y
 
-            // if (this.isCollidingBroadPhase(playerBound, otherBound)){
+            if (this.isCollidingBroadPhase(playerBound, otherBound)){
                 var collisionPoint = this.narrowPhaseCollision(this.components[i])
                 if (collisionPoint){
                     this.playerCollider.onHit(this.components[i], collisionPoint)
                     this.components[i].onHit()
                 }
-            // }
+            }
         }
     }
 }

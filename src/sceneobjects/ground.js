@@ -49,14 +49,14 @@ class Ground extends SceneObject{
           kind: require('../controls/objectpooler'),
           args: {
             tag: 'ground',
-            originalPosition: {x: 360, y: 150}
+            spawnPosition: {x: 360, y: 200}
           }
         },
 
         collider: {
           kind: require('../controls/collider'),
           args: {
-            hitbox: [0, 0, 128, 50],
+            hitbox: [0, 0, 128, 36],
             rays: [[0, 36, 40, 0], [40, 0, 88, 0], [88, 0, 128, 36]]
           }
         }
