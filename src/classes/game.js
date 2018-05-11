@@ -72,6 +72,7 @@ class Game {
 
   updateCurrent(){
     this.currentScene = this.sceneStack.peek()
+    renderer.setTransform(1, 0, 0, 1, 0, 0)
     this.currentScene.enter(this, this.currentScene)
   }
 
@@ -103,7 +104,6 @@ class Game {
   }
 
   update(){
-    renderer.clearRect(0, 0, 320, 240)
     this.currentScene.update()
   }
 }

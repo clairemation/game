@@ -25,6 +25,13 @@ class Player extends SceneObject{
           }
         },
 
+        advance: {
+          kind: require('../controls/scroller'),
+          args: {
+            multiplier: -1
+          }
+        },
+
         sprite: {
           kind: require('../controls/sprite'),
           args: {
@@ -70,6 +77,10 @@ class Player extends SceneObject{
               this.owner.changeState('dying')
             }
           }
+        },
+
+        cameraFollow: {
+          kind: require('../controls/camera-follow')
         }
       }
     }

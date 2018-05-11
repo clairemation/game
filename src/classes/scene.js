@@ -1,4 +1,5 @@
 const AssetManager = require('./assetmanager')
+const renderer = require('../core/renderer')
 
 var count = 1
 
@@ -13,6 +14,8 @@ class Scene {
         this.enter = args.enter || this.enter
         this.exit = args.exit || this.exit
         this.initialObjectList = args.objects || []
+        this.screenX = 0
+        this.screenY = 0
     }
 
     resetObjects(){
@@ -72,6 +75,7 @@ class Scene {
     }
 
     update(){
+        // renderer.clearRect(0, 0, this.game.screenWidth, this.game.screenHeight)
         for (let i = 0; i < this.objects.length; i++){
           this.objects[i].update()
         }
