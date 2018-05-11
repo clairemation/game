@@ -22,7 +22,7 @@ class Ground extends SceneObject{
           args: {
             position: {x: 320 - 128 * count, y: 190.0},
             width: 128,
-            height: 50
+            height: 240
           }
         },
 
