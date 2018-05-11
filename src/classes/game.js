@@ -2,6 +2,7 @@ const Stack = require('../lib/stack')
 const StateMachine = require('./statemachine')
 const Scene = require('./scene')
 const renderer = require('../core/renderer')
+const CameraFollow = require('../controls/camera-follow')
 
 var screenWidth = 320
 var screenHeight = 240
@@ -72,7 +73,7 @@ class Game {
 
   updateCurrent(){
     this.currentScene = this.sceneStack.peek()
-    renderer.setTransform(1, 0, 0, 1, 0, 0)
+    CameraFollow.reset()
     this.currentScene.enter(this, this.currentScene)
   }
 

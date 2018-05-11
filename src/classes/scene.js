@@ -75,7 +75,6 @@ class Scene {
     }
 
     update(){
-        // renderer.clearRect(0, 0, this.game.screenWidth, this.game.screenHeight)
         for (let i = 0; i < this.objects.length; i++){
           this.objects[i].update()
         }
