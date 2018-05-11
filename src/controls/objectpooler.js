@@ -1,5 +1,6 @@
 const Control = require('../classes/control')
 const Game = require('../classes/game')
+const CameraFollow = require('./camera-follow')
 
 class ObjectPooler extends Control{
     constructor(args){
@@ -9,10 +10,9 @@ class ObjectPooler extends Control{
         this.spawnPosition = args.spawnPosition || {x: Game.getScreenWidth(), y: 200}
     }
 
-    activate(yOffset){
+    activate(x){
         this.owner.changeState('active')
-        this.owner.controls.transform.position.x = this.spawnPosition.x
-        this.owner.controls.transform.position.y = this.spawnPosition.y - yOffset
+        this.owner.controls.transform.position.x = x
     }
 
     setObjectPool(value){
@@ -25,7 +25,7 @@ class ObjectPooler extends Control{
     }
 
     update(){
-        if (this.owner.controls.transform.position.x < -128){
+        if (this.owner.controls.transform.position.x + this.owner.controls.transform.width < -CameraFollow.getOffset()[0]){
             this.deactivate()
         }
     }

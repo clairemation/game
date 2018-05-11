@@ -1,5 +1,7 @@
 const Control = require('../classes/control')
+const Game = require('../classes/game')
 const Math2 = require('../lib/math2')
+const CameraFollow = require('./camera-follow')
 
 class ObjectPoolEngine extends Control{
     constructor(args){
@@ -13,15 +15,13 @@ class ObjectPoolEngine extends Control{
         this.waitTime = 0
         this.layer = args.layer || 'foreground'
         this.objectFrequency = args.objectFrequency || 0.75
-        this.minInterval = args.minInterval || 75
+        this.minInterval = args.minInterval || 50
         this.maxInterval = args.maxInterval || 90
-        this.minOffset = args.minOffset || 0
-        this.maxOffset = args.maxOffset || 0
-        this.lastOffset = 0
-        this.intervalWidth = 0
+        this.lastObjectRightEdge = 0
     }
 
     init(){
+        this.lastObjectRightEdge = CameraFollow.getOffset()[0] + Game.getScreenWidth()
         var components = this.owner.scene.getControlsByName('objectpooler').filter(objPooler => objPooler.tag == this.tag)
         this.inactiveComponents = components.filter(c => c.owner.currentStateName == 'inactive')
         this.activeComponents = components.filter(c => c.owner.currentStateName != 'inactive')
@@ -40,32 +40,50 @@ class ObjectPoolEngine extends Control{
     }
 
     update(){
-
-        this.deltaPixels += this.scrollingEngine.scrollAmt
-        if (this.deltaPixels < this.waitTime - 2){ //Fudge factor
-            return
-        }
-
-        var rand = this.intervalWidth >= this.maxInterval ? 0 : Math.random()
-        if (rand < this.objectFrequency) {
-            var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
-            var obj = this.inactiveComponents.splice(r, 1)[0]
-            if (obj) {
-                this.activeComponents.push(obj)
-                var offset = this.intervalWidth == 0 ? this.lastOffset : Math2.clamp(this.lastOffset + Math.ceil(Math.random() * 50 - 25), this.minOffset, this.maxOffset)
-                this.lastOffset = offset
-                obj.activate(offset)
-                this.waitTime = obj.owner.controls.transform.width
-                this.deltaPixels = 0
-                this.intervalWidth = 0
-
+        if (this.lastObjectRightEdge < Game.getScreenWidth() - CameraFollow.getOffset()[0]){
+            var rand = Math.random()
+            if (rand < this.objectFrequency){
+                var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
+                var obj = this.inactiveComponents.splice(r, 1)[0]
+                if (obj) {
+                    this.activeComponents.push(obj)
+                    obj.activate(Game.getScreenWidth() - CameraFollow.getOffset()[0] - 3) // fudge factor
+                    this.lastObjectRightEdge = obj.owner.controls.transform.position.x + obj.owner.controls.transform.width
+                }
+            } else {
+                var r = Math.ceil(Math.random() * (this.maxInterval - this.minInterval) + this.minInterval)
+                console.log(r)
+                this.lastObjectRightEdge = -CameraFollow.getOffset()[0] + Game.getScreenWidth() + r
             }
-        } else {
-            this.waitTime = this.minInterval
-            this.deltaPixels = 0
-            this.intervalWidth += this.minInterval
         }
     }
+
+
+    //     this.deltaPixels += this.scrollingEngine.scrollAmt
+    //     if (this.deltaPixels < this.waitTime - 2){ //Fudge factor
+    //         return
+    //     }
+
+    //     var rand = this.intervalWidth >= this.maxInterval ? 0 : Math.random()
+    //     if (rand < this.objectFrequency) {
+    //         var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
+    //         var obj = this.inactiveComponents.splice(r, 1)[0]
+    //         if (obj) {
+    //             this.activeComponents.push(obj)
+    //             var offset = this.intervalWidth == 0 ? this.lastOffset : Math2.clamp(this.lastOffset + Math.ceil(Math.random() * 50 - 25), this.minOffset, this.maxOffset)
+    //             this.lastOffset = offset
+    //             obj.activate(offset)
+    //             this.waitTime = obj.owner.controls.transform.width
+    //             this.deltaPixels = 0
+    //             this.intervalWidth = 0
+
+    //         }
+    //     } else {
+    //         this.waitTime = this.minInterval
+    //         this.deltaPixels = 0
+    //         this.intervalWidth += this.minInterval
+    //     }
+    // }
 }
 
 module.exports = ObjectPoolEngine
