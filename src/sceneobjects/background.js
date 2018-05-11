@@ -21,7 +21,7 @@ class Background extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 320 * count, y: -240},
+            position: {x: 320 * count, y: -230},
             width: 320,
             height: 240 * 3
           }
