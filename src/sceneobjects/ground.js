@@ -65,6 +65,10 @@ class Ground extends SceneObject{
     }
     super(sceneObjArgs)
   }
+
+  static reset(){
+    count = 0
+  }
 }
 
 module.exports = Ground

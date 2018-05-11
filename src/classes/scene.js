@@ -12,12 +12,19 @@ class Scene {
         this.assetManager = new AssetManager(args.assets)
         this.enter = args.enter || this.enter
         this.exit = args.exit || this.exit
-        if (args.objects){
-            for (let i = 0; i < args.objects.length; i++){
-                new args.objects[i]({scene: this})
-            }
+        this.initialObjectList = args.objects || []
+    }
 
+    resetObjects(){
+        this.objectIndices = {}
+        this.objects = []
+        for (let i = 0; i < this.initialObjectList.length; i++){
+            this.initialObjectList[i].reset()
         }
+        for (let i = 0; i < this.initialObjectList.length; i++){
+            new this.initialObjectList[i]({scene: this})
+        }
+        this.init()
     }
 
     setGame(game){
@@ -26,15 +33,13 @@ class Scene {
 
     enter(){
         this.game.stop()
+        this.resetObjects()
         return this.assetManager.load().then(() => this.game.start()) // return for Promise chainability
     }
 
     exit(){}
 
     init(){
-        if (this.initialized){
-            return
-        }
         var controls = this.getAllControls()
         for (let i = 0; i < controls.length; i++){
             controls[i].init()

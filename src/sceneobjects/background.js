@@ -56,6 +56,10 @@ class Background extends SceneObject{
     }
     super(sceneObjArgs)
   }
+
+  static reset(){
+    count = -1
+  }
 }
 
 module.exports = Background

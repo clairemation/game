@@ -64,11 +64,10 @@ class Player extends SceneObject{
           kind: require('../controls/condition-checker'),
           args: {
             condition: function(){
-              return this.owner.controls.transform.getBounds()[3] > Game.getScreenHeight()
+              return this.owner.controls.transform.getBounds()[3] >= Game.getScreenHeight()
             },
             result: function(){
               this.owner.changeState('dying')
-              console.log("LOSE")
             }
           }
         }

@@ -21,7 +21,7 @@ var titlescreen = new Scene({
 })
 
 function pushLevel(){
-  titlescreen.game.push('level01')
+  titlescreen.game.replaceTop('level01')
 }
 
 

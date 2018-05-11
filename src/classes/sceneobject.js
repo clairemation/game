@@ -15,6 +15,8 @@ class SceneObject extends StateMachine{
     getGame(){
         return this.scene.game
     }
+
+    static reset(){}
 }
 
 module.exports = SceneObject
