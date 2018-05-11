@@ -16,7 +16,7 @@ var level01 = new Scene({
   assets: {
     spritesheet: './assets/spritesheet.png',
     groundSpritesheet: './assets/ground.png',
-    background: './assets/bg.png',
+    background: './assets/bg2.png',
     blop: './assets/blop.wav',
     screech: './assets/pusou.wav'
   },

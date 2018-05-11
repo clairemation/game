@@ -1,4 +1,6 @@
 const SceneObject = require('../classes/sceneobject')
+const CameraFollow = require('../controls/camera-follow')
+const Game = require('../classes/game')
 
 var count = -1
 
@@ -19,9 +21,9 @@ class Background extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 0.0 + 320 * count, y: 0.0},
+            position: {x: 320 * count, y: -240},
             width: 320,
-            height: 240
+            height: 240 * 3
           }
         },
 
@@ -35,7 +37,7 @@ class Background extends SceneObject{
         conditionChecker: {
           kind: require('../controls/condition-checker'),
           args: {
-            condition: function(){return this.owner.controls.transform.getBounds()[2] < 0},
+            condition: function(){return this.owner.controls.transform.getBounds()[2] < -CameraFollow.getOffset()[0]},
             result: function(){this.owner.controls.transform.position.x += this.owner.controls.transform.width * 2}
           }
         },

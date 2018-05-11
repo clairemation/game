@@ -52,7 +52,6 @@ class ObjectPoolEngine extends Control{
                 }
             } else {
                 var r = Math.ceil(Math.random() * (this.maxInterval - this.minInterval) + this.minInterval)
-                console.log(r)
                 this.lastObjectRightEdge = -CameraFollow.getOffset()[0] + Game.getScreenWidth() + r
             }
         }
