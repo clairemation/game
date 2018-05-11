@@ -45,6 +45,7 @@ var level01 = new Scene({
     require('../sceneobjects/player'),
     require('../sceneobjects/protoceratops'),
     require('../sceneobjects/protoceratops'),
+    require('../sceneobjects/post-systems')
   ]
 })
 
@@ -118,45 +119,5 @@ function release(e){
 //   }
 // })
 
-
-
-new SceneObject({
-  name: 'post-systems',
-  scene: level01,
-
-  states: {
-    normal: new State({
-      update: function(){
-        // this.controls.groundLevelObstaclePool.update()
-        this.controls.groundPool.update()
-        // this.controls.groundLevelObstaclePool.update()
-        this.controls.collisionEngine.update()
-        this.controls.spriteEngine.update()
-      }
-    })
-  },
-  initialState: 'normal',
-
-  controls: {
-    spriteEngine: {
-      kind: SpriteEngine
-    },
-    groundLevelObstaclePool: {
-      kind: require('../controls/objectpool-engine'),
-      args: {
-        tag: 'groundLevel'
-      }
-    },
-    groundPool: {
-      kind: require('../controls/objectpool-engine'),
-      args: {
-        tag: 'ground'
-      }
-    },
-    collisionEngine: {
-      kind: require('../controls/collision-engine')
-    }
-  }
-})
 
 module.exports = level01

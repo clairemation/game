@@ -20,7 +20,7 @@ class Ground extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 320 - 128 * count, y: 200.0},
+            position: {x: 320 - 128 * count, y: 190.0},
             width: 128,
             height: 50
           }
@@ -49,13 +49,14 @@ class Ground extends SceneObject{
           kind: require('../controls/objectpooler'),
           args: {
             tag: 'ground',
-            spawnPosition: {x: 360, y: 200}
+            spawnPosition: {x: 360, y: 190}
           }
         },
 
         collider: {
           kind: require('../controls/collider'),
           args: {
+            tag: 'ground',
             hitbox: [0, 0, 128, 36],
             rays: [[0, 36, 40, 0], [40, 0, 88, 0], [88, 0, 128, 36]]
           }

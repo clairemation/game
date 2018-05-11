@@ -44,11 +44,9 @@ class Player extends SceneObject{
         collider: {
           kind: require('../controls/collider'),
           args: {
-            hitbox: [0, 0, 48, 34],
+            tag: 'ground',
+            hitbox: [0,30, 48, 34],
             onHit: function(other, collisionPoint){
-              if (this.owner.currentStateName == 'dying'){
-                return
-              }
               if (other.owner.tag == 'ground'){
                   this.owner.controls.transform.position.y = collisionPoint[1] - this.owner.controls.transform.height
                   this.owner.controls.altitude.resetFall()

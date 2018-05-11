@@ -5,13 +5,14 @@ const intersection = require('../lib/intersection')
 class CollisionEngine extends Control{
     constructor(args){
         super(args)
+        this.tag = args.tag
         this.components = []
         this.playerCollider = undefined
     }
 
     init(){
         var colliders
-        colliders = this.owner.scene.getControlsByName('collider')
+        colliders = this.owner.scene.getControlsByName('collider').filter(c => c.tag == this.tag)
         var playerColliderIndex = colliders.findIndex(c => c.owner.name == 'player')
         this.playerCollider = colliders[playerColliderIndex]
         colliders.splice(playerColliderIndex, 1)
