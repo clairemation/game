@@ -9,11 +9,13 @@ class Camera extends Control{
     this.name = 'camera'
     offset = args.offset || offset
     this.cameraFollow = null
+    this.parallaxLayers = []
   }
 
   init(){
     this.cameraFollow = this.owner.scene.getControlsByName('camera-follow')[0]
     this.cameraFollow.camera = this
+    this.parallaxLayers = this.owner.scene.getControlsByName('parallax')
   }
 
   reset(){
@@ -36,6 +38,14 @@ class Camera extends Control{
     return offset
   }
 
+  setOffset(x,y){
+    var diff = [x - offset[0], y - offset[1]]
+    for (let i = 0; i < this.parallaxLayers.length; i++){
+      this.parallaxLayers[i].move(-diff[0], -diff[1])
+    }
+    Camera.setOffset(x, y)
+  }
+
   update(){
     renderer.setTransform(1, 0, 0, 1, 0, 0)
     offset[0] = -this.owner.controls.transform.position.x + this.margin[0]
@@ -45,7 +55,6 @@ class Camera extends Control{
 }
 
 Camera.prototype.reset = Camera.reset
-Camera.prototype.setOffset = Camera.setOffset
 Camera.prototype.getOffset = Camera.getOffset
 
 module.exports = Camera

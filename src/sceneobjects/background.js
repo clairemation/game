@@ -47,6 +47,9 @@ class Background extends SceneObject{
           }
         },
 
+        parallax: {
+          kind: require('../controls/parallax')
+        }
       }
     }
     super(sceneObjArgs)

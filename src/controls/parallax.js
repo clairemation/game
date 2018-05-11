@@ -7,11 +7,12 @@ class Parallax extends Control{
   constructor(args){
     super(args)
     this.name = 'parallax'
-    this.level = args.level || 0.5
+    this.level = args.level || 0.75
   }
 
-  move(){
-
+  move(x, y){
+    this.owner.controls.transform.position.x += x * this.level
+    this.owner.controls.transform.position.y += y * this.level
   }
 }
 
