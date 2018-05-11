@@ -1,7 +1,7 @@
 const Control = require('../classes/control')
 const Game = require('../classes/game')
 const Math2 = require('../lib/math2')
-const CameraFollow = require('./camera-follow')
+const Camera = require('./camera')
 
 class ObjectPoolEngine extends Control{
     constructor(args){
@@ -21,7 +21,7 @@ class ObjectPoolEngine extends Control{
     }
 
     init(){
-        this.lastObjectRightEdge = CameraFollow.getOffset()[0] + Game.getScreenWidth()
+        this.lastObjectRightEdge = Camera.getOffset()[0] - Game.getScreenWidth()
         var components = this.owner.scene.getControlsByName('objectpooler').filter(objPooler => objPooler.tag == this.tag)
         this.inactiveComponents = components.filter(c => c.owner.currentStateName == 'inactive')
         this.activeComponents = components.filter(c => c.owner.currentStateName != 'inactive')
@@ -40,19 +40,19 @@ class ObjectPoolEngine extends Control{
     }
 
     update(){
-        if (this.lastObjectRightEdge < Game.getScreenWidth() - CameraFollow.getOffset()[0]){
+        if (this.lastObjectRightEdge < Game.getScreenWidth() - Camera.getOffset()[0]){
             var rand = Math.random()
             if (rand < this.objectFrequency){
                 var r = Math.floor(Math.random() * (this.inactiveComponents.length -1))
                 var obj = this.inactiveComponents.splice(r, 1)[0]
                 if (obj) {
                     this.activeComponents.push(obj)
-                    obj.activate(Game.getScreenWidth() - CameraFollow.getOffset()[0] - 3) // fudge factor
+                    obj.activate(Game.getScreenWidth() - Camera.getOffset()[0] - 3) // fudge factor
                     this.lastObjectRightEdge = obj.owner.controls.transform.position.x + obj.owner.controls.transform.width
                 }
             } else {
                 var r = Math.ceil(Math.random() * (this.maxInterval - this.minInterval) + this.minInterval)
-                this.lastObjectRightEdge = -CameraFollow.getOffset()[0] + Game.getScreenWidth() + r
+                this.lastObjectRightEdge = -Camera.getOffset()[0] + Game.getScreenWidth() + r
             }
         }
     }

@@ -1,6 +1,6 @@
 const Control = require('../classes/control')
 const renderer = require('../core/renderer')
-const CameraFollow = require('../controls/camera-follow')
+const Camera = require('../controls/camera')
 
 class SpriteEngine extends Control{
   constructor(args){
@@ -19,7 +19,7 @@ class SpriteEngine extends Control{
     // Clear canvas
     renderer.setTransform(1, 0, 0, 1, 0, 0)
     renderer.clearRect(0, 0,renderer.canvas.width,renderer.canvas.height)
-    renderer.setTransform(1, 0, 0, 1, CameraFollow.getOffset()[0], CameraFollow.getOffset()[1])
+    renderer.setTransform(1, 0, 0, 1, Camera.getOffset()[0], Camera.getOffset()[1])
 
     for (let i = 0; i < this.components.length; i++){
       if (!this.components[i].shouldDraw){

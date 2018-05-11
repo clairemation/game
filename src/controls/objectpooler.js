@@ -1,6 +1,6 @@
 const Control = require('../classes/control')
 const Game = require('../classes/game')
-const CameraFollow = require('./camera-follow')
+const Camera = require('./camera')
 
 class ObjectPooler extends Control{
     constructor(args){
@@ -25,7 +25,7 @@ class ObjectPooler extends Control{
     }
 
     update(){
-        if (this.owner.controls.transform.position.x + this.owner.controls.transform.width < -CameraFollow.getOffset()[0]){
+        if (this.owner.controls.transform.position.x + this.owner.controls.transform.width < -Camera.getOffset()[0]){
             this.deactivate()
         }
     }

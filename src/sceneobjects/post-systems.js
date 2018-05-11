@@ -41,6 +41,9 @@ class PostSystems extends SceneObject{
           args: {
             tag: 'ground'
           }
+        },
+        camera: {
+          kind: require('../controls/camera')
         }
       }
     }
