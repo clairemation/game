@@ -30,7 +30,7 @@ class Background extends SceneObject{
           kind: require('../controls/condition-checker'),
           args: {
             condition: function(){return this.owner.controls.transform.getBounds()[2] < -Camera.getOffset()[0]},
-            result: function(){this.owner.controls.transform.position.x += this.owner.controls.transform.size[0] * 2}
+            result: function(){this.owner.controls.transform.position[0] += this.owner.controls.transform.size[0] * 2}
           }
         },
 

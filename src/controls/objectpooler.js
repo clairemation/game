@@ -25,7 +25,7 @@ class ObjectPooler extends Control{
     }
 
     update(){
-        if (this.owner.controls.transform.position.x + this.owner.controls.transform.size[0] < -Camera.getOffset()[0]){
+        if (this.owner.controls.transform.position[0] + this.owner.controls.transform.size[0] < -Camera.getOffset()[0]){
             this.deactivate()
         }
     }
