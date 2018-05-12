@@ -20,9 +20,8 @@ class Protoceratops extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 0, y: 0},
-            width: 48,
-            height: 34
+            position: [0, 0],
+            size: [48, 34]
           }
         },
 
@@ -49,7 +48,7 @@ class Protoceratops extends SceneObject{
           kind: require('../controls/objectpooler'),
           args: {
             tag: 'groundLevel',
-            spawnPosition: {x: 360, y: 166}
+            spawnPosition: [360, 166]
           }
         },
 

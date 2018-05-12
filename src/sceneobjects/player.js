@@ -1,5 +1,6 @@
 const SceneObject = require('../classes/sceneobject')
 const Game = require('../classes/game')
+const $ = require('../lib/coolgebra')
 
 class Player extends SceneObject{
   constructor(args){
@@ -19,16 +20,15 @@ class Player extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 50.0, y: 100.0},
-            width: 48,
-            height: 34
+            position: [50.0, 100.0],
+            size: [48, 34]
           }
         },
 
         advance: {
           kind: require('../controls/scroller'),
           args: {
-            multiplier: -1
+            multiplier: 1.0
           }
         },
 
@@ -55,7 +55,7 @@ class Player extends SceneObject{
             hitbox: [0,30, 48, 34],
             onHit: function(other, collisionPoint){
               if (other.owner.tag == 'ground'){
-                  this.owner.controls.transform.position.y = collisionPoint[1] - this.owner.controls.transform.height
+                  this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
                   this.owner.controls.altitude.resetFall()
                   this.owner.changeState('walking')
               }
@@ -67,11 +67,15 @@ class Player extends SceneObject{
           kind: require('../controls/altitude')
         },
 
+        physics: {
+          kind: require('../controls/physics')
+        },
+
         loseChecker: {
           kind: require('../controls/condition-checker'),
           args: {
             condition: function(){
-              return this.owner.controls.transform.getBounds()[3] >= Game.getScreenHeight()
+              return this.owner.controls.transform.getBounds()[3] >= 400
             },
             result: function(){
               this.owner.changeState('dying')

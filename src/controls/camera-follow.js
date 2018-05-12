@@ -12,8 +12,8 @@ class CameraFollow extends Control{
   }
 
   update(){
-    this.camera.setOffset(-this.owner.controls.transform.position.x + this.margin[0],
-                          -this.owner.controls.transform.position.y + this.margin[1])
+    this.camera.setOffset(-this.owner.controls.transform.position[0] + this.margin[0],
+                          -this.owner.controls.transform.position[1] + this.margin[1])
   }
 }
 

@@ -8,6 +8,7 @@ var walking = new State({
     this.controls.altitude.update()
     this.controls.advance.update()
     this.controls.loseChecker.update()
+    this.controls.physics.update()
     this.controls.sprite.update()
     this.controls.cameraFollow.update()
   },

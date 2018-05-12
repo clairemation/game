@@ -46,9 +46,10 @@ class CollisionEngine extends Control{
 
     narrowPhaseCollision(collider){
         var playerRay = this.getPlayerRay()
+        console.log(playerRay)
         var inter = null
         for (let i = 0; i < collider.rays.length; i++){
-            inter = intersection(...playerRay, ...($(collider.rays[i]).plusVector([collider.owner.controls.transform.position.x, collider.owner.controls.transform.position.y, collider.owner.controls.transform.position.x, collider.owner.controls.transform.position.y]).$))
+            inter = intersection(...playerRay, ...$(collider.rays[i]).plusVector([...collider.owner.controls.transform.position, ...collider.owner.controls.transform.position]).$)
             if (inter){
                 return inter
             }
@@ -57,15 +58,10 @@ class CollisionEngine extends Control{
     }
 
     getPlayerRay(){
-        var offset = [this.playerCollider.owner.controls.transform.width / 2, this.playerCollider.owner.controls.transform.height]
-        var pivot = $([this.playerCollider.owner.controls.transform.position.x, this.playerCollider.owner.controls.transform.position.y]).plusVector(offset).$
-        var upper = [this.playerCollider.owner.controls.transform.prevPosition.x + offset[0], 0]
-        return [...upper, ...pivot]
-
-    }
-
-    getPivot(pos){
-        return $(pos).plusVector([this.playerCollider.owner.controls.transform.width / 2, this.playerCollider.owner.controls.transform.height / 2]).$
+        var offset = [this.playerCollider.owner.controls.transform.size[0] / 2, this.playerCollider.owner.controls.transform.size[1]]
+        var pivot = $(this.playerCollider.owner.controls.transform.position).plusVector(offset).$
+        var prevPivot = [pivot[0], 0]
+        return [...prevPivot, ...pivot]
     }
 
     update(){
@@ -81,24 +77,24 @@ class CollisionEngine extends Control{
             }
             playerBox = this.playerCollider.hitbox
             playerPos = this.playerCollider.owner.controls.transform.position
-            playerBound[0] = playerBox[0] + playerPos.x
-            playerBound[2] = playerBox[2] + playerPos.x
-            playerBound[1] = playerBox[1] + playerPos.y
-            playerBound[3] = playerBox[3] + playerPos.y
+            playerBound[0] = playerBox[0] + playerPos[0]
+            playerBound[2] = playerBox[2] + playerPos[0]
+            playerBound[1] = playerBox[1] + playerPos[1]
+            playerBound[3] = playerBox[3] + playerPos[1]
 
 
             otherBox = this.components[i].hitbox
             otherPos = this.components[i].owner.controls.transform.position
-            otherBound[0] = otherBox[0] + otherPos.x
-            otherBound[2] = otherBox[2] + otherPos.x
-            otherBound[1] = otherBox[1] + otherPos.y
-            otherBound[3] = otherBox[3] + otherPos.y
+            otherBound[0] = otherBox[0] + otherPos[0]
+            otherBound[2] = otherBox[2] + otherPos[0]
+            otherBound[1] = otherBox[1] + otherPos[1]
+            otherBound[3] = otherBox[3] + otherPos[1]
 
             if (this.isCollidingBroadPhase(playerBound, otherBound)){
                 var collisionPoint = this.narrowPhaseCollision(this.components[i])
                 if (collisionPoint){
                     this.playerCollider.onHit(this.components[i], collisionPoint)
-                    this.components[i].onHit()
+                    this.components[i].onHit(this.playerCollider, collisionPoint)
                 }
             }
         }

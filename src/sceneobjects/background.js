@@ -21,9 +21,8 @@ class Background extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: {x: 320 * count, y: -230},
-            width: 320,
-            height: 240 * 3
+            position: [320 * count, -230],
+            size: [320, 240 * 3]
           }
         },
 
@@ -31,7 +30,7 @@ class Background extends SceneObject{
           kind: require('../controls/condition-checker'),
           args: {
             condition: function(){return this.owner.controls.transform.getBounds()[2] < -Camera.getOffset()[0]},
-            result: function(){this.owner.controls.transform.position.x += this.owner.controls.transform.width * 2}
+            result: function(){this.owner.controls.transform.position.x += this.owner.controls.transform.size[0] * 2}
           }
         },
 

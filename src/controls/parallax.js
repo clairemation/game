@@ -11,8 +11,8 @@ class Parallax extends Control{
   }
 
   move(x, y){
-    this.owner.controls.transform.position.x += x * this.level
-    this.owner.controls.transform.position.y += y * this.level
+    this.owner.controls.transform.position[0]+= x * this.level
+    this.owner.controls.transform.position[1] += y * this.level
   }
 }
 

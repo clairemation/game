@@ -10,7 +10,7 @@ class Scroller extends Control{
     }
 
     update(dt){
-        this.owner.controls.transform.moveLeft(Math.ceil(this.engine.scrollAmt * this.multiplier))
+        this.owner.controls.physics.addMovement(Math.ceil(this.engine.scrollAmt * this.multiplier), 0)
     }
 }
 

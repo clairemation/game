@@ -1,46 +1,58 @@
 const Control = require('../classes/control')
+const $ = require('../lib/coolgebra')
 
 class Transform extends Control{
   constructor(args = {}){
     super(args)
     this.name = "transform"
-    this.position = args.position || {x: 0, y:0}
-    this.width = args.width || 0
-    this.height = args.height || 0
-    this.prevPosition = {x: this.position.x, y: this.position.y}
+    this.position = args.position || [0,0]
+    this.size = args.size || [0, 0]
+    this.prevPosition = [...this.position]
   }
 
   getBounds(){
-    return [this.position.x, this.position.y, this.position.x + this.width, this.position.y + this.height]
+    return [...this.position, ...$(this.position).plusVector(this.size).$]
   }
 
   getCenter(){
-    return {x: this.position.x + this.width / 2, y: this.position.y + this.height / 2}
+    return $(this.position).plusVector($(this.size).timesScalar(0.5).$).$
+  }
+
+  moveTo(x,y){
+    this._setPrevPosition()
+    this.position[0] = x
+    this.position[1] = y
+  }
+
+  moveBy(x, y){
+    this._setPrevPosition()
+    this.position[0] += x
+    this.position[1] += y
   }
 
   moveUp(amt){
     this._setPrevPosition()
-    this.position.y -= amt
+    this.position[1] -= amt
   }
 
   moveDown(amt){
     this._setPrevPosition()
-    this.position.y += amt
+    this.position[1] += amt
   }
 
   moveLeft(amt){
     this._setPrevPosition()
-    this.position.x -= amt
+    this.position[0] -= amt
   }
 
   moveRight(amt){
     this._setPrevPosition()
-    this.position.x += amt
+    this.position[0] += amt
   }
 
   _setPrevPosition(){
-    this.prevPosition.x = this.position.x
-    this.prevPosition.y = this.position.y
+    this.prevPosition[0] = this.position[0]
+    this.prevPosition[1] = this.position[1]
   }
 }
 

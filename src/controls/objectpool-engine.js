@@ -48,7 +48,7 @@ class ObjectPoolEngine extends Control{
                 if (obj) {
                     this.activeComponents.push(obj)
                     obj.activate(Game.getScreenWidth() - Camera.getOffset()[0] - 3) // fudge factor
-                    this.lastObjectRightEdge = obj.owner.controls.transform.position.x + obj.owner.controls.transform.width
+                    this.lastObjectRightEdge = obj.owner.controls.transform.getBounds()[2]
                 }
             } else {
                 var r = Math.ceil(Math.random() * (this.maxInterval - this.minInterval) + this.minInterval)

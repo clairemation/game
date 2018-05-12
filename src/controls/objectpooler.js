@@ -7,12 +7,12 @@ class ObjectPooler extends Control{
         super(args)
         this.name = 'objectpooler'
         this.tag = args.tag
-        this.spawnPosition = args.spawnPosition || {x: Game.getScreenWidth(), y: 200}
+        this.spawnPosition = args.spawnPosition || [Game.getScreenWidth(), 200]
     }
 
     activate(x){
         this.owner.changeState('active')
-        this.owner.controls.transform.position.x = x
+        this.owner.controls.transform.position[0] = x
     }
 
     setObjectPool(value){
@@ -25,7 +25,7 @@ class ObjectPooler extends Control{
     }
 
     update(){
-        if (this.owner.controls.transform.position.x + this.owner.controls.transform.width < -Camera.getOffset()[0]){
+        if (this.owner.controls.transform.position.x + this.owner.controls.transform.size[0] < -Camera.getOffset()[0]){
             this.deactivate()
         }
     }

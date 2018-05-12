@@ -9,6 +9,7 @@ var dying = new State({
   update: function(){
     this.controls.altitude.update()
     this.controls.advance.update()
+    this.controls.physics.update()
     this.controls.sprite.update()
     // this.controls.cameraFollow.update()
   }

@@ -30,8 +30,7 @@ class Altitude extends Control{
   }
 
   update(){
-      // this.yAccel = Math.max(this.yAccel, -9)
-      this.owner.controls.transform.moveDown(this.yAccel * (this.getGame().dt / 30))
+      this.owner.controls.physics.addMovement(0, Math.ceil(this.yAccel * (this.getGame().dt / 30)))
       this.yAccel += 0.6 * (this.getGame().dt / 30)
   }
 }
