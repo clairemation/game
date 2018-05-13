@@ -46,11 +46,13 @@ class CollisionEngine extends Control{
 
     narrowPhaseCollision(collider){
         var playerRay = this.getPlayerRay()
-        console.log(playerRay)
         var inter = null
         for (let i = 0; i < collider.rays.length; i++){
             inter = intersection(...playerRay, ...$(collider.rays[i]).plusVector([...collider.owner.controls.transform.position, ...collider.owner.controls.transform.position]).$)
             if (inter){
+                var playerPoint = [playerRay[2], playerRay[3]]
+                var resistancePoint = intersection(...collider.rays[i], ...$(playerPoint).plusVector($(collider.normals[i]).timesScalar(10).$).$, ...playerPoint)
+                console.log(resistancePoint)
                 return inter
             }
         }
