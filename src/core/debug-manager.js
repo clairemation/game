@@ -41,7 +41,7 @@ function enterDebugMode(){
   spriteEngine = game.currentScene.getControlsByName('spriteEngine')[0]
 
   canvas.addEventListener('mousedown', onMouseDown.bind())
-  canvas.addEventListener('mouseup', onMouseUp.bind())
+  document.addEventListener('mouseup', onMouseUp.bind())
 }
 
 function exitDebugMode(){
@@ -75,8 +75,8 @@ function onMouseUp(e){
 
 function scrollUpdate(){
   scrollUpdateLoop = requestAnimationFrame(scrollUpdate)
-  var deltaX = currentMousePos[0] - lastMousePos[0]
-  var deltaY = currentMousePos[1] - lastMousePos[1]
+  var deltaX = (currentMousePos[0] - lastMousePos[0]) / 2
+  var deltaY = (currentMousePos[1] - lastMousePos[1]) / 2
   var currCameraOffset = camera.getOffset()
   currCameraOffset[0] += deltaX
   currCameraOffset[1] += deltaY
