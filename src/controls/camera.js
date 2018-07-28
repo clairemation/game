@@ -47,11 +47,13 @@ class Camera extends Control{
 
     var rate, rowNum, xCamOffset, yCamOffset
     for (var i = 0; i < this.parallaxLayers.length; i++){
-      rate = this.parallaxLayers[i].scrollRate
       rowNum = this.parallaxLayers[i].rowNumber
-      xCamOffset = x % (640) / 2
-      yCamOffset = y % (480) / 2
-      console.log(rowNum)
+      //Only need to recalc if rate is different from last iteration
+      if (rate != this.parallaxLayers[i].rate){
+        rate = this.parallaxLayers[i].rate
+        xCamOffset = x % (PIXEL_WIDTH * rate) / rate
+        yCamOffset = y % (PIXEL_HEIGHT * rate) / rate
+      }
       this.parallaxLayers[i].owner.controls.transform.position[0] = -x + xCamOffset + PIXEL_WIDTH * rowNum
       this.parallaxLayers[i].owner.controls.transform.position[1] = -y + yCamOffset + this.parallaxLayers[i].offset[1]
     }
