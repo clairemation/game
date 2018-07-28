@@ -112,8 +112,9 @@ class Game {
     lastTime = timestamp
   }
 
-  advanceFrame(timestamp){
-
+  advanceFrame(){
+    this.dt = 17
+    this.update();
   }
 
   update(){
