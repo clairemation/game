@@ -1,5 +1,3 @@
-const DEBUG = true
-
 const Stack = require('../lib/stack')
 const StateMachine = require('./statemachine')
 const Scene = require('./scene')
@@ -21,9 +19,8 @@ class Game {
       return instance
     }
 
-    if (DEBUG){
-      this.debugManager = new (require('../core/debug-manager'))(this)
-    }
+    this.debugManager = new (require('../core/debug-manager'))(this)
+    this.debugMode = false
 
     this.scenes = args.scenes || {}
     this.sceneStack = new Stack()
