@@ -1,3 +1,6 @@
+const PIXEL_WIDTH = 320
+const PIXEL_HEIGHT = 240
+
 const Control = require('../classes/control')
 const renderer = require('../core/renderer')
 
@@ -39,25 +42,19 @@ class Camera extends Control{
   }
 
   setOffset(x,y){
-    var diff = [x - offset[0], y - offset[1]]
-    // console.log(this.parallaxLayers[0].owner.controls.transform.position)
-    // // this.parallaxLayers[0].owner.controls.transform.position = [-this.getOffset()[0] % 2, -this.getOffset()[1] % 2]
-    // for (let i = 0; i < this.parallaxLayers.length; i++){
 
-    //   this.parallaxLayers[i].move(-diff[0], -diff[1])
-    // }
     Camera.setOffset(x, y)
-    // 0 - 0
-    // 320 -
-    // 640 - 640
-    var a = (x % 640) / 640
-    var b = (y % 280) / 280
 
-    this.parallaxLayers[0].owner.controls.transform.position[0] = -x + 320 * a
-    this.parallaxLayers[0].owner.controls.transform.position[1] = (-y - 200) + 140 * b
-
-    this.parallaxLayers[1].owner.controls.transform.position[0] = -x + 320 * a + 320
-    this.parallaxLayers[1].owner.controls.transform.position[1] = (-y - 200) + 140 * b
+    var rate, rowNum, xCamOffset, yCamOffset
+    for (var i = 0; i < this.parallaxLayers.length; i++){
+      rate = this.parallaxLayers[i].scrollRate
+      rowNum = this.parallaxLayers[i].rowNumber
+      xCamOffset = x % (640) / 2
+      yCamOffset = y % (480) / 2
+      console.log(rowNum)
+      this.parallaxLayers[i].owner.controls.transform.position[0] = -x + xCamOffset + PIXEL_WIDTH * rowNum
+      this.parallaxLayers[i].owner.controls.transform.position[1] = -y + yCamOffset + this.parallaxLayers[i].offset[1]
+    }
   }
 
   update(){

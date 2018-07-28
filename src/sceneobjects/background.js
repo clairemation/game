@@ -2,12 +2,14 @@ const SceneObject = require('../classes/sceneobject')
 const Camera = require('../controls/camera')
 const Game = require('../classes/game')
 
-var count = -1
+var count = 0
+const width = 320
+const height = 240
 
 class Background extends SceneObject{
   constructor(args){
     var sceneObjArgs = {
-      name: 'background' + (++count),
+      name: 'background' + (count),
       scene: args.scene,
       tag: 'background',
 
@@ -26,14 +28,6 @@ class Background extends SceneObject{
           }
         },
 
-        conditionChecker: {
-          kind: require('../controls/condition-checker'),
-          args: {
-            condition: function(){return this.owner.controls.transform.getBounds()[2] < -Camera.getOffset()[0]},
-            result: function(){this.owner.controls.transform.position[0] += this.owner.controls.transform.size[0] * 2}
-          }
-        },
-
         sprite: {
           kind: require('../controls/sprite'),
           args: {
@@ -47,15 +41,27 @@ class Background extends SceneObject{
         },
 
         parallax: {
-          kind: require('../controls/parallax')
+          kind: require('../controls/parallax'),
+          args: {
+            rowNumber: count++,
+            offset: [0, -180]
+          }
         }
       }
     }
     super(sceneObjArgs)
   }
 
+  static getWidth(){
+    return width
+  }
+
+  static getHeight(){
+    return height
+  }
+
   static reset(){
-    count = -1
+    count = 0
   }
 }
 
