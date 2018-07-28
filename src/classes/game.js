@@ -113,6 +113,7 @@ class Game {
   }
 
   advanceFrame(){
+    this.currentTime = lastTime = Date.now()
     this.dt = 17
     this.update();
   }
