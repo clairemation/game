@@ -37,7 +37,11 @@ class Scene {
     enter(){
         this.game.stop()
         this.resetObjects()
-        return this.assetManager.load().then(() => this.game.start()) // return for Promise chainability
+        return this.assetManager.load().then(() => { // return for Promise chainability
+            if (!this.game.debugMode){
+                this.game.start()
+            }
+        })
     }
 
     exit(){}

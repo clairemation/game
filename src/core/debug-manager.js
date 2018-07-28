@@ -1,13 +1,14 @@
-var canvas = document.getElementById('canvas')
 var startButton = document.getElementById('start-button')
 var advanceFrameButton = document.getElementById('advance-frame')
 var debugModeHeader = document.getElementById('debugmodeheader')
+var sceneSelect = document.getElementById('scene-select')
 
 var lastMousePos = [0,0]
 var currentMousePos = [0,0]
 var mouseDown = false
 var scrollUpdateLoop
 
+var canvas = document.getElementById('canvas')
 var game
 var camera
 var spriteEngine
@@ -17,8 +18,12 @@ class DebugManager{
     game = g
     startButton.onclick = togglePlayPause
     advanceFrameButton.onclick = advanceFrame
+    sceneSelect.onchange = selectScene
   }
+
 }
+DebugManager.prototype.exitDebug = exitDebugMode
+DebugManager.prototype.enterDebug = enterDebugMode
 
 function togglePlayPause(e){
   e.preventDefault()
@@ -35,6 +40,7 @@ function enterDebugMode(){
   startButton.innerHTML='<i class="material-icons">play_arrow</i>'
   debugModeHeader.style.visibility = 'visible'
   advanceFrameButton.disabled = false
+  sceneSelect.disabled = false
   game.debugMode = true
 
   camera = game.currentScene.getControlsByName('camera')[0]
@@ -49,7 +55,13 @@ function exitDebugMode(){
   startButton.innerHTML='<i class="material-icons">pause</i>'
   debugModeHeader.style.visibility = 'hidden'
   advanceFrameButton.disabled = "disabled"
+  sceneSelect.disabled = "disabled"
   game.debugMode = false
+}
+
+function selectScene(e){
+  game.replaceTop(e.target.value)
+  spriteEngine.update()
 }
 
 function onMouseDown(e){

@@ -40,10 +40,24 @@ class Camera extends Control{
 
   setOffset(x,y){
     var diff = [x - offset[0], y - offset[1]]
-    for (let i = 0; i < this.parallaxLayers.length; i++){
-      this.parallaxLayers[i].move(-diff[0], -diff[1])
-    }
+    // console.log(this.parallaxLayers[0].owner.controls.transform.position)
+    // // this.parallaxLayers[0].owner.controls.transform.position = [-this.getOffset()[0] % 2, -this.getOffset()[1] % 2]
+    // for (let i = 0; i < this.parallaxLayers.length; i++){
+
+    //   this.parallaxLayers[i].move(-diff[0], -diff[1])
+    // }
     Camera.setOffset(x, y)
+    // 0 - 0
+    // 320 -
+    // 640 - 640
+    var a = (x % 640) / 640
+    var b = (y % 280) / 280
+
+    this.parallaxLayers[0].owner.controls.transform.position[0] = -x + 320 * a
+    this.parallaxLayers[0].owner.controls.transform.position[1] = (-y - 200) + 140 * b
+
+    this.parallaxLayers[1].owner.controls.transform.position[0] = -x + 320 * a + 320
+    this.parallaxLayers[1].owner.controls.transform.position[1] = (-y - 200) + 140 * b
   }
 
   update(){
