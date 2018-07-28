@@ -1,3 +1,5 @@
+const DEBUG = true
+
 const Stack = require('../lib/stack')
 const StateMachine = require('./statemachine')
 const Scene = require('./scene')
@@ -18,6 +20,11 @@ class Game {
       console.warn('Trying to instantiate more than one Game, returning original instance')
       return instance
     }
+
+    if (DEBUG){
+      this.debugManager = new (require('../core/debug-manager'))(this)
+    }
+
     this.scenes = args.scenes || {}
     this.sceneStack = new Stack()
     this.currentTime = 0
@@ -81,6 +88,7 @@ class Game {
     if (this.running){
       return
     }
+    lastTime = null
     loop = requestAnimationFrame(this.tick)
     this.running = true
   }
@@ -102,6 +110,10 @@ class Game {
     this.dt = timestamp - lastTime
     this.update();
     lastTime = timestamp
+  }
+
+  advanceFrame(timestamp){
+
   }
 
   update(){

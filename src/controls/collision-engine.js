@@ -52,7 +52,6 @@ class CollisionEngine extends Control{
             if (inter){
                 var playerPoint = [playerRay[2], playerRay[3]]
                 var resistancePoint = intersection(...collider.rays[i], ...$(playerPoint).plusVector($(collider.normals[i]).timesScalar(10).$).$, ...playerPoint)
-                console.log(resistancePoint)
                 return inter
             }
         }

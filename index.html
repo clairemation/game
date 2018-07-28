@@ -6,6 +6,7 @@
   <head>
     <meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
 
   <body scroll="no" style="background: #000; font-family: 'Press Start 2P'; text-align: center;
@@ -15,20 +16,17 @@
           user-select: none;          /* Likely future */
   ">&nbsp;
 
+    <form id="debugmenu" align=left style="width: 640px; margin: auto; text-align: left;">
+      <button id="start-button"><i class="material-icons">play_arrow</i></button>
+      <button id="stop-button"><i class="material-icons">pause</i></button>
+      <button id="advance-frame"><i class="material-icons">skip_next</i></button>
+    </form>
+
     <div id="root" style="width: 640px; height: 480px; position: relative; margin: auto; display: flex; overflow: hidden;">
 
-     <!--  <div id="title-screen" style="width: 100%; height: 100%; position: absolute; display: flex; align-items: center; justify-content: center; color: #fff;">
-        <img src="assets/titlescreen.png" style="width: 100%; height: 100%;" />
-      </div>
-
-      <div id="loading-screen" style="width: 100%; height: 100%; position: absolute; display: flex; align-items: center; justify-content: center; color: #fff; visibility: hidden;">
-        Loading...
-      </div>
-
-      <img id="bg1" src="assets/bgb.jpg" style="position: absolute; width: 1280; height: 480px; left: 0; top: 0; image-rendering: pixelated; visibility: hidden;" /> -->
 
       <canvas width=320 height=240 id="canvas"
-        style="position: absolute; width: 640px; height: 480px;
+        style="position: relative; width: 640px; height: 480px;
           image-rendering: optimizeSpeed;             /* Older versions of FF          */
           image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
           image-rendering: -webkit-optimize-contrast; /* Safari                        */
@@ -36,17 +34,6 @@
           image-rendering: pixelated;                 /* Awesome future-browsers       */
           -ms-interpolation-mode: nearest-neighbor;   /* IE                            */">
       </canvas>
-
-      <!-- <img id="fg1" src="assets/fg2b.png" style="position: absolute; left: 0; top: 0; width: 1280; height: 480px; image-rendering: pixelated; visibility: hidden"/>
-
-      <div id="scoreboard" style="position: absolute; left: 540px; top: 40px; width: 100px; height: 100px; color: #000; font-size: 16px; text-align: center; visibility: hidden">SCORE: 0</div>
-
-      <div id="message-wrapper" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-
-        <div id="message" style="width: 90%; height: 90%; background: hsl(0, 0%, 0%); border: 3px solid #fff; visibility: hidden; display: flex; align-items: center; justify-content: center; color: #fff;">
-        </div>
-
-      </div> -->
 
     </div>
 

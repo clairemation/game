@@ -47,7 +47,6 @@ class Camera extends Control{
   }
 
   update(){
-    renderer.setTransform(1, 0, 0, 1, 0, 0)
     offset[0] = -this.owner.controls.transform.position.x + this.margin[0]
     offset[1] = -this.owner.controls.transform.position.y + this.margin[1]
     renderer.setTransform(1, 0, 0, 1, offset[0], offset[1])
