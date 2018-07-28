@@ -7,7 +7,7 @@ class Parallax extends Control{
   constructor(args){
     super(args)
     this.name = 'parallax'
-    this.rate = 2
+    this.rate = 7.5
     this.rowNumber = args.rowNumber
     this.offset = args.offset
   }
