@@ -8,6 +8,7 @@ class Ground extends SceneObject{
       name: 'ground' + count++,
       scene: args.scene,
       tag: 'ground',
+      active: true,
 
       states: {
         active: require('../states/activeGround'),

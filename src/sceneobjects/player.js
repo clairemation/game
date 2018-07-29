@@ -7,6 +7,7 @@ class Player extends SceneObject{
     var sceneObjArgs = {
       name: 'player',
       scene: args.scene,
+      active: true,
 
       states: {
         walking: require('../states/walking'),

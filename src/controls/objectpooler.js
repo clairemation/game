@@ -13,6 +13,7 @@ class ObjectPooler extends Control{
     activate(x){
         this.owner.changeState('active')
         this.owner.controls.transform.position[0] = x
+        this.owner.active = true
     }
 
     setObjectPool(value){
@@ -22,6 +23,7 @@ class ObjectPooler extends Control{
     deactivate(){
         this.objectPool.returnToPool(this)
         this.owner.changeState('inactive')
+        this.owner.active = false
     }
 
     update(){

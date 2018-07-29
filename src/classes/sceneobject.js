@@ -6,6 +6,7 @@ class SceneObject extends StateMachine{
         this.scene = args.scene
         this.tag = args.tag || ''
         this.scene.registerObject(this)
+        this.active = args.active || false
     }
 
     getControlsByName(name){
