@@ -1,24 +1,31 @@
-var startButton = document.getElementById('start-button')
-var advanceFrameButton = document.getElementById('advance-frame')
 var debugModeHeader = document.getElementById('debugmodeheader')
-var sceneSelect = document.getElementById('scene-select')
+var buttons = {
+  start: document.getElementById('start-button'),
+  advanceFrame: document.getElementById('advance-frame'),
+  scroll: document.getElementById('scroll-button'),
+  sceneSelect: document.getElementById('scene-select'),
+  placePlayer: document.getElementById('place-player')
+}
 
-var lastMousePos = [0,0]
-var currentMousePos = [0,0]
+var updateLoop
+
+var lastMouseX, lastMouseY
+var currentMouseX, currentMouseY
 var mouseDown = false
-var scrollUpdateLoop
+
+var mode = "play"
 
 var canvas = document.getElementById('canvas')
-var game
-var camera
-var spriteEngine
+var game, camera, spriteEngine, player
 
 class DebugManager{
   constructor(g){
     game = g
-    startButton.onclick = togglePlayPause
-    advanceFrameButton.onclick = advanceFrame
-    sceneSelect.onchange = selectScene
+    buttons.start.onclick = togglePlayPause
+    buttons.advanceFrame.onclick = advanceFrame
+    buttons.scroll.onclick = toggleScrollMode
+    buttons.sceneSelect.onchange = selectScene
+    buttons.placePlayer.onclick = togglePlacePlayerMode
   }
 
 }
@@ -37,26 +44,59 @@ function advanceFrame(e){
 
 function enterDebugMode(){
   game.stop()
-  startButton.innerHTML='<i class="material-icons">play_arrow</i>'
+  buttons.start.innerHTML='<i class="fa fa-play"></i>'
   debugModeHeader.style.visibility = 'visible'
-  advanceFrameButton.disabled = false
-  sceneSelect.disabled = false
+  enableAllButtons()
   game.debugMode = true
+  mode = "debug"
 
   camera = game.currentScene.getControlsByName('camera')[0]
   spriteEngine = game.currentScene.getControlsByName('spriteEngine')[0]
+  player = game.currentScene.getObjectByName('player')
 
-  canvas.addEventListener('mousedown', onMouseDown.bind())
-  document.addEventListener('mouseup', onMouseUp.bind())
+  updateLoop = requestAnimationFrame(update)
+
 }
 
 function exitDebugMode(){
   game.start()
-  startButton.innerHTML='<i class="material-icons">pause</i>'
+  buttons.start.innerHTML='<i class="fa fa-pause"></i>'
   debugModeHeader.style.visibility = 'hidden'
-  advanceFrameButton.disabled = "disabled"
-  sceneSelect.disabled = "disabled"
+  disableAllButtonsExcept(buttons.start)
   game.debugMode = false
+}
+
+function toggleScrollMode(e){
+  e.preventDefault()
+  if (mode != "scroll"){
+    disableAllButtonsExcept(buttons.scroll)
+    canvas.addEventListener('mousedown', scrollOnMouseDown)
+    document.addEventListener('mouseup', scrollOnMouseUp)
+    mode = "scroll"
+  } else {
+    enableAllButtons()
+    canvas.removeEventListener('mousedown', scrollOnMouseDown)
+    document.removeEventListener('mouseup', scrollOnMouseUp)
+    mode = "debug"
+  }
+}
+
+function togglePlacePlayerMode(e){
+  e.preventDefault()
+}
+
+function enableAllButtons(){
+  for (var key in buttons){
+    buttons[key].disabled = false
+  }
+}
+
+function disableAllButtonsExcept(button){
+  for (var key in buttons){
+    if (buttons[key] != button){
+      buttons[key].disabled = "disabled"
+    }
+  }
 }
 
 function selectScene(e){
@@ -64,38 +104,47 @@ function selectScene(e){
   spriteEngine.update()
 }
 
-function onMouseDown(e){
+function scrollOnMouseDown(e){
   if (!mouseDown){
-    lastMousePos = [e.clientX, e.clientY]
-    currentMousePos = [e.clientX, e.clientY]
-    canvas.addEventListener('mousemove', onMouseMove)
-    scrollUpdateLoop = requestAnimationFrame(scrollUpdate)
+    lastMouseX = e.clientX
+    lastMouseY = e.clientY
+    currentMouseX = e.clientX
+    currentMouseY = e.clientY
+    canvas.addEventListener('mousemove', scrollOnMouseMove)
     mouseDown = true
   }
 }
 
-function onMouseMove(e){
-  currentMousePos[0] = e.clientX
-  currentMousePos[1] = e.clientY
+function scrollOnMouseMove(e){
+  currentMouseX = e.clientX
+  currentMouseY = e.clientY
 }
 
-function onMouseUp(e){
-  cancelAnimationFrame(scrollUpdateLoop)
-  canvas.removeEventListener('mousemove', onMouseMove)
+function scrollOnMouseUp(e){
+  canvas.removeEventListener('mousemove', scrollOnMouseMove)
   mouseDown = false
 }
 
-function scrollUpdate(){
-  scrollUpdateLoop = requestAnimationFrame(scrollUpdate)
-  var deltaX = (currentMousePos[0] - lastMousePos[0]) / 2
-  var deltaY = (currentMousePos[1] - lastMousePos[1]) / 2
-  var currCameraOffset = camera.getOffset()
-  currCameraOffset[0] += deltaX
-  currCameraOffset[1] += deltaY
-  camera.setOffset(currCameraOffset[0], currCameraOffset[1])
-  spriteEngine.update()
-  lastMousePos[0] = currentMousePos[0]
-  lastMousePos[1] = currentMousePos[1]
+function debugOnMouseMove(e){
+
+}
+
+function update(){
+  updateLoop = requestAnimationFrame(update)
+  if (mode == "scroll"){
+    if (currentMouseX == lastMouseX && currentMouseY == lastMouseY){
+      return
+    }
+    var deltaX = (currentMouseX - lastMouseX) / 2
+    var deltaY = (currentMouseY - lastMouseY) / 2
+    var currCameraOffset = camera.getOffset()
+    currCameraOffset[0] += deltaX
+    currCameraOffset[1] += deltaY
+    camera.setOffset(currCameraOffset[0], currCameraOffset[1])
+    spriteEngine.update()
+    lastMouseX = currentMouseX
+    lastMouseY = currentMouseY
+  }
 }
 
 module.exports = DebugManager
