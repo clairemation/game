@@ -1,3 +1,5 @@
+const renderer = require('./renderer')
+
 var debugModeHeader = document.getElementById('debugmodeheader')
 var buttons = {
   start: document.getElementById('start-button'),
@@ -58,6 +60,9 @@ function enterDebugMode(){
   canvas.addEventListener('mousedown', onMouseDown)
   canvas.addEventListener('mousemove', onMouseMove)
   document.addEventListener('mouseup', onMouseUp)
+
+  renderer.strokeStyle = "green"
+  renderer.strokeWidth = "1"
 
   updateLoop = requestAnimationFrame(update)
 
@@ -135,6 +140,7 @@ function onMouseUp(e){
 
 function update(){
   updateLoop = requestAnimationFrame(update)
+  spriteEngine.update()
 
   if (currentMouseX == lastMouseX && currentMouseY == lastMouseY){
     return
@@ -149,7 +155,9 @@ function update(){
     for (var i = 0; i < objects.length; i++){
       boundingBox = objects[i].controls.transform.getBounds()
       if (pointer[0] > boundingBox[0] && pointer[0] < boundingBox[2] && pointer[1] > boundingBox[1] && pointer[1] < boundingBox[3]){
-        console.log(objects[i].name)
+        renderer.beginPath()
+        renderer.rect(...objects[i].controls.transform.position, ...objects[i].controls.transform.size)
+        renderer.stroke()
         break
       }
     }
