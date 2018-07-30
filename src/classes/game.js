@@ -19,7 +19,7 @@ class Game {
       return instance
     }
 
-    this.debugManager = new (require('../core/debug-manager'))(this)
+    this.debugManager = new (require('../core/debug-manager'))({game: this})
     this.debugMode = false
 
     this.scenes = args.scenes || {}
