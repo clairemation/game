@@ -1,4 +1,5 @@
 const renderer = require('./renderer')
+const input = require('./input')
 const State = require("../classes/state")
 const StateMachine = require('../classes/statemachine')
 
@@ -76,6 +77,7 @@ class DebugManager extends StateMachine{
 
 var off = new DebugState({
   enter(){
+    input.turnOn()
     game.start()
     buttons.start.innerHTML='<i class="fa fa-pause"></i>'
     debugModeHeader.style.visibility = 'hidden'
@@ -91,6 +93,7 @@ var off = new DebugState({
 var selection = new DebugState({
   enter: function(){
     game.stop()
+    input.turnOff()
     buttons.start.innerHTML='<i class="fa fa-play"></i>'
     debugModeHeader.style.visibility = 'visible'
     enableAllButtons()

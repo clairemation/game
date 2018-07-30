@@ -12,6 +12,20 @@ function handleEvent(handlers, e){
 }
 
 var input = {
+  turnOn: function(){
+    document.addEventListener("keydown", keydownHandler)
+    document.addEventListener("keyup", keyupHandler)
+    document.addEventListener("touchstart", touchstartHandler)
+    document.addEventListener("touchend", touchendHandler)
+  },
+
+  turnOff: function(){
+    document.removeEventListener("keydown", keydownHandler)
+    document.removeEventListener("keyup", keyupHandler)
+    document.removeEventListener("touchstart", touchstartHandler)
+    document.removeEventListener("touchend", touchendHandler)
+  },
+
   addKeyDownListener: function(handler){
     keyDownHandlers.push(handler)
     keyDownHandlerIndices[handler] = keyDownHandlers.length - 1
@@ -35,30 +49,32 @@ var input = {
   }
 }
 
-document.addEventListener("keydown", e => {
-    if (!keyDown && e.keyCode == 32){
-        e.preventDefault()
-        keyDown = true
-        handleEvent(keyDownHandlers, e)
-    }
-})
+function keydownHandler(e){
+  if (!keyDown && e.keyCode == 32){
+      e.preventDefault()
+      keyDown = true
+      handleEvent(keyDownHandlers, e)
+  }
+}
 
-document.addEventListener("keyup", e => {
-    if (e.keyCode == 32){
-        e.preventDefault()
-        keyDown = false
-        handleEvent(keyUpHandlers, e)
-    }
-})
+function keyupHandler(e){
+  if (e.keyCode == 32){
+      e.preventDefault()
+      keyDown = false
+      handleEvent(keyUpHandlers, e)
+  }
+}
 
-document.addEventListener("touchstart", e => {
-    e.preventDefault()
-    handleEvent(keyDownHandlers)
-})
+function touchstartHandler(e){
+  e.preventDefault()
+  handleEvent(keyDownHandlers)
+}
 
-document.addEventListener("touchend", e => {
-    e.preventDefault()
-    handleEvent(keyUpHandlers)
-})
+function touchendHandler(e){
+  e.preventDefault()
+  handleEvent(keyUpHandlers)
+}
+
+input.turnOn()
 
 module.exports = input
