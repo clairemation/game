@@ -12,6 +12,10 @@ var buttons = {
   placePlayer: document.getElementById('place-player')
 }
 
+var keys = {
+  space: 32
+}
+
 var updateLoop
 
 var highlightedObject
@@ -29,6 +33,8 @@ class DebugState extends State{
   onMouseUp(){}
   onMouseDown(){}
   onMouseMove(){}
+  onKeyDown(){}
+  onKeyUp(){}
 }
 
 class DebugManager extends StateMachine{
@@ -60,18 +66,24 @@ class DebugManager extends StateMachine{
     this.onMouseDown = this.onMouseDown.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
+    this.onKeyDown = this.onKeyDown.bind(this)
+    this.onKeyUp = this.onMouseUp.bind(this)
   }
 
   onMouseDown(e){
     this.currentState.onMouseDown.call(this,e)
   }
-
   onMouseMove(e){
     this.currentState.onMouseMove.call(this, e)
   }
-
   onMouseUp(e){
     this.currentState.onMouseUp.call(this, e)
+  }
+  onKeyDown(e){
+    this.currentState.onKeyDown.call(this, e)
+  }
+  onKeyUp(e){
+    this.currentState.onKeyUp.call(this, e)
   }
 }
 
@@ -86,6 +98,8 @@ var off = new DebugState({
     canvas.removeEventListener('mousedown', this.onMouseDown)
     canvas.removeEventListener('mousemove', this.onMouseMove)
     document.removeEventListener('mouseup', this.onMouseUp)
+    document.removeEventListener('keydown', this.onKeyDown)
+    document.removeEventListener('keyup', this.onKeyUp)
     game.debugMode = false
   }
 })
