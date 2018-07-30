@@ -67,7 +67,7 @@ class DebugManager extends StateMachine{
     this.onMouseMove = this.onMouseMove.bind(this)
     this.onMouseUp = this.onMouseUp.bind(this)
     this.onKeyDown = this.onKeyDown.bind(this)
-    this.onKeyUp = this.onMouseUp.bind(this)
+    this.onKeyUp = this.onKeyUp.bind(this)
   }
 
   onMouseDown(e){
@@ -121,6 +121,8 @@ var selection = new DebugState({
     canvas.addEventListener('mousedown', this.onMouseDown)
     canvas.addEventListener('mousemove', this.onMouseMove)
     document.addEventListener('mouseup', this.onMouseUp)
+    document.addEventListener('keydown', this.onKeyDown)
+    document.addEventListener('keyup', this.onKeyUp)
 
     renderer.strokeWidth = "1"
 
@@ -138,6 +140,12 @@ var selection = new DebugState({
     lastMouseY = currentMouseY
     currentMouseX = e.layerX
     currentMouseY = e.layerY
+  },
+
+  onKeyDown: function(e){
+    if (e.keyCode == keys.space){
+      this.changeState('scroll')
+    }
   },
 
   update: function(){
@@ -198,10 +206,12 @@ var moveObject = new DebugState({
 var scroll = new DebugState({
   enter: function(){
     disableAllButtonsExcept(buttons.scroll)
+    canvas.style.cursor = 'all-scroll'
   },
 
   exit: function(){
     enableAllButtons()
+    canvas.style.cursor = 'default'
   },
 
   onMouseDown: function(e){
@@ -223,6 +233,12 @@ var scroll = new DebugState({
 
   onMouseUp: function(e){
     mouseDown = false
+  },
+
+  onKeyUp: function(e){
+    if (e.keyCode == keys.space){
+      this.changeState('selection')
+    }
   },
 
   update: function(){
