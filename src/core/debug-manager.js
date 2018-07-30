@@ -13,6 +13,10 @@ var buttons = {
 
 var updateLoop
 
+var highlightedObject
+var objectDeltaX
+var objectDeltaY
+
 var lastMouseX, lastMouseY
 var currentMouseX, currentMouseY
 var mouseDown = false
@@ -33,6 +37,7 @@ class DebugManager extends StateMachine{
       states: {
         selection,
         scroll,
+        moveObject,
         off
       },
       initialState: 'off'
@@ -100,19 +105,14 @@ var selection = new DebugState({
     canvas.addEventListener('mousemove', this.onMouseMove)
     document.addEventListener('mouseup', this.onMouseUp)
 
-    renderer.strokeStyle = "red"
     renderer.strokeWidth = "1"
 
     updateLoop = requestAnimationFrame(this.update.bind(this))
   },
 
   onMouseDown: function(e){
-    if (!mouseDown){
-      lastMouseX = e.layerX
-      lastMouseY = e.layerY
-      currentMouseX = e.layerX
-      currentMouseY = e.layerY
-      mouseDown = true
+    if (highlightedObject){
+      this.changeState('moveObject')
     }
   },
 
@@ -123,10 +123,6 @@ var selection = new DebugState({
     currentMouseY = e.layerY
   },
 
-  onMouseUp: function(e){
-    mouseDown = false
-  },
-
   update: function(){
     updateLoop = requestAnimationFrame(this.update.bind(this))
     if (currentMouseX == lastMouseX && currentMouseY == lastMouseY){
@@ -135,18 +131,50 @@ var selection = new DebugState({
 
     spriteEngine.update()
 
-    var camOffset = camera.getOffset()
-    var pointer = [currentMouseX / 2 - camOffset[0], currentMouseY / 2 - camOffset[1]]
+    var pointer = getPointerWorldspace()
     var boundingBox
     for (var i = 0; i < objects.length; i++){
       boundingBox = objects[i].controls.transform.getBounds()
       if (pointer[0] > boundingBox[0] && pointer[0] < boundingBox[2] && pointer[1] > boundingBox[1] && pointer[1] < boundingBox[3]){
-        renderer.beginPath()
-        renderer.rect(...objects[i].controls.transform.position, ...objects[i].controls.transform.size)
-        renderer.stroke()
-        break
+        highlightedObject = objects[i]
+        highlightObject(highlightedObject, 'red')
+        return
       }
+      highlightedObject = null
     }
+  }
+})
+
+var moveObject = new DebugState({
+  enter: function(){
+    var pointer = getPointerWorldspace()
+    objectDeltaX = highlightedObject.controls.transform.position[0] - pointer[0]
+    objectDeltaY = highlightedObject.controls.transform.position[1] - pointer[1]
+  },
+
+  onMouseMove(e){
+    lastMouseX = currentMouseX
+    lastMouseY = currentMouseY
+    currentMouseX = e.layerX
+    currentMouseY = e.layerY
+  },
+
+  onMouseUp(e){
+    this.changeState('selection')
+  },
+
+  update: function(){
+    updateLoop = requestAnimationFrame(this.update.bind(this))
+
+    if (currentMouseX == lastMouseX && currentMouseY == lastMouseY){
+      return
+    }
+
+    var pointer = getPointerWorldspace()
+    highlightedObject.controls.transform.position[0] = pointer[0] + objectDeltaX
+    highlightedObject.controls.transform.position[1] = pointer[1] + objectDeltaY
+    spriteEngine.update()
+    highlightObject(highlightedObject, 'green')
   }
 })
 
@@ -195,83 +223,10 @@ var scroll = new DebugState({
   }
 })
 
-// class DebugManager{
-//   constructor(g){
-//     game = g
-    // buttons.start.onclick = togglePlayPause
-    // buttons.advanceFrame.onclick = advanceFrame
-    // buttons.scroll.onclick = toggleScrollMode
-    // buttons.sceneSelect.onchange = selectScene
-    // buttons.placePlayer.onclick = togglePlacePlayerMode
-//   }
-
-// }
-// DebugManager.prototype.exitDebug = exitDebugMode
-// DebugManager.prototype.enterDebug = enterDebugMode
-
-// function togglePlayPause(e){
-//   e.preventDefault()
-//   game.debugMode ? exitDebugMode() : enterDebugMode()
-// }
-
 function advanceFrame(e){
   e.preventDefault()
   game.advanceFrame()
 }
-
-// function enterDebugMode(){
-  // game.stop()
-  // buttons.start.innerHTML='<i class="fa fa-play"></i>'
-  // debugModeHeader.style.visibility = 'visible'
-  // enableAllButtons()
-  // game.debugMode = true
-  // mode = "debug"
-
-  // camera = game.currentScene.getControlsByName('camera')[0]
-  // spriteEngine = game.currentScene.getControlsByName('spriteEngine')[0]
-  // player = game.currentScene.getObjectByName('player')
-  // objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
-
-  // canvas.addEventListener('mousedown', onMouseDown)
-  // canvas.addEventListener('mousemove', onMouseMove)
-  // document.addEventListener('mouseup', onMouseUp)
-
-  // renderer.strokeStyle = "red"
-  // renderer.strokeWidth = "1"
-
-  // updateLoop = requestAnimationFrame(update)
-
-// }
-
-// function exitDebugMode(){
-  // game.start()
-  // buttons.start.innerHTML='<i class="fa fa-pause"></i>'
-  // debugModeHeader.style.visibility = 'hidden'
-  // disableAllButtonsExcept(buttons.start)
-  // canvas.addEventListener('mousedown', onMouseDown)
-  // canvas.addEventListener('mousemove', onMouseMove)
-  // document.addEventListener('mouseup', onMouseUp)
-  // cancelAnimationFrame(updateLoop)
-  // game.debugMode = false
-// }
-
-// function toggleScrollMode(e){
-//   e.preventDefault()
-//   if (mode != "scroll"){
-    // disableAllButtonsExcept(buttons.scroll)
-
-//     mode = "scroll"
-//   } else {
-//     enableAllButtons()
-//     canvas.removeEventListener('mousedown', onMouseDown)
-//     document.removeEventListener('mouseup', onMouseUp)
-//     mode = "debug"
-//   }
-// }
-
-// function togglePlacePlayerMode(e){
-//   e.preventDefault()
-// }
 
 function enableAllButtons(){
   for (var key in buttons){
@@ -292,70 +247,16 @@ function selectScene(e){
   spriteEngine.update()
 }
 
-// function onMouseDown(e){
-  // if (!mouseDown){
-  //   lastMouseX = e.clientX
-  //   lastMouseY = e.clientY
-  //   currentMouseX = e.layerX
-  //   currentMouseY = e.layerY
-  //   mouseDown = true
-  // }
-// }
+function highlightObject(object, color){
+  renderer.strokeStyle = color
+  renderer.beginPath()
+  renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
+  renderer.stroke()
+}
 
-// function onMouseMove(e){
-  // lastMouseX = currentMouseX
-  // lastMouseY = currentMouseY
-  // currentMouseX = e.layerX
-  // currentMouseY = e.layerY
-// }
-
-// function onMouseUp(e){
-  // mouseDown = false
-// }
-
-// function update(){
-  // updateLoop = requestAnimationFrame(update)
-  // spriteEngine.update()
-
-  // if (currentMouseX == lastMouseX && currentMouseY == lastMouseY){
-  //   return
-  // }
-
-  // if (mode == "scroll"){
-  //   scroll()
-  // } else if (mode == "debug"){
-  //   selectObjects()
-  // }
-// }
-
-// function scroll(){
-  // if (!mouseDown){
-  //   return
-  // }
-  // var deltaX = (currentMouseX - lastMouseX) / 2
-  // var deltaY = (currentMouseY - lastMouseY) / 2
-  // var currCameraOffset = camera.getOffset()
-  // currCameraOffset[0] += deltaX
-  // currCameraOffset[1] += deltaY
-  // camera.setOffset(currCameraOffset[0], currCameraOffset[1])
-  // spriteEngine.update()
-  // lastMouseX = currentMouseX
-  // lastMouseY = currentMouseY
-// }
-
-// function selectObjects(){
-  // var camOffset = camera.getOffset()
-  // var pointer = [currentMouseX / 2 - camOffset[0], currentMouseY / 2 - camOffset[1]]
-  // var boundingBox
-  // for (var i = 0; i < objects.length; i++){
-  //   boundingBox = objects[i].controls.transform.getBounds()
-  //   if (pointer[0] > boundingBox[0] && pointer[0] < boundingBox[2] && pointer[1] > boundingBox[1] && pointer[1] < boundingBox[3]){
-  //     renderer.beginPath()
-  //     renderer.rect(...objects[i].controls.transform.position, ...objects[i].controls.transform.size)
-  //     renderer.stroke()
-  //     break
-  //   }
-  // }
-// }
+function getPointerWorldspace(){
+  var camOffset = camera.getOffset()
+  return [currentMouseX / 2 - camOffset[0], currentMouseY / 2 - camOffset[1]]
+}
 
 module.exports = DebugManager
