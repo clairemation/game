@@ -9,7 +9,8 @@ var buttons = {
   advanceFrame: document.getElementById('advance-frame'),
   scroll: document.getElementById('scroll-button'),
   sceneSelect: document.getElementById('scene-select'),
-  showGrid: document.getElementById('show-grid')
+  showGrid: document.getElementById('show-grid'),
+  snap: document.getElementById('snap')
 }
 
 var keys = {
@@ -19,6 +20,7 @@ var keys = {
 var updateLoop
 
 var shouldShowGrid = false
+var shouldSnapToGrid = false
 
 var highlightedObject
 var objectDeltaX
@@ -69,6 +71,10 @@ class DebugManager extends StateMachine{
     buttons.showGrid.onchange = e => {
       e.preventDefault()
       toggleShowGrid()
+    }
+    buttons.snap.onchange = e => {
+      e.preventDefault()
+      shouldSnapToGrid = !shouldSnapToGrid
     }
     buttons.advanceFrame.onclick = advanceFrame
     // buttons.sceneSelect.onchange = selectScene
@@ -131,8 +137,8 @@ var selection = new DebugState({
 
     pixelWidth = camera.getPixelWidth()
     pixelHeight = camera.getPixelHeight()
-    gridWidth = pixelWidth + 64
-    gridHeight = pixelWidth + 64
+    gridWidth = pixelWidth + 32
+    gridHeight = pixelWidth + 32
 
     gridCanvas.width = gridWidth
     gridCanvas.height = gridHeight
@@ -220,8 +226,20 @@ var moveObject = new DebugState({
     }
 
     var pointer = getPointerWorldspace()
-    highlightedObject.controls.transform.position[0] = pointer[0] + objectDeltaX
-    highlightedObject.controls.transform.position[1] = pointer[1] + objectDeltaY
+    var newX = pointer[0] + objectDeltaX
+    var newY = pointer[1] + objectDeltaY
+    if (shouldSnapToGrid){
+      var xDistFromGrid = newX % 32
+      var yDistFromGrid = newY % 32
+      if (xDistFromGrid < 5){
+        newX -= xDistFromGrid
+      }
+      if (yDistFromGrid < 5){
+        newY -= yDistFromGrid
+      }
+    }
+    highlightedObject.controls.transform.position[0] = newX
+    highlightedObject.controls.transform.position[1] = newY
     render()
   }
 })
