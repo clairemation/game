@@ -70,7 +70,7 @@ class DebugManager extends StateMachine{
     }
     buttons.showGrid.onchange = e => {
       e.preventDefault()
-      toggleShowGrid()
+      shouldShowGrid = !shouldShowGrid
     }
     buttons.snap.onchange = e => {
       e.preventDefault()
@@ -229,13 +229,17 @@ var moveObject = new DebugState({
     var newX = pointer[0] + objectDeltaX
     var newY = pointer[1] + objectDeltaY
     if (shouldSnapToGrid){
-      var xDistFromGrid = newX % 32
-      var yDistFromGrid = newY % 32
-      if (xDistFromGrid < 5){
-        newX -= xDistFromGrid
+      var distFromLeftLine = newX % 32
+      var distFromAboveLine = newY % 32
+      if (distFromLeftLine < 5){
+        newX -= distFromLeftLine
+      } else if (distFromLeftLine > 32 - 5) {
+        newX += 32 - distFromLeftLine
       }
-      if (yDistFromGrid < 5){
-        newY -= yDistFromGrid
+      if (distFromAboveLine < 5){
+        newY -= distFromAboveLine
+      } else if (distFromAboveLine > 32 - 5) {
+        newY += 32 - distFromAboveLine
       }
     }
     highlightedObject.controls.transform.position[0] = newX
@@ -343,10 +347,6 @@ function render(){
   if (highlightedObject){
     highlightObject(highlightedObject)
   }
-}
-
-function toggleShowGrid(){
-  shouldShowGrid = !shouldShowGrid
 }
 
 function drawGridCanvas(){
