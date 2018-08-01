@@ -41,6 +41,14 @@ class Camera extends Control{
     return offset
   }
 
+  getPixelWidth(){
+    return PIXEL_WIDTH
+  }
+
+  getPixelHeight(){
+    return PIXEL_HEIGHT
+  }
+
   setOffset(x,y){
 
     Camera.setOffset(x, y)

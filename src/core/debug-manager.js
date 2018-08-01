@@ -9,7 +9,7 @@ var buttons = {
   advanceFrame: document.getElementById('advance-frame'),
   scroll: document.getElementById('scroll-button'),
   sceneSelect: document.getElementById('scene-select'),
-  placePlayer: document.getElementById('place-player')
+  showGrid: document.getElementById('show-grid')
 }
 
 var keys = {
@@ -17,6 +17,8 @@ var keys = {
 }
 
 var updateLoop
+
+var shouldShowGrid = false
 
 var highlightedObject
 var objectDeltaX
@@ -28,6 +30,11 @@ var mouseDown = false
 
 var canvas = document.getElementById('canvas')
 var game, camera, spriteEngine, player, objects
+var pixelWidth, pixelHeight
+
+var gridCanvas = document.createElement('canvas')
+var gridCtx
+var gridWidth, gridHeight
 
 class DebugState extends State{
   onMouseUp(){}
@@ -58,6 +65,10 @@ class DebugManager extends StateMachine{
     buttons.scroll.onclick = e => {
       e.preventDefault()
       this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
+    }
+    buttons.showGrid.onchange = e => {
+      e.preventDefault()
+      toggleShowGrid()
     }
     buttons.advanceFrame.onclick = advanceFrame
     // buttons.sceneSelect.onchange = selectScene
@@ -118,6 +129,16 @@ var selection = new DebugState({
     player = game.currentScene.getObjectByName('player')
     objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
 
+    pixelWidth = camera.getPixelWidth()
+    pixelHeight = camera.getPixelHeight()
+    gridWidth = pixelWidth + 64
+    gridHeight = pixelWidth + 64
+
+    gridCanvas.width = gridWidth
+    gridCanvas.height = gridHeight
+    gridCtx = gridCanvas.getContext('2d')
+    drawGridCanvas()
+
     canvas.addEventListener('mousedown', this.onMouseDown)
     canvas.addEventListener('mousemove', this.onMouseMove)
     document.addEventListener('mouseup', this.onMouseUp)
@@ -125,6 +146,9 @@ var selection = new DebugState({
     document.addEventListener('keyup', this.onKeyUp)
 
     renderer.strokeWidth = "1"
+    renderer.strokeStyle = 'green'
+
+    render()
 
     updateLoop = requestAnimationFrame(this.update.bind(this))
   },
@@ -154,24 +178,24 @@ var selection = new DebugState({
       return
     }
 
-    spriteEngine.update()
-
     var pointer = getPointerWorldspace()
     var boundingBox
+    highlightedObject = null
     for (var i = 0; i < objects.length; i++){
       boundingBox = objects[i].controls.transform.getBounds()
       if (pointer[0] > boundingBox[0] && pointer[0] < boundingBox[2] && pointer[1] > boundingBox[1] && pointer[1] < boundingBox[3]){
         highlightedObject = objects[i]
-        highlightObject(highlightedObject, 'red')
-        return
+        highlightObject(highlightedObject)
+        break
       }
-      highlightedObject = null
     }
+    render()
   }
 })
 
 var moveObject = new DebugState({
   enter: function(){
+    renderer.strokeStyle = 'red'
     var pointer = getPointerWorldspace()
     objectDeltaX = highlightedObject.controls.transform.position[0] - pointer[0]
     objectDeltaY = highlightedObject.controls.transform.position[1] - pointer[1]
@@ -198,8 +222,7 @@ var moveObject = new DebugState({
     var pointer = getPointerWorldspace()
     highlightedObject.controls.transform.position[0] = pointer[0] + objectDeltaX
     highlightedObject.controls.transform.position[1] = pointer[1] + objectDeltaY
-    spriteEngine.update()
-    highlightObject(highlightedObject, 'green')
+    render()
   }
 })
 
@@ -252,7 +275,7 @@ var scroll = new DebugState({
     currCameraOffset[0] += deltaX
     currCameraOffset[1] += deltaY
     camera.setOffset(currCameraOffset[0], currCameraOffset[1])
-    spriteEngine.update()
+    render()
   }
 })
 
@@ -280,8 +303,7 @@ function selectScene(e){
   spriteEngine.update()
 }
 
-function highlightObject(object, color){
-  renderer.strokeStyle = color
+function highlightObject(object){
   renderer.beginPath()
   renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
   renderer.stroke()
@@ -290,6 +312,40 @@ function highlightObject(object, color){
 function getPointerWorldspace(){
   var camOffset = camera.getOffset()
   return [currentMouseX / 2 - camOffset[0], currentMouseY / 2 - camOffset[1]]
+}
+
+function render(){
+  spriteEngine.update()
+  if (shouldShowGrid){
+    var camOffset = camera.getOffset()
+    var startX = -camOffset[0] + camOffset[0] % 32
+    var startY = -camOffset[1] + camOffset[1] % 32
+    renderer.drawImage(gridCanvas, 0, 0, gridWidth, gridHeight, startX, startY, gridWidth, gridHeight)
+  }
+  if (highlightedObject){
+    highlightObject(highlightedObject)
+  }
+}
+
+function toggleShowGrid(){
+  shouldShowGrid = !shouldShowGrid
+}
+
+function drawGridCanvas(){
+  gridCtx.strokeStyle = 'white'
+  for (var i = 0; i <= gridWidth; i += 32){
+    gridCtx.beginPath()
+    gridCtx.moveTo(i, 0)
+    gridCtx.lineTo(i, gridWidth)
+    gridCtx.stroke()
+  }
+  for (var i = 0; i <= gridHeight; i += 32){
+    gridCtx.beginPath()
+    gridCtx.moveTo(0, i)
+    gridCtx.lineTo(gridHeight, i)
+    gridCtx.stroke()
+  }
+
 }
 
 module.exports = DebugManager
