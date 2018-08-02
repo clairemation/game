@@ -34,7 +34,8 @@ class Ground extends SceneObject{
             animations: {
               default: ['default'],
             },
-            initialAnimation: ['default', true]
+            initialAnimation: ['default', true],
+            layer: 1
           }
         },
 

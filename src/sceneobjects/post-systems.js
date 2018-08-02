@@ -14,15 +14,24 @@ class PostSystems extends SceneObject{
             this.controls.groundPool.update()
             // this.controls.groundLevelObstaclePool.update()
             this.controls.collisionEngine.update()
-            this.controls.spriteEngine.update()
+            this.controls.renderingEngine.update()
           }
         })
       },
       initialState: 'normal',
 
       controls: {
+        bgSpriteEngine: {
+          kind: require('../controls/sprite-engine')
+        },
+        groundSpriteEngine: {
+          kind: require('../controls/sprite-engine')
+        },
         spriteEngine: {
           kind: require('../controls/sprite-engine')
+        },
+        renderingEngine: {
+          kind: require('../controls/rendering-engine')
         },
         groundLevelObstaclePool: {
           kind: require('../controls/objectpool-engine'),

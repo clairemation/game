@@ -14,6 +14,7 @@ class Sprite extends Control{
         this.spritesheetName = args.spritesheetName
         this.spritesheetData = args.spritesheetData
         this.animations = args.animations
+        this.layer = args.layer
         this.currentFrameNum = 0
         this.elapsedTime = 0
         this.looping = true

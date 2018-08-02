@@ -45,7 +45,8 @@ class Player extends SceneObject{
               fall: ['raptorflap01'],
               hurt: ['raptorhurt']
             },
-            initialAnimation: ['walk', true]
+            initialAnimation: ['walk', true],
+            layer: 2
           }
         },
 

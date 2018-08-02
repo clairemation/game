@@ -31,7 +31,7 @@ var currentMouseX, currentMouseY
 var mouseDown = false
 
 var canvas = document.getElementById('canvas')
-var game, camera, spriteEngine, player, objects
+var game, camera, renderingEngine, player, objects
 var pixelWidth, pixelHeight
 
 var gridCanvas = document.createElement('canvas')
@@ -131,7 +131,7 @@ var selection = new DebugState({
     game.debugMode = true
 
     camera = game.currentScene.getControlsByName('camera')[0]
-    spriteEngine = game.currentScene.getControlsByName('spriteEngine')[0]
+    renderingEngine = game.currentScene.getControlsByName('renderingEngine')[0]
     player = game.currentScene.getObjectByName('player')
     objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
 
@@ -322,7 +322,7 @@ function disableAllButtonsExcept(button){
 
 function selectScene(e){
   game.replaceTop(e.target.value)
-  spriteEngine.update()
+  renderingEngine.update()
 }
 
 function highlightObject(object){
@@ -337,7 +337,7 @@ function getPointerWorldspace(){
 }
 
 function render(){
-  spriteEngine.update()
+  renderingEngine.update()
   if (shouldShowGrid){
     var camOffset = camera.getOffset()
     var startX = -camOffset[0] + camOffset[0] % 32
