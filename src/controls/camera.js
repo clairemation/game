@@ -18,7 +18,6 @@ class Camera extends Control{
   init(){
     this.cameraFollow = this.owner.scene.getControlsByName('camera-follow')[0]
     this.cameraFollow.camera = this
-    this.parallaxLayers = this.owner.scene.getControlsByName('parallax')
   }
 
   reset(){
@@ -48,33 +47,10 @@ class Camera extends Control{
   static getPixelHeight(){
     return PIXEL_HEIGHT
   }
-
-  setOffset(x,y){
-
-    Camera.setOffset(x, y)
-
-    var rate, rowNum, xCamOffset, yCamOffset
-    for (var i = 0; i < this.parallaxLayers.length; i++){
-      rowNum = this.parallaxLayers[i].rowNumber
-      //Only need to recalc if rate is different from last iteration
-      if (rate != this.parallaxLayers[i].rate){
-        rate = this.parallaxLayers[i].rate
-        xCamOffset = x % (PIXEL_WIDTH * rate) / rate
-        yCamOffset = y % (PIXEL_HEIGHT * rate) / rate
-      }
-      this.parallaxLayers[i].owner.controls.transform.position[0] = -x + xCamOffset + PIXEL_WIDTH * rowNum
-      this.parallaxLayers[i].owner.controls.transform.position[1] = -y + yCamOffset + this.parallaxLayers[i].offset[1]
-    }
-  }
-
-  update(){
-    offset[0] = -this.owner.controls.transform.position.x + this.margin[0]
-    offset[1] = -this.owner.controls.transform.position.y + this.margin[1]
-    renderer.setTransform(1, 0, 0, 1, offset[0], offset[1])
-  }
 }
 
 Camera.prototype.reset = Camera.reset
 Camera.prototype.getOffset = Camera.getOffset
+Camera.prototype.setOffset = Camera.setOffset
 
 module.exports = Camera

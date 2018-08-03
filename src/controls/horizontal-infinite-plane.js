@@ -4,7 +4,7 @@ const Camera = require('../controls/camera')
 
 var PIXEL_WIDTH, PIXEL_HEIGHT
 
-class InfinitePlane extends Control{
+class HorizontalInfinitePlane extends Control{
   constructor(args){
     super(args)
     this.name = 'infinitePlane'
@@ -53,4 +53,4 @@ class InfinitePlane extends Control{
   }
 }
 
-module.exports = InfinitePlane
+module.exports = HorizontalInfinitePlane

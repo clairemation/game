@@ -22,7 +22,7 @@ class PostSystems extends SceneObject{
 
       controls: {
         background: {
-          kind: require('../controls/infinite-plane-engine'),
+          kind: require('../controls/horizontal-infinite-plane'),
           args: {
             rate: 7.5,
             spritesheetData: require('../spritesheet-data/background'),
