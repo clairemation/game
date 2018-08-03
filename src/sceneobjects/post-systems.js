@@ -21,9 +21,14 @@ class PostSystems extends SceneObject{
       initialState: 'normal',
 
       controls: {
-        bgSpriteEngine: {
-          kind: require('../controls/sprite-engine'),
-          args: {layer: 0}
+        background: {
+          kind: require('../controls/infinite-plane-engine'),
+          args: {
+            rate: 7.5,
+            spritesheetData: require('../spritesheet-data/background'),
+            offset: [0, 200],
+            layer: 0
+          }
         },
         groundSpriteEngine: {
           kind: require('../controls/sprite-engine'),

@@ -41,11 +41,11 @@ class Camera extends Control{
     return offset
   }
 
-  getPixelWidth(){
+  static getPixelWidth(){
     return PIXEL_WIDTH
   }
 
-  getPixelHeight(){
+  static getPixelHeight(){
     return PIXEL_HEIGHT
   }
 

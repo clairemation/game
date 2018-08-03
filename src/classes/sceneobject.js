@@ -13,6 +13,10 @@ class SceneObject extends StateMachine{
         return Object.values(this.controls).filter(control => control.name == name)
     }
 
+    getControlsByTag(tag){
+        return Object.values(this.controls).filter(control => control.tag == tag)
+    }
+
     getGame(){
         return this.scene.game
     }

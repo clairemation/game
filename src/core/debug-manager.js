@@ -1,4 +1,5 @@
 const renderer = require('./renderer')
+const Camera = require('../controls/camera')
 const input = require('./input')
 const State = require("../classes/state")
 const StateMachine = require('../classes/statemachine')
@@ -135,8 +136,8 @@ var selection = new DebugState({
     player = game.currentScene.getObjectByName('player')
     objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
 
-    pixelWidth = camera.getPixelWidth()
-    pixelHeight = camera.getPixelHeight()
+    pixelWidth = Camera.getPixelWidth()
+    pixelHeight = Camera.getPixelHeight()
     gridWidth = pixelWidth + 32
     gridHeight = pixelWidth + 32
 

@@ -10,7 +10,7 @@ class RenderingEngine extends Control{
   }
 
   init(){
-    this.components = this.owner.scene.getControlsByName('spriteEngine').sort((a, b) => a.layer - b.layer)
+    this.components = this.owner.scene.getControlsByTag('renderer').sort((a, b) => a.layer - b.layer)
   }
 
   update(){

@@ -69,6 +69,14 @@ class Scene {
         return arr
     }
 
+    getControlsByTag(tag){
+        var arr = []
+        for (let i = 0; i < this.objects.length; i++){
+            arr.push(...(this.objects[i].getControlsByTag(tag)))
+        }
+        return arr
+    }
+
     getObjectByName(name){
         return this.objects[this.objectIndices[name]]
     }
