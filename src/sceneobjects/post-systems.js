@@ -14,6 +14,7 @@ class PostSystems extends SceneObject{
             this.controls.groundPool.update()
             // this.controls.groundLevelObstaclePool.update()
             this.controls.collisionEngine.update()
+            this.controls.mapCollisionEngine.update()
             this.controls.renderingEngine.update()
           }
         })
@@ -64,6 +65,12 @@ class PostSystems extends SceneObject{
           kind: require('../controls/collision-engine'),
           args: {
             tag: 'ground'
+          }
+        },
+        mapCollisionEngine: {
+          kind: require('../controls/map-collision-engine'),
+          args: {
+            tileMap: require('../maps/level01')
           }
         },
         camera: {

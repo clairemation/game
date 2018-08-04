@@ -12,7 +12,7 @@ class CollisionEngine extends Control{
 
     init(){
         var colliders
-        colliders = this.owner.scene.getControlsByName('collider').filter(c => c.tag == this.tag)
+        colliders = this.owner.scene.getControlsByName('collider').filter(c => c.tags.includes(this.tag))
         var playerColliderIndex = colliders.findIndex(c => c.owner.name == 'player')
         this.playerCollider = colliders[playerColliderIndex]
         colliders.splice(playerColliderIndex, 1)

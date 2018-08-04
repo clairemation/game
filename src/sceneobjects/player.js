@@ -53,14 +53,14 @@ class Player extends SceneObject{
         collider: {
           kind: require('../controls/collider'),
           args: {
-            tag: 'ground',
+            tags: ['ground', 'level01'],
             hitbox: [0,30, 48, 34],
-            onHit: function(other, collisionPoint){
-              if (other.owner.tag == 'ground'){
-                  this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
-                  this.owner.controls.altitude.resetFall()
-                  this.owner.changeState('walking')
-              }
+            onHit: function(other){
+              // if (other.owner.tag == 'ground'){
+              //     this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
+              //     this.owner.controls.altitude.resetFall()
+              //     this.owner.changeState('walking')
+              // }
             }
           },
         },

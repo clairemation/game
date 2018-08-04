@@ -36,7 +36,7 @@ var currentMouseX, currentMouseY
 var mouseDown = false
 
 var canvas = document.getElementById('canvas')
-var game, camera, renderingEngine, player, objects
+var game, camera, renderingEngine, player, objects, map
 var pixelWidth, pixelHeight
 
 var gridCanvas = document.createElement('canvas')
@@ -155,6 +155,7 @@ var selection = new DebugState({
     renderingEngine = game.currentScene.getControlsByName('renderingEngine')[0]
     player = game.currentScene.getObjectByName('player')
     objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
+    map = game.currentScene.getControlsByName('mapRenderer')[0].tileMap
 
     pixelWidth = Camera.getPixelWidth()
     pixelHeight = Camera.getPixelHeight()
@@ -215,6 +216,10 @@ var selection = new DebugState({
         highlightObject(highlightedObject)
         break
       }
+    }
+    if (!highlightedObject){
+      var tile = map.getTileAtMapPosition(...pointer)
+      console.log(tile)
     }
     render()
   }

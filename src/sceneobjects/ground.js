@@ -57,7 +57,7 @@ class Ground extends SceneObject{
         collider: {
           kind: require('../controls/collider'),
           args: {
-            tag: 'ground',
+            tags: ['ground'],
             hitbox: [0, 0, 128, 36],
             rays: [[0, 36, 40, 0], [40, 0, 88, 0], [88, 0, 128, 36]]
           }
