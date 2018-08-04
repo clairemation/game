@@ -18,7 +18,8 @@ var level01 = new Scene({
     groundSpritesheet: './assets/ground.png',
     background: './assets/bg2.png',
     blop: './assets/blop.wav',
-    screech: './assets/pusou.wav'
+    screech: './assets/pusou.wav',
+    groundTile: './assets/ground-tile.png'
   },
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {

@@ -30,10 +30,17 @@ class PostSystems extends SceneObject{
             layer: 0
           }
         },
-        groundSpriteEngine: {
-          kind: require('../controls/sprite-engine'),
-          args: {layer: 1}
+        mapRenderer: {
+          kind: require('../controls/map-renderer'),
+          args: {
+            tileMap: require('../maps/level01'),
+            layer: 1
+          }
         },
+        // groundSpriteEngine: {
+        //   kind: require('../controls/sprite-engine'),
+        //   args: {layer: 1}
+        // },
         spriteEngine: {
           kind: require('../controls/sprite-engine'),
           args: {layer: 2}

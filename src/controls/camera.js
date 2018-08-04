@@ -40,6 +40,14 @@ class Camera extends Control{
     return offset
   }
 
+  static getViewportPosition(){
+    return [-offset[0], -offset[1]]
+  }
+
+  static setViewportPosition(x, y){
+    Camera.setOffset(-x, -y)
+  }
+
   static getPixelWidth(){
     return PIXEL_WIDTH
   }
@@ -52,5 +60,7 @@ class Camera extends Control{
 Camera.prototype.reset = Camera.reset
 Camera.prototype.getOffset = Camera.getOffset
 Camera.prototype.setOffset = Camera.setOffset
+Camera.prototype.getViewportPosition = Camera.getViewportPosition
+Camera.prototype.setViewportPosition = Camera.setViewportPosition
 
 module.exports = Camera
