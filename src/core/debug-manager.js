@@ -28,6 +28,7 @@ var shouldShowGrid = false
 var shouldSnapToGrid = false
 
 var highlightedObject
+var highlightedTileCoords
 var highlightedTile
 var objectDeltaX
 var objectDeltaY
@@ -60,6 +61,7 @@ class DebugManager extends StateMachine{
         selection,
         scroll,
         moveObject,
+        moveTile,
         off
       },
       initialState: 'off'
@@ -185,6 +187,8 @@ var selection = new DebugState({
   onMouseDown: function(e){
     if (highlightedObject){
       this.changeState('moveObject')
+    } else if (highlightedTileCoords){
+      this.changeState('moveTile')
     }
   },
 
@@ -219,14 +223,79 @@ var selection = new DebugState({
       }
     }
     if (!highlightedObject){
-      var tile = map.getTileAtMapPosition(...pointer)
-      if (tile){
-        highlightedTile = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
+      var mapCoords = map.worldToMapCoords(...pointer)
+      var tile = map.map[mapCoords[0]][mapCoords[1]]
+      if (tile != ' '){
+        highlightedTile = tile
+        highlightedTileCoords = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
       } else {
         highlightedTile = null
+        highlightedTileCoords = null
       }
     }
     render()
+  }
+})
+
+var moveTile = new DebugState({
+  enter: function(){
+    renderer.strokeStyle = 'red'
+    var pointer = getPointerWorldspace()
+    objectDeltaX = highlightedTileCoords[0] - pointer[0]
+    objectDeltaY = highlightedTileCoords[1] - pointer[1]
+
+    var mapCoords = map.worldToMapCoords(...pointer)
+    map.map[mapCoords[0]][mapCoords[1]] = ' '
+  },
+
+  exit: function(){
+    var mapCoords = map.worldToMapCoords(highlightedTileCoords[0], highlightedTileCoords[1])
+    map.map[mapCoords[0]][mapCoords[1]] = highlightedTile
+  },
+
+  onMouseMove: function(e){
+    lastMouseX = currentMouseX
+    lastMouseY = currentMouseY
+    currentMouseX = e.layerX
+    currentMouseY = e.layerY
+  },
+
+  onMouseUp: function(e){
+    this.changeState('selection')
+  },
+
+  update: function(){
+    updateLoop = requestAnimationFrame(this.update.bind(this))
+
+    var pointer = getPointerWorldspace()
+    var newX = pointer[0] + objectDeltaX
+    var newY = pointer[1] + objectDeltaY
+    var distFromLeftLine = newX % 32
+    var distFromAboveLine = newY % 32
+    if (distFromLeftLine <= 16){
+      newX -= distFromLeftLine
+    } else {
+      newX += 32 - distFromLeftLine
+    }
+    if (distFromAboveLine <= 16){
+      newY -= distFromAboveLine
+    } else {
+      newY += 32 - distFromAboveLine
+    }
+    highlightedTileCoords[0] = newX
+    highlightedTileCoords[1] = newY
+
+    render()
+    renderer.drawImage(game.currentScene.assetManager.assets[map.key[highlightedTile].sheet],
+      map.key[highlightedTile].coords.x,
+      map.key[highlightedTile].coords.y,
+      map.key[highlightedTile].coords.w,
+      map.key[highlightedTile].coords.h,
+      highlightedTileCoords[0],
+      highlightedTileCoords[1],
+      map.key[highlightedTile].coords.w,
+      map.key[highlightedTile].coords.h
+    )
   }
 })
 
@@ -236,16 +305,17 @@ var moveObject = new DebugState({
     var pointer = getPointerWorldspace()
     objectDeltaX = highlightedObject.controls.transform.position[0] - pointer[0]
     objectDeltaY = highlightedObject.controls.transform.position[1] - pointer[1]
+
   },
 
-  onMouseMove(e){
+  onMouseMove: function(e){
     lastMouseX = currentMouseX
     lastMouseY = currentMouseY
     currentMouseX = e.layerX
     currentMouseY = e.layerY
   },
 
-  onMouseUp(e){
+  onMouseUp: function(e){
     this.changeState('selection')
   },
 
@@ -383,8 +453,8 @@ function render(){
   }
   if (highlightedObject){
     highlightObject(highlightedObject)
-  } else if (highlightedTile){
-    highlightTile(highlightedTile)
+  } else if (highlightedTileCoords){
+    highlightTile(highlightedTileCoords)
   }
 }
 
