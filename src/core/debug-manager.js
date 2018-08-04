@@ -15,7 +15,7 @@ var buttons = {
   layer1: document.getElementById('layer-1'),
   layer2: document.getElementById('layer-2'),
   layer3: document.getElementById('layer-3'),
-  layer4: document.getElementById('layer-4')
+  exportMap: document.getElementById('export-map')
 }
 
 var keys = {
@@ -97,9 +97,17 @@ class DebugManager extends StateMachine{
       e.preventDefault()
       renderingEngine.enableLayer(2, buttons.layer3.checked)
     }
-    buttons.layer4.onchange = e => {
+    buttons.exportMap.onclick = e => {
       e.preventDefault()
-      renderingEngine.enableLayer(3, buttons.layer4.checked)
+      var textMap = map.map.map(e => e.join('')).join('\n') //Yes I should
+      var blob = new Blob([textMap], {type: 'text/text'})
+      var el = window.document.createElement('a')
+      el.href = window.URL.createObjectURL(blob)
+      el.download = 'map.txt'
+      document.body.appendChild(el)
+      el.click()
+      document.body.removeChild(el)
+      window.URL.revokeObjectURL(blob)
     }
     // buttons.sceneSelect.onchange = selectScene
     // buttons.placePlayer.onclick = togglePlacePlayerMode
