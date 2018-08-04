@@ -37,13 +37,13 @@ class PostSystems extends SceneObject{
             layer: 1
           }
         },
-        // groundSpriteEngine: {
-        //   kind: require('../controls/sprite-engine'),
-        //   args: {layer: 1}
-        // },
-        spriteEngine: {
+        groundSpriteEngine: {
           kind: require('../controls/sprite-engine'),
           args: {layer: 2}
+        },
+        spriteEngine: {
+          kind: require('../controls/sprite-engine'),
+          args: {layer: 3}
         },
         renderingEngine: {
           kind: require('../controls/rendering-engine')

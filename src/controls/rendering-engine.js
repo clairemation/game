@@ -11,6 +11,7 @@ class RenderingEngine extends Control{
 
   init(){
     this.components = this.owner.scene.getControlsByTag('renderer').sort((a, b) => a.layer - b.layer)
+    console.log(this.components)
   }
 
   update(){
