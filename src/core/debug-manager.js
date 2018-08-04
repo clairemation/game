@@ -19,7 +19,8 @@ var buttons = {
 }
 
 var keys = {
-  space: 32
+  space: 32,
+  shift: 16
 }
 
 var updateLoop
@@ -30,12 +31,16 @@ var shouldSnapToGrid = false
 var highlightedObject
 var highlightedTileCoords
 var highlightedTile
+var selectionStart
+var selectionEnd
+var selection
 var objectDeltaX
 var objectDeltaY
 
 var lastMouseX, lastMouseY
 var currentMouseX, currentMouseY
 var mouseDown = false
+var shiftDown = false
 
 var canvas = document.getElementById('canvas')
 var game, camera, renderingEngine, player, objects, map
@@ -59,6 +64,7 @@ class DebugManager extends StateMachine{
       name: 'debugManager',
       states: {
         selection,
+        multipleSelection,
         scroll,
         moveObject,
         moveTile,
@@ -100,7 +106,7 @@ class DebugManager extends StateMachine{
     buttons.exportMap.onclick = e => {
       e.preventDefault()
       var textMap = map.map.map(e => e.join('')).join('\n') //Yes I should
-      var blob = new Blob([textMap], {type: 'text/text'})
+      var blob = new Blob([textMap], {type: 'text/plain;charset=utf-8;'})
       var el = window.document.createElement('a')
       el.href = window.URL.createObjectURL(blob)
       el.download = 'map.txt'
@@ -210,6 +216,8 @@ var selection = new DebugState({
   onKeyDown: function(e){
     if (e.keyCode == keys.space){
       this.changeState('scroll')
+    } else if (e.keyCode == keys.shift){
+      this.changeState('multipleSelection')
     }
   },
 
@@ -242,6 +250,67 @@ var selection = new DebugState({
       }
     }
     render()
+  }
+})
+
+var multipleSelection = new DebugState({
+  enter: function(e){
+    selectionStart = null
+  },
+
+  onMouseDown: function(e){
+    if (mouseDown){
+      return
+    }
+    var pointer = getPointerWorldspace()
+    selectionStart = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32]
+    selectionEnd = [...selectionStart]
+    renderer.strokeStyle = 'red'
+    highlightedTile = null
+    highlightedTileCoords = null
+    mouseDown = true
+  },
+
+  onMouseUp: function(e){
+    mouseDown = false
+    renderer.strokeStyle = 'green'
+  },
+
+  onMouseMove: function(e){
+    lastMouseX = currentMouseX
+    lastMouseY = currentMouseY
+    currentMouseX = e.layerX
+    currentMouseY = e.layerY
+
+    if (mouseDown){
+      var pointer = getPointerWorldspace()
+      selectionEnd = [pointer[0] + (32 - pointer[0] % 32), pointer[1] + (32 - pointer[1] % 32)]
+    }
+  },
+
+  onKeyUp: function(e){
+    if (e.keyCode == keys.shift){
+      this.changeState('selection')
+    }
+  },
+
+  update: function(){
+    updateLoop = requestAnimationFrame(this.update.bind(this))
+    var pointer = getPointerWorldspace()
+    var mapCoords = map.worldToMapCoords(...pointer)
+    var tile = map.map[mapCoords[0]][mapCoords[1]]
+    if (tile != ' '){
+      highlightedTile = tile
+      highlightedTileCoords = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
+    } else {
+      highlightedTile = null
+      highlightedTileCoords = null
+    }
+    render()
+    if (selectionStart){
+      highlightTiles()
+    }
+
   }
 })
 
@@ -443,6 +512,15 @@ function highlightObject(object){
 function highlightTile(tile){
   renderer.beginPath()
   renderer.rect(...tile)
+  renderer.stroke()
+}
+
+function highlightTiles(){
+  renderer.beginPath()
+  var width = selectionEnd[0] - selectionStart[0]
+  var height = selectionEnd[1] - selectionStart[1]
+  console.log(width)
+  renderer.rect(...selectionStart, width, height)
   renderer.stroke()
 }
 
