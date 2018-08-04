@@ -28,6 +28,7 @@ var shouldShowGrid = false
 var shouldSnapToGrid = false
 
 var highlightedObject
+var highlightedTile
 var objectDeltaX
 var objectDeltaY
 
@@ -219,7 +220,11 @@ var selection = new DebugState({
     }
     if (!highlightedObject){
       var tile = map.getTileAtMapPosition(...pointer)
-      console.log(tile)
+      if (tile){
+        highlightedTile = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
+      } else {
+        highlightedTile = null
+      }
     }
     render()
   }
@@ -357,6 +362,12 @@ function highlightObject(object){
   renderer.stroke()
 }
 
+function highlightTile(tile){
+  renderer.beginPath()
+  renderer.rect(...tile)
+  renderer.stroke()
+}
+
 function getPointerWorldspace(){
   var camOffset = camera.getOffset()
   return [currentMouseX / 2 - camOffset[0], currentMouseY / 2 - camOffset[1]]
@@ -372,6 +383,8 @@ function render(){
   }
   if (highlightedObject){
     highlightObject(highlightedObject)
+  } else if (highlightedTile){
+    highlightTile(highlightedTile)
   }
 }
 
