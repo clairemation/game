@@ -11,7 +11,11 @@ var buttons = {
   scroll: document.getElementById('scroll-button'),
   sceneSelect: document.getElementById('scene-select'),
   showGrid: document.getElementById('show-grid'),
-  snap: document.getElementById('snap')
+  snap: document.getElementById('snap'),
+  layer1: document.getElementById('layer-1'),
+  layer2: document.getElementById('layer-2'),
+  layer3: document.getElementById('layer-3'),
+  layer4: document.getElementById('layer-4')
 }
 
 var keys = {
@@ -78,6 +82,22 @@ class DebugManager extends StateMachine{
       shouldSnapToGrid = !shouldSnapToGrid
     }
     buttons.advanceFrame.onclick = advanceFrame
+    buttons.layer1.onchange = e => {
+      e.preventDefault()
+      renderingEngine.enableLayer(0, buttons.layer1.checked)
+    }
+    buttons.layer2.onchange = e => {
+      e.preventDefault()
+      renderingEngine.enableLayer(1, buttons.layer2.checked)
+    }
+    buttons.layer3.onchange = e => {
+      e.preventDefault()
+      renderingEngine.enableLayer(2, buttons.layer3.checked)
+    }
+    buttons.layer4.onchange = e => {
+      e.preventDefault()
+      renderingEngine.enableLayer(3, buttons.layer4.checked)
+    }
     // buttons.sceneSelect.onchange = selectScene
     // buttons.placePlayer.onclick = togglePlacePlayerMode
 

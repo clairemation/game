@@ -11,6 +11,7 @@ class MapRenderer extends Control{
     this.tag = 'renderer'
     this.layer = args.layer
     this.tileMap = args.tileMap
+    this.enabled = true
     SCREEN_TILE_WIDTH = Math.floor(Camera.getPixelWidth() / 32) + 32
     SCREEN_TILE_HEIGHT = Math.floor(Camera.getPixelHeight() / 32) + 32
   }

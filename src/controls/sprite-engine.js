@@ -10,6 +10,7 @@ class SpriteEngine extends Control{
     this.name = 'spriteEngine'
     this.tag = 'renderer'
     this.components = []
+    this.enabled = true
     this.layer = args.layer || count++
   }
 

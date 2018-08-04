@@ -13,6 +13,7 @@ class HorizontalInfinitePlane extends Control{
     this.rate = args.rate
     this.spritesheetData = args.spritesheetData
     this.offset = args.offset || [0,0]
+    this.enabled = true
     PIXEL_WIDTH = Camera.getPixelWidth()
     PIXEL_HEIGHT = Camera.getPixelHeight()
   }

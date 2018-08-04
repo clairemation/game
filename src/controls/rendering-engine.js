@@ -11,8 +11,13 @@ class RenderingEngine extends Control{
 
   init(){
     this.components = this.owner.scene.getControlsByTag('renderer').sort((a, b) => a.layer - b.layer)
-    console.log(this.components)
   }
+
+  enableLayer(num, enable){
+    this.components[num].enabled = enable
+    console.log(this.components[num].enabled)
+  }
+
 
   update(){
 
@@ -22,7 +27,9 @@ class RenderingEngine extends Control{
     renderer.setTransform(1, 0, 0, 1, Camera.getOffset()[0], Camera.getOffset()[1])
 
     for (var i = 0; i < this.components.length; i++){
-      this.components[i].render()
+      if (this.components[i].enabled){
+        this.components[i].render()
+      }
     }
 
   }
