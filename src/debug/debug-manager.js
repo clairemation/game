@@ -14,7 +14,10 @@ var buttons = {
   layer1: document.getElementById('layer-1'),
   layer2: document.getElementById('layer-2'),
   layer3: document.getElementById('layer-3'),
-  exportMap: document.getElementById('export-map')
+  exportMap: document.getElementById('export-map'),
+
+  atlasSelect: document.getElementById('atlas-select'),
+  drawAtlasGrid: document.getElementById('inspector-show-grid')
 }
 
 var keys = {
@@ -51,6 +54,15 @@ var pixelWidth, pixelHeight
 var gridCanvas = document.createElement('canvas')
 var gridCtx
 var gridWidth, gridHeight
+
+var inspectorCanvas = document.getElementById('inspector-canvas')
+var inspector = inspectorCanvas.getContext('2d')
+var atlasImage
+var inspectorGridCanvas = document.createElement('canvas')
+var inspectorGridCtx = inspectorGridCanvas.getContext('2d')
+
+var shouldDrawAtlasGrid = false
+
 
 class DebugState extends State{
   onMouseUp(){}
@@ -119,6 +131,18 @@ class DebugManager extends StateMachine{
       document.body.removeChild(el)
       window.URL.revokeObjectURL(blob)
     }
+    buttons.atlasSelect.onchange = e => {
+      e.preventDefault()
+      inspector.clearRect(0,0,320,320)
+      atlasImage = new Image(160, 160)
+      atlasImage.onload = renderInspector
+      atlasImage.src = '../assets/' + e.target.value
+    }
+    buttons.drawAtlasGrid.onclick = e => {
+      e.preventDefault()
+      shouldDrawAtlasGrid = !shouldDrawAtlasGrid
+      renderInspector()
+    }
     // buttons.sceneSelect.onchange = selectScene
     // buttons.placePlayer.onclick = togglePlacePlayerMode
 
@@ -184,7 +208,11 @@ var initial = new DebugState({
     gridCanvas.width = gridWidth
     gridCanvas.height = gridHeight
     gridCtx = gridCanvas.getContext('2d')
-    drawGridCanvas()
+    drawGridCanvas(gridCtx, gridCanvas.width, gridCanvas.height)
+
+    inspectorGridCanvas.width = inspectorCanvas.width
+    inspectorGridCanvas.height = inspectorCanvas.height
+    drawGridCanvas(inspectorGridCtx, inspectorGridCanvas.width, inspectorGridCanvas.height)
 
     canvas.addEventListener('mousedown', this.onMouseDown)
     canvas.addEventListener('mousemove', this.onMouseMove)
@@ -653,19 +681,27 @@ function render(){
   }
 }
 
-function drawGridCanvas(){
-  gridCtx.strokeStyle = 'white'
+function renderInspector(){
+  inspector.clearRect(0, 0, 320, 320)
+  inspector.drawImage(atlasImage, 0, 0)
+  if (shouldDrawAtlasGrid){
+    inspector.drawImage(inspectorGridCanvas, 0, 0)
+  }
+}
+
+function drawGridCanvas(ctx, width, height){
+  ctx.strokeStyle = 'white'
   for (var i = 0; i <= gridWidth; i += 32){
-    gridCtx.beginPath()
-    gridCtx.moveTo(i, 0)
-    gridCtx.lineTo(i, gridWidth)
-    gridCtx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(i, 0)
+    ctx.lineTo(i, gridWidth)
+    ctx.stroke()
   }
   for (var i = 0; i <= gridHeight; i += 32){
-    gridCtx.beginPath()
-    gridCtx.moveTo(0, i)
-    gridCtx.lineTo(gridHeight, i)
-    gridCtx.stroke()
+    ctx.beginPath()
+    ctx.moveTo(0, i)
+    ctx.lineTo(gridHeight, i)
+    ctx.stroke()
   }
 
 }
