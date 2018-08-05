@@ -20,13 +20,15 @@ class MapCollisionEngine extends Control{
       if (!this.components[i].owner.active){
         continue
       }
-      var frontTile = this.tileMap.getTileAtMapPosition(...this.components[i].getWorldFrontCheckPoint())
+      var frontTileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldFrontCheckPoint())
+      var frontTile = this.tileMap.getTileAtMapCoords(...frontTileMapPos)
       if (frontTile){
-        frontTile.onHit(this.components[i], true)
+        frontTile.onHitFront(this.components[i], frontTileMapPos, this.tileMap)
       }
-      var bottomTile = this.tileMap.getTileAtMapPosition(...this.components[i].getWorldBottomCheckPoint())
+      var bottomTileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldBottomCheckPoint())
+      var bottomTile = this.tileMap.getTileAtMapCoords(...bottomTileMapPos)
       if (bottomTile && bottomTile != frontTile){
-        bottomTile.onHit(this.components[i], false)
+        bottomTile.onHitTop(this.components[i], bottomTileMapPos, this.tileMap)
       }
     }
   }
