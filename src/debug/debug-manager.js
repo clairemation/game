@@ -404,10 +404,11 @@ var moveMultipleTiles = new DebugState({
   },
 
   exit: function(){
+    console.log(selectedTiles)
     var mapStart = map.worldToMapCoords(...worldSelectionStart)
     for (var y = 0; y < selectedTiles.length; y++){
       for (var x = 0; x < selectedTiles[y].length; x++){
-        map.map[mapStart[0] + y * 32][mapStart[1] + x * 32] = selectedTiles[y][x]
+        map.map[mapStart[0] + y][mapStart[1] + x] = selectedTiles[y][x]
       }
     }
   },
