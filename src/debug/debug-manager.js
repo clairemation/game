@@ -1,6 +1,6 @@
-const renderer = require('./renderer')
+const renderer = require('../core/renderer')
 const Camera = require('../controls/camera')
-const input = require('./input')
+const input = require('../core/input')
 const State = require("../classes/state")
 const StateMachine = require('../classes/statemachine')
 
@@ -31,9 +31,12 @@ var shouldSnapToGrid = false
 var highlightedObject
 var highlightedTileCoords
 var highlightedTile
-var selectionStart
-var selectionEnd
-var selection
+var worldSelectionStart
+var worldSelectionEnd
+var mapSelectionStart
+var mapSelectionEnd
+var selectedTiles
+var selectionWidth, selectionHeight
 var objectDeltaX
 var objectDeltaY
 
@@ -68,6 +71,7 @@ class DebugManager extends StateMachine{
         scroll,
         moveObject,
         moveTile,
+        moveMultipleTiles,
         off
       },
       initialState: 'off'
@@ -255,7 +259,7 @@ var selection = new DebugState({
 
 var multipleSelection = new DebugState({
   enter: function(e){
-    selectionStart = null
+    worldSelectionStart = null
   },
 
   onMouseDown: function(e){
@@ -263,8 +267,12 @@ var multipleSelection = new DebugState({
       return
     }
     var pointer = getPointerWorldspace()
-    selectionStart = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32]
-    selectionEnd = [...selectionStart]
+    worldSelectionStart = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32]
+    mapSelectionStart = map.worldToMapCoords(...pointer)
+    worldSelectionEnd = [...worldSelectionStart]
+    mapSelectionEnd = [...mapSelectionStart]
+    selectionWidth = 32
+    selectionHeight = 32
     renderer.strokeStyle = 'red'
     highlightedTile = null
     highlightedTileCoords = null
@@ -273,7 +281,6 @@ var multipleSelection = new DebugState({
 
   onMouseUp: function(e){
     mouseDown = false
-    renderer.strokeStyle = 'green'
   },
 
   onMouseMove: function(e){
@@ -284,33 +291,30 @@ var multipleSelection = new DebugState({
 
     if (mouseDown){
       var pointer = getPointerWorldspace()
-      selectionEnd = [pointer[0] + (32 - pointer[0] % 32), pointer[1] + (32 - pointer[1] % 32)]
+      worldSelectionEnd = [pointer[0] + (32 - pointer[0] % 32), pointer[1] + (32 - pointer[1] % 32)]
+      mapSelectionEnd = map.worldToMapCoords(...pointer)
+      selectionWidth = worldSelectionEnd[0] - worldSelectionStart[0]
+      selectionHeight = worldSelectionEnd[1] - worldSelectionStart[1]
     }
   },
 
   onKeyUp: function(e){
     if (e.keyCode == keys.shift){
-      this.changeState('selection')
+      if (worldSelectionStart){
+        this.changeState('moveMultipleTiles')
+      } else {
+        this.changeState('selection')
+      }
     }
   },
 
   update: function(){
     updateLoop = requestAnimationFrame(this.update.bind(this))
-    var pointer = getPointerWorldspace()
-    var mapCoords = map.worldToMapCoords(...pointer)
-    var tile = map.map[mapCoords[0]][mapCoords[1]]
-    if (tile != ' '){
-      highlightedTile = tile
-      highlightedTileCoords = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
-    } else {
-      highlightedTile = null
-      highlightedTileCoords = null
-    }
+
     render()
-    if (selectionStart){
+    if (worldSelectionStart){
       highlightTiles()
     }
-
   }
 })
 
@@ -373,6 +377,110 @@ var moveTile = new DebugState({
       map.key[highlightedTile].coords.w,
       map.key[highlightedTile].coords.h
     )
+  }
+})
+
+var moveMultipleTiles = new DebugState({
+  enter: function(){
+    renderer.strokeStyle = 'green'
+
+    selectionWidth = worldSelectionEnd[0] - worldSelectionStart[0]
+    selectionHeight = worldSelectionEnd[1] - worldSelectionStart[1]
+
+    var mapStartY = mapSelectionStart[0]
+    var mapEndY = mapSelectionEnd[0]
+    var mapStartX = mapSelectionStart[1]
+    var mapEndX = mapSelectionEnd[1]
+
+    selectedTiles = []
+    for (var y = mapStartY; y <= mapEndY; y++){
+      var row = []
+      for (var x = mapStartX; x <= mapEndX; x++){
+        row.push(map.map[y][x])
+        map.map[y][x] = ' '
+      }
+      selectedTiles.push(row)
+    }
+  },
+
+  exit: function(){
+    var mapStart = map.worldToMapCoords(...worldSelectionStart)
+    for (var y = 0; y < selectedTiles.length; y++){
+      for (var x = 0; x < selectedTiles[y].length; x++){
+        map.map[mapStart[0] + y * 32][mapStart[1] + x * 32] = selectedTiles[y][x]
+      }
+    }
+  },
+
+  onMouseDown: function(e){
+    var pointer = getPointerWorldspace()
+    if (pointer[0] < worldSelectionStart[0] || pointer[0] > worldSelectionEnd[0] || pointer[1] < worldSelectionStart[1] || pointer[1] > worldSelectionEnd[1]){
+      this.changeState('selection')
+      return
+    }
+    objectDeltaX = worldSelectionStart[0] - pointer[0]
+    objectDeltaY = worldSelectionStart[1] - pointer[1]
+    mouseDown = true
+  },
+
+  onMouseMove: function(e){
+    lastMouseX = currentMouseX
+    lastMouseY = currentMouseY
+    currentMouseX = e.layerX
+    currentMouseY = e.layerY
+  },
+
+  onMouseUp: function(e){
+    mouseDown = false
+  },
+
+  update: function(){
+    updateLoop = requestAnimationFrame(this.update.bind(this))
+
+    if (!mouseDown){
+      return
+    }
+
+    var pointer = getPointerWorldspace()
+    var newX = pointer[0] + objectDeltaX
+    var newY = pointer[1] + objectDeltaY
+
+    var distFromLeftLine = newX % 32
+    var distFromAboveLine = newY % 32
+    if (distFromLeftLine <= 16){
+      newX -= distFromLeftLine
+    } else {
+      newX += 32 - distFromLeftLine
+    }
+    if (distFromAboveLine <= 16){
+      newY -= distFromAboveLine
+    } else {
+      newY += 32 - distFromAboveLine
+    }
+
+    var deltaX = newX - worldSelectionStart[0]
+    var deltaY = newX - worldSelectionStart[1]
+    worldSelectionStart[0] = newX
+    worldSelectionStart[1] = newY
+    worldSelectionEnd[0] += deltaX
+    worldSelectionEnd[1] += deltaY
+
+    render()
+    for (var y = 0; y < selectedTiles.length; y++){
+      for (var x = 0; x < selectedTiles[y].length; x++){
+        renderer.drawImage(game.currentScene.assetManager.assets[map.key[selectedTiles[y][x]].sheet],
+          map.key[selectedTiles[y][x]].coords.x,
+          map.key[selectedTiles[y][x]].coords.y,
+          map.key[selectedTiles[y][x]].coords.w,
+          map.key[selectedTiles[y][x]].coords.h,
+          worldSelectionStart[0] + x * 32,
+          worldSelectionStart[1] + y * 32,
+          map.key[selectedTiles[y][x]].coords.w,
+          map.key[selectedTiles[y][x]].coords.h
+        )
+      }
+    }
+    highlightTiles()
   }
 })
 
@@ -517,10 +625,7 @@ function highlightTile(tile){
 
 function highlightTiles(){
   renderer.beginPath()
-  var width = selectionEnd[0] - selectionStart[0]
-  var height = selectionEnd[1] - selectionStart[1]
-  console.log(width)
-  renderer.rect(...selectionStart, width, height)
+  renderer.rect(...worldSelectionStart, selectionWidth, selectionHeight)
   renderer.stroke()
 }
 
