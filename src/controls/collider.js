@@ -7,7 +7,7 @@ class Collider extends Control{
     super(args)
     this.tags = args.tags
     this.hitbox = args.hitbox
-    this.pivot = args.pivot || [this.hitbox[2] / 2, this.hitbox[3]]
+    this.checkPoints = args.checkPoints
 
     var upperLeftCorner = [this.hitbox[0], this.hitbox[1]]
     var upperRightCorner = [this.hitbox[2], this.hitbox[1]]
@@ -25,8 +25,12 @@ class Collider extends Control{
     }
   }
 
-  getWorldPivot(){
-    return [this.pivot[0] + this.owner.controls.transform.position[0], this.pivot[1] + this.owner.controls.transform.position[1]]
+  getWorldFrontCheckPoint(){
+    return [this.checkPoints.front[0] + this.owner.controls.transform.position[0], this.checkPoints.front[1] + this.owner.controls.transform.position[1]]
+  }
+
+  getWorldBottomCheckPoint(){
+    return [this.checkPoints.bottom[0] + this.owner.controls.transform.position[0], this.checkPoints.bottom[1] + this.owner.controls.transform.position[1]]
   }
 }
 

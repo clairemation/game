@@ -55,6 +55,10 @@ class Player extends SceneObject{
           args: {
             tags: ['ground', 'level01'],
             hitbox: [0,30, 48, 34],
+            checkPoints: {
+              front: [48, 16],
+              bottom: [16, 32]
+            },
             onHit: function(other){
               // if (other.owner.tag == 'ground'){
               //     this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
