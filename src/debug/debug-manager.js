@@ -66,6 +66,7 @@ class DebugManager extends StateMachine{
     super({
       name: 'debugManager',
       states: {
+        initial,
         selection,
         multipleSelection,
         scroll,
@@ -80,7 +81,7 @@ class DebugManager extends StateMachine{
     this.changeState('off')
     buttons.start.onclick = e => {
       e.preventDefault()
-      this.changeState(this.currentStateName == 'selection' ? 'off' : 'selection')
+      this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
     }
     buttons.scroll.onclick = e => {
       e.preventDefault()
@@ -163,7 +164,7 @@ var off = new DebugState({
   }
 })
 
-var selection = new DebugState({
+var initial = new DebugState({
   enter: function(){
     game.stop()
     input.turnOff()
@@ -194,11 +195,16 @@ var selection = new DebugState({
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
 
-    renderer.strokeWidth = "1"
-    renderer.strokeStyle = 'green'
-
     render()
 
+    this.changeState('selection')
+  }
+})
+
+var selection = new DebugState({
+  enter: function(){
+    enableAllButtons()
+    renderer.strokeStyle = 'green'
     updateLoop = requestAnimationFrame(this.update.bind(this))
   },
 
