@@ -4,7 +4,6 @@ const input = require('./input')
 const State = require("../classes/state")
 const StateMachine = require('../classes/statemachine')
 
-var debugModeHeader = document.getElementById('debugmodeheader')
 var buttons = {
   start: document.getElementById('start-button'),
   advanceFrame: document.getElementById('advance-frame'),
@@ -52,6 +51,11 @@ var gridCanvas = document.createElement('canvas')
 var gridCtx
 var gridWidth, gridHeight
 
+var inspector = document.getElementById('inspector-canvas')
+var inspectorCtx = inspector.getContext('2d')
+var inspectorGridCanvas = document.createElement('canvas')
+var inspectorGridCtx = inspectorGridCanvas.getContext('2d')
+
 class DebugState extends State{
   onMouseUp(){}
   onMouseDown(){}
@@ -65,6 +69,7 @@ class DebugManager extends StateMachine{
     super({
       name: 'debugManager',
       states: {
+        initial
         selection,
         multipleSelection,
         scroll,
@@ -79,7 +84,7 @@ class DebugManager extends StateMachine{
     this.changeState('off')
     buttons.start.onclick = e => {
       e.preventDefault()
-      this.changeState(this.currentStateName == 'selection' ? 'off' : 'selection')
+      this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
     }
     buttons.scroll.onclick = e => {
       e.preventDefault()
@@ -150,7 +155,6 @@ var off = new DebugState({
     input.turnOn()
     game.start()
     buttons.start.innerHTML='<i class="fa fa-pause"></i>'
-    debugModeHeader.style.visibility = 'hidden'
     disableAllButtonsExcept(buttons.start)
     cancelAnimationFrame(updateLoop)
     canvas.removeEventListener('mousedown', this.onMouseDown)
@@ -162,12 +166,47 @@ var off = new DebugState({
   }
 })
 
+var initial = new DebugState({
+  enter: function(){
+    game.stop()
+    input.turnOff()
+    buttons.start.innerHTML='<i class="fa fa-play"></i>'
+    game.debugMode = true
+
+    camera = game.currentScene.getControlsByName('camera')[0]
+    renderingEngine = game.currentScene.getControlsByName('renderingEngine')[0]
+    player = game.currentScene.getObjectByName('player')
+    objects = game.currentScene.objects.filter(e => !e.name.match(/background/) && e.active && e.controls.transform)
+    map = game.currentScene.getControlsByName('mapRenderer')[0].tileMap
+
+    pixelWidth = Camera.getPixelWidth()
+    pixelHeight = Camera.getPixelHeight()
+    gridWidth = pixelWidth + 32
+    gridHeight = pixelWidth + 32
+
+    gridCanvas.width = gridWidth
+    gridCanvas.height = gridHeight
+    gridCtx = gridCanvas.getContext('2d')
+    drawGridCanvas()
+
+    canvas.addEventListener('mousedown', this.onMouseDown)
+    canvas.addEventListener('mousemove', this.onMouseMove)
+    document.addEventListener('mouseup', this.onMouseUp)
+    document.addEventListener('keydown', this.onKeyDown)
+    document.addEventListener('keyup', this.onKeyUp)
+
+    renderer.strokeWidth = "1"
+    renderer.strokeStyle = 'green'
+
+    this.changeState('selection')
+  }
+})
+
 var selection = new DebugState({
   enter: function(){
     game.stop()
     input.turnOff()
     buttons.start.innerHTML='<i class="fa fa-play"></i>'
-    debugModeHeader.style.visibility = 'visible'
     enableAllButtons()
     game.debugMode = true
 

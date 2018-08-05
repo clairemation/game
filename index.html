@@ -21,36 +21,34 @@
 
 
 
-    <div id="root" style="position: relative; margin: auto; overflow: hidden;">
+    <div id="root" style="display: flex; position: relative; margin: auto; overflow: hidden; text-align: left;">
 
-        <h3 id="debugmodeheader" style="color: white; visibility: hidden;">DEBUG MODE</h3>
+      <section id="scene-view" style="display: inline-block;">
 
-      <form id="debugmenu" align=left style="width: 100%; margin: auto; text-align: left; background: gray;">
-        <button id="start-button"><i class="fa fa-pause"></i></button>
-        <button id="advance-frame" disabled="disabled"><i class="fa fa-step-forward"></i></button>
-        <button id="scroll-button" disabled="disabled"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
-        <span style="font-size: 12px;">Show grid</span>
-          <input type="checkbox" id="show-grid" disabled="disabled">
-        <span style="font-size: 12px;">Snap to grid</span>
-          <input type="checkbox" id="snap" disabled="disabled">
-        <select id="scene-select" disabled="disabled">
-          <option value="">Scene</option>
-          <option value="titlescreen">Title</option>
-          <option value="level01">Level 01</option>
-        </select>
-        <div style="font-size: 12px;">
-          Render layers
-          1<input type="checkbox" id="layer-1" checked="checked" disabled="disabled">
-          2<input type="checkbox" id="layer-2" checked="checked" disabled="disabled">
-          3<input type="checkbox" id="layer-3" checked="checked" disabled="disabled">
-        </div>
-        <button id="export-map">Export map</button>
-      </form>
-
-      <section id="canvases" style="flex;">
+        <form id="debugmenu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
+          <button id="start-button"><i class="fa fa-pause"></i></button>
+          <button id="advance-frame" disabled="disabled"><i class="fa fa-step-forward"></i></button>
+          <button id="scroll-button" disabled="disabled"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
+          <span style="font-size: 12px;">Show grid</span>
+            <input type="checkbox" id="show-grid" disabled="disabled">
+          <span style="font-size: 12px;">Snap to grid</span>
+            <input type="checkbox" id="snap" disabled="disabled">
+          <select id="scene-select" disabled="disabled">
+            <option value="">Scene</option>
+            <option value="titlescreen">Title</option>
+            <option value="level01">Level 01</option>
+          </select>
+          <div style="font-size: 12px;">
+            Render layers
+            1<input type="checkbox" id="layer-1" checked="checked" disabled="disabled">
+            2<input type="checkbox" id="layer-2" checked="checked" disabled="disabled">
+            3<input type="checkbox" id="layer-3" checked="checked" disabled="disabled">
+          </div>
+          <button id="export-map">Export map</button>
+        </form>
 
         <canvas width=320 height=240 id="canvas"
-          style="dipsplay: inline-block; width: 640px; height: 480px;
+          style="display: block; width: 640px; height: 480px;
             image-rendering: optimizeSpeed;             /* Older versions of FF          */
             image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
             image-rendering: -webkit-optimize-contrast; /* Safari                        */
@@ -58,6 +56,20 @@
             image-rendering: pixelated;                 /* Awesome future-browsers       */
             -ms-interpolation-mode: nearest-neighbor;   /* IE                            */">
         </canvas>
+
+      </section>
+
+      <section id="inspector-view" style="display: inline-block;">
+
+        <form id="inspector-menu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
+          <button id="scroll-button" ><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
+          <span style="font-size: 12px;">Show grid</span>
+            <input type="checkbox" id="show-grid">
+          <select id="scene-select">
+            <option value="">Atlas:</option>
+            <option value="ground">Ground</option>
+          </select>
+        </form>
 
         <canvas width=320 height=240 id="inspector-canvas"
           style="display: inline-block; position: relative;

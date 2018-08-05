@@ -4,7 +4,6 @@ const input = require('../core/input')
 const State = require("../classes/state")
 const StateMachine = require('../classes/statemachine')
 
-var debugModeHeader = document.getElementById('debugmodeheader')
 var buttons = {
   start: document.getElementById('start-button'),
   advanceFrame: document.getElementById('advance-frame'),
@@ -152,7 +151,6 @@ var off = new DebugState({
     input.turnOn()
     game.start()
     buttons.start.innerHTML='<i class="fa fa-pause"></i>'
-    debugModeHeader.style.visibility = 'hidden'
     disableAllButtonsExcept(buttons.start)
     cancelAnimationFrame(updateLoop)
     canvas.removeEventListener('mousedown', this.onMouseDown)
@@ -169,7 +167,6 @@ var initial = new DebugState({
     game.stop()
     input.turnOff()
     buttons.start.innerHTML='<i class="fa fa-play"></i>'
-    debugModeHeader.style.visibility = 'visible'
     enableAllButtons()
     game.debugMode = true
 
