@@ -15,7 +15,6 @@ class RenderingEngine extends Control{
 
   enableLayer(num, enable){
     this.components[num].enabled = enable
-    console.log(this.components[num].enabled)
   }
 
 

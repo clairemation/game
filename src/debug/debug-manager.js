@@ -61,7 +61,7 @@ var atlasImage
 var inspectorGridCanvas = document.createElement('canvas')
 var inspectorGridCtx = inspectorGridCanvas.getContext('2d')
 
-var shouldDrawAtlasGrid = false
+var shouldDrawAtlasGrid = true
 
 
 class DebugState extends State{
@@ -133,14 +133,14 @@ class DebugManager extends StateMachine{
     }
     buttons.atlasSelect.onchange = e => {
       e.preventDefault()
-      inspector.clearRect(0,0,320,320)
       atlasImage = new Image(160, 160)
       atlasImage.onload = renderInspector
       atlasImage.src = '../assets/' + e.target.value
     }
-    buttons.drawAtlasGrid.onclick = e => {
+    buttons.drawAtlasGrid.onchange = e => {
       e.preventDefault()
       shouldDrawAtlasGrid = !shouldDrawAtlasGrid
+
       renderInspector()
     }
     // buttons.sceneSelect.onchange = selectScene
