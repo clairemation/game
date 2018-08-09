@@ -75,7 +75,6 @@ class DebugManager extends StateMachine{
 
     this.canvas = document.getElementById('canvas')
     this.game
-    this.camera
     this.renderingEngine
     this.player
     this.objects

@@ -27,7 +27,6 @@ var moveMultipleTiles = new DebugState({
   },
 
   exit: function(){
-    console.log(this.selectedTiles)
     var mapStart = this.map.worldToMapCoords(...this.worldSelectionStart)
     for (var y = 0; y < this.selectedTiles.length; y++){
       for (var x = 0; x < this.selectedTiles[y].length; x++){
