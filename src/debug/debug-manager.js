@@ -16,11 +16,13 @@ class DebugManager{
         canvas: document.getElementById('canvas'),
         clipboard: this.clipboard
       }),
-      // inspector: new (require('./inspector-manager'))({game: this.game,
-      //   canvas: document.getElementById('inspector-canvas'),
-      //   clipboard: this.clipboard
-      // })
+      inspector: new (require('./inspector-manager'))({game: this.game,
+        canvas: document.getElementById('inspector-canvas'),
+        clipboard: this.clipboard
+      })
     }
+
+    this.canvasManagers.inspector.changeState('initial')
   }
 }
 

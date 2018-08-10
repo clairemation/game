@@ -13,10 +13,10 @@ class DebugState extends State{
   onKeyUp(){}
 }
 
-class SceneViewManager extends StateMachine{
+class DebugManager extends StateMachine{
   constructor(args){
     super({
-      name: 'sceneViewManager',
+      name: 'debugManager',
       states: {
         initial: require('./states/initial'),
         selection: require('./states/selection'),
@@ -29,10 +29,6 @@ class SceneViewManager extends StateMachine{
       },
       initialState: 'off'
     })
-
-    this.canvas = args.canvas
-    this.clipboard = args.clipboard
-    this.game = args.game
 
     this.buttons = {
       start: document.getElementById('start-button'),
@@ -58,6 +54,8 @@ class SceneViewManager extends StateMachine{
 
     this.updateLoop
 
+    this.renderer = renderer
+
     this.shouldShowGrid = false
     this.shouldSnapToGrid = false
 
@@ -78,6 +76,8 @@ class SceneViewManager extends StateMachine{
     this.mouseDown = false
     this.shiftDown = false
 
+    this.canvas = document.getElementById('canvas')
+    this.game
     this.renderingEngine
     this.player
     this.objects
@@ -91,15 +91,46 @@ class SceneViewManager extends StateMachine{
     this.gridWidth
     this.gridHeight
 
-    this.buttons.start.onclick = e => this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
-    this.buttons.scroll.onclick = e => this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
-    this.buttons.showGrid.onchange = e => this.shouldShowGrid = !this.shouldShowGrid
-    this.buttons.snap.onchange = e => this.shouldSnapToGrid = !this.shouldSnapToGrid
-    this.buttons.advanceFrame.onclick = this.game.advanceFrame.bind(this.game)
-    this.buttons.layer1.onchange = e => this.renderingEngine.enableLayer(0, this.buttons.layer1.checked)
-    this.buttons.layer2.onchange = e => this.renderingEngine.enableLayer(1, this.buttons.layer2.checked)
-    this.buttons.layer3.onchange = e => this.renderingEngine.enableLayer(2, this.buttons.layer3.checked)
+    this.inspectorCanvas = document.getElementById('inspector-canvas')
+    this.inspector = this.inspectorCanvas.getContext('2d')
+    this.atlasImage
+    this.inspectorGridCanvas = document.createElement('canvas')
+    this.inspectorGridCtx = this.inspectorGridCanvas.getContext('2d')
+
+    this.shouldDrawAtlasGrid = true
+
+    this.game = args.game
+    this.buttons.start.onclick = e => {
+      e.preventDefault()
+      this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
+    }
+    this.buttons.scroll.onclick = e => {
+      e.preventDefault()
+      this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
+    }
+    this.buttons.showGrid.onchange = e => {
+      e.preventDefault()
+      this.shouldShowGrid = !this.shouldShowGrid
+    }
+    this.buttons.snap.onchange = e => {
+      e.preventDefault()
+      this.shouldSnapToGrid = !this.shouldSnapToGrid
+    }
+    this.buttons.advanceFrame.onclick = this.advanceFrame.bind(this)
+    this.buttons.layer1.onchange = e => {
+      e.preventDefault()
+      this.renderingEngine.enableLayer(0, this.buttons.layer1.checked)
+    }
+    this.buttons.layer2.onchange = e => {
+      e.preventDefault()
+      this.renderingEngine.enableLayer(1, this.buttons.layer2.checked)
+    }
+    this.buttons.layer3.onchange = e => {
+      e.preventDefault()
+      this.renderingEngine.enableLayer(2, this.buttons.layer3.checked)
+    }
     this.buttons.exportMap.onclick = e => {
+      e.preventDefault()
       var textMap = this.map.this.map.this.map(e => e.join('')).join('\n') //Yes this sounds silly
       var blob = new Blob([textMap], {type: 'text/plain;charset=utf-8;'})
       var el = window.document.createElement('a')
@@ -162,21 +193,21 @@ class SceneViewManager extends StateMachine{
   }
 
   highlightObject(object){
-    renderer.beginPath()
-    renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
+    this.renderer.stroke()
   }
 
   highlightTile(tile){
-    renderer.beginPath()
-    renderer.rect(...tile)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...tile)
+    this.renderer.stroke()
   }
 
   highlightTiles(){
-    renderer.beginPath()
-    renderer.rect(...this.worldSelectionStart, this.selectionWidth, this.selectionHeight)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...this.worldSelectionStart, this.selectionWidth, this.selectionHeight)
+    this.renderer.stroke()
   }
 
   getPointerWorldspace(){
@@ -190,7 +221,7 @@ class SceneViewManager extends StateMachine{
       var camOffset = Camera.getOffset()
       var startX = -camOffset[0] + camOffset[0] % 32
       var startY = -camOffset[1] + camOffset[1] % 32
-      renderer.drawImage(this.gridCanvas, 0, 0, this.gridWidth, this.gridHeight, startX, startY, this.gridWidth, this.gridHeight)
+      this.renderer.drawImage(this.gridCanvas, 0, 0, this.gridWidth, this.gridHeight, startX, startY, this.gridWidth, this.gridHeight)
     }
     if (this.highlightedObject){
       this.highlightObject(this.highlightedObject)
@@ -224,4 +255,4 @@ class SceneViewManager extends StateMachine{
   }
 }
 
-module.exports = SceneViewManager
+module.exports = DebugManager

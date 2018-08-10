@@ -1,4 +1,3 @@
-const renderer = require('../core/renderer')
 const Camera = require('../controls/camera')
 const input = require('../core/input')
 const State = require("../classes/state")
@@ -7,16 +6,20 @@ const StateMachine = require('../classes/statemachine')
 class InspectorManager extends StateMachine{
   constructor(args){
     super({
-      name: 'inspectorManager',
+      name: 'sceneViewManager',
       states: {
-        initial: require('./states/initial'),
+        initial: require('./states/inspector-initial'),
         multipleSelection: require('./states/multiple-selection'),
         scroll: require('./states/scroll'),
-        moveMultipleTiles: require('./states/move-multiple-tiles'),
         off: require('./states/off')
       },
       initialState: 'off'
     })
+
+    this.canvas = args.canvas
+    this.renderer = this.canvas.getContext('2d')
+    this.clipboard = args.clipboard
+    this.game = args.game
 
     this.buttons = {
       atlasSelect: document.getElementById('atlas-select'),
@@ -30,7 +33,7 @@ class InspectorManager extends StateMachine{
 
     this.updateLoop
 
-    this.shouldShowGrid = false
+    this.shouldShowGrid = true
     this.shouldSnapToGrid = false
 
     this.highlightedObject
@@ -50,60 +53,24 @@ class InspectorManager extends StateMachine{
     this.mouseDown = false
     this.shiftDown = false
 
-    this.canvas = args.canvas
-    this.clipboard = args.clipboard
-    this.game
-    this.renderingEngine
-    this.player
-    this.objects
-    this.map
-    this.lastMap
     this.pixelWidth
     this.pixelHeight
 
     this.gridCanvas = document.createElement('canvas')
     this.gridCtx
-    this.gridWidth
-    this.gridHeight
+    this.gridWidth = 320
+    this.gridHeight = 240
 
-    this.inspectorCanvas = document.getElementById('inspector-canvas')
-    this.inspector = this.inspectorCanvas.getContext('2d')
-    this.atlasImage
-    this.inspectorGridCanvas = document.createElement('canvas')
-    this.inspectorGridCtx = this.inspectorGridCanvas.getContext('2d')
-
-    this.shouldDrawAtlasGrid = true
-
-    this.game = args.game
-    this.buttons.start.onclick = e => this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
-    this.buttons.scroll.onclick = e => this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
-    this.buttons.showGrid.onchange = e => this.shouldShowGrid = !this.shouldShowGrid
-    this.buttons.snap.onchange = e => this.shouldSnapToGrid = !this.shouldSnapToGrid
-    this.buttons.advanceFrame.onclick = this.game.advanceFrame.bind(this.game)
-    this.buttons.layer1.onchange = e => this.renderingEngine.enableLayer(0, this.buttons.layer1.checked)
-    this.buttons.layer2.onchange = e => this.renderingEngine.enableLayer(1, this.buttons.layer2.checked)
-    this.buttons.layer3.onchange = e => this.renderingEngine.enableLayer(2, this.buttons.layer3.checked)
-    this.buttons.exportMap.onclick = e => {
-      var textMap = this.map.this.map.this.map(e => e.join('')).join('\n') //Yes this sounds silly
-      var blob = new Blob([textMap], {type: 'text/plain;charset=utf-8;'})
-      var el = window.document.createElement('a')
-      el.href = window.URL.createObjectURL(blob)
-      el.download = 'this.map.txt'
-      document.body.appendChild(el)
-      el.click()
-      document.body.removeChild(el)
-      window.URL.revokeObjectURL(blob)
-    }
     this.buttons.atlasSelect.onchange = e => {
-      this.atlasImage = new Image(160, 160)
-      this.atlasImage.onload = this.renderInspector.bind(this)
+      this.atlasImage = new Image()
+      this.atlasImage.onload = this.render.bind(this)
       this.atlasImage.src = '../assets/' + e.target.value
     }
     this.buttons.drawAtlasGrid.onchange = e => {
-      this.shouldDrawAtlasGrid = !this.shouldDrawAtlasGrid
-
-      this.renderInspector()
+      this.shouldShowGrid = !this.shouldShowGrid
+      this.render()
     }
+
     // this.buttons.sceneSelect.onchange = this.selectScene
     // this.buttons.placePlayer.onclick = togglePlacePlayerMode
 
@@ -155,21 +122,21 @@ class InspectorManager extends StateMachine{
   }
 
   highlightObject(object){
-    renderer.beginPath()
-    renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...object.controls.transform.position, ...object.controls.transform.size)
+    this.renderer.stroke()
   }
 
   highlightTile(tile){
-    renderer.beginPath()
-    renderer.rect(...tile)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...tile)
+    this.renderer.stroke()
   }
 
   highlightTiles(){
-    renderer.beginPath()
-    renderer.rect(...this.worldSelectionStart, this.selectionWidth, this.selectionHeight)
-    renderer.stroke()
+    this.renderer.beginPath()
+    this.renderer.rect(...this.worldSelectionStart, this.selectionWidth, this.selectionHeight)
+    this.renderer.stroke()
   }
 
   getPointerWorldspace(){
@@ -178,12 +145,12 @@ class InspectorManager extends StateMachine{
   }
 
   render(){
-    this.renderingEngine.update()
+    this.renderer.clearRect(0, 0, 320, 240)
+    this.renderer.drawImage(this.atlasImage, 0, 0)
     if (this.shouldShowGrid){
-      var camOffset = Camera.getOffset()
-      var startX = -camOffset[0] + camOffset[0] % 32
-      var startY = -camOffset[1] + camOffset[1] % 32
-      renderer.drawImage(this.gridCanvas, 0, 0, this.gridWidth, this.gridHeight, startX, startY, this.gridWidth, this.gridHeight)
+      var startX = 0
+      var startY = 0
+      this.renderer.drawImage(this.gridCanvas, 0, 0, this.gridWidth, this.gridHeight, startX, startY, this.gridWidth, this.gridHeight)
     }
     if (this.highlightedObject){
       this.highlightObject(this.highlightedObject)
@@ -192,27 +159,19 @@ class InspectorManager extends StateMachine{
     }
   }
 
-  renderInspector(){
-    this.inspector.clearRect(0, 0, 320, 320)
-    this.inspector.drawImage(this.atlasImage, 0, 0)
-    if (this.shouldDrawAtlasGrid){
-      this.inspector.drawImage(this.inspectorGridCanvas, 0, 0)
-    }
-  }
-
-  drawGridCanvas(ctx, width, height){
-    ctx.strokeStyle = 'white'
+  drawGridCanvas(renderer, width, height){
+    renderer.strokeStyle = 'white'
     for (var i = 0; i <= this.gridWidth; i += 32){
-      ctx.beginPath()
-      ctx.moveTo(i, 0)
-      ctx.lineTo(i, this.gridWidth)
-      ctx.stroke()
+      renderer.beginPath()
+      renderer.moveTo(i, 0)
+      renderer.lineTo(i, this.gridWidth)
+      renderer.stroke()
     }
     for (var i = 0; i <= this.gridHeight; i += 32){
-      ctx.beginPath()
-      ctx.moveTo(0, i)
-      ctx.lineTo(this.gridHeight, i)
-      ctx.stroke()
+      renderer.beginPath()
+      renderer.moveTo(0, i)
+      renderer.lineTo(this.gridHeight, i)
+      renderer.stroke()
     }
   }
 }
