@@ -15,6 +15,8 @@ var inspectorInitial = new DebugState({
     document.addEventListener('mouseup', this.onMouseUp)
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
+
+    this.changeState('multipleSelection')
   }
 })
 

@@ -9,7 +9,7 @@ class InspectorManager extends StateMachine{
       name: 'sceneViewManager',
       states: {
         initial: require('./states/inspector-initial'),
-        multipleSelection: require('./states/multiple-selection'),
+        multipleSelection: require('./states/inspector-multiple-selection'),
         scroll: require('./states/scroll'),
         off: require('./states/off')
       },
@@ -140,11 +140,13 @@ class InspectorManager extends StateMachine{
   }
 
   getPointerWorldspace(){
-    var camOffset = Camera.getOffset()
-    return [this.currentMouseX / 2 - camOffset[0], this.currentMouseY / 2 - camOffset[1]]
+    return [this.currentMouseX / 2, this.currentMouseY / 2]
   }
 
   render(){
+    if (!this.atlasImage){
+      return
+    }
     this.renderer.clearRect(0, 0, 320, 240)
     this.renderer.drawImage(this.atlasImage, 0, 0)
     if (this.shouldShowGrid){
