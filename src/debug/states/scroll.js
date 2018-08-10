@@ -48,10 +48,10 @@ var scroll = new DebugState({
     }
     var deltaX = (this.currentMouseX - this.lastMouseX) / 2
     var deltaY = (this.currentMouseY - this.lastMouseY) / 2
-    var currCameraOffset = this.camera.getOffset()
+    var currCameraOffset = Camera.getOffset()
     currCameraOffset[0] += deltaX
     currCameraOffset[1] += deltaY
-    this.camera.setOffset(currCameraOffset[0], currCameraOffset[1])
+    Camera.setOffset(currCameraOffset[0], currCameraOffset[1])
     this.render()
   }
 })

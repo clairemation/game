@@ -27,10 +27,6 @@ var initial = new DebugState({
     this.gridCtx = this.gridCanvas.getContext('2d')
     this.drawGridCanvas(this.gridCtx, this.gridCanvas.width, this.gridCanvas.height)
 
-    this.inspectorGridCanvas.width = this.inspectorCanvas.width
-    this.inspectorGridCanvas.height = this.inspectorCanvas.height
-    this.drawGridCanvas(this.inspectorGridCtx, this.inspectorGridCanvas.width, this.inspectorGridCanvas.height)
-
     this.canvas.addEventListener('mousedown', this.onMouseDown)
     this.canvas.addEventListener('mousemove', this.onMouseMove)
     document.addEventListener('mouseup', this.onMouseUp)
