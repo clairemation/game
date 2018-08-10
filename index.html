@@ -25,7 +25,7 @@
 
       <section id="scene-view" style="display: inline-block;">
 
-        <form id="debugmenu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
+        <div id="debugmenu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
           <button id="start-button"><i class="fa fa-pause"></i></button>
           <button id="advance-frame" disabled="disabled"><i class="fa fa-step-forward"></i></button>
           <button id="scroll-button" disabled="disabled"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
@@ -45,7 +45,8 @@
             3<input type="checkbox" id="layer-3" checked="checked" disabled="disabled">
           </div>
           <button id="export-map">Export map</button>
-        </form>
+          <button id="undo">Undo</button>
+        </div>
 
         <canvas width=320 height=240 id="canvas"
           style="display: block; width: 640px; height: 480px;
@@ -61,7 +62,7 @@
 
       <section id="inspector-view" style="display: inline-block;">
 
-        <form id="inspector-menu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
+        <div id="inspector-menu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
           <button id="inspector-scroll-button" disabled="disabled"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
           <span style="font-size: 12px;">Show grid</span>
             <input type="checkbox" id="inspector-show-grid" checked="checked" disabled="disabled">
@@ -69,10 +70,10 @@
             <option value="">Atlas:</option>
             <option value="ground-atlas.png">Ground</option>
           </select>
-        </form>
+        </div>
 
         <canvas width=320 height=240 id="inspector-canvas"
-          style="display: inline-block; position: relative;
+          style="display: inline-block; position: relative; width: 640px; height: 480px;
             image-rendering: optimizeSpeed;             /* Older versions of FF          */
             image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
             image-rendering: -webkit-optimize-contrast; /* Safari                        */

@@ -41,6 +41,7 @@ class DebugManager extends StateMachine{
       layer2: document.getElementById('layer-2'),
       layer3: document.getElementById('layer-3'),
       exportMap: document.getElementById('export-map'),
+      undo: document.getElementById('undo'),
 
       atlasSelect: document.getElementById('atlas-select'),
       drawAtlasGrid: document.getElementById('inspector-show-grid')
@@ -79,6 +80,7 @@ class DebugManager extends StateMachine{
     this.player
     this.objects
     this.map
+    this.lastMap
     this.pixelWidth
     this.pixelHeight
 
@@ -96,37 +98,15 @@ class DebugManager extends StateMachine{
     this.shouldDrawAtlasGrid = true
 
     this.game = args.game
-    this.buttons.start.onclick = e => {
-      e.preventDefault()
-      this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
-    }
-    this.buttons.scroll.onclick = e => {
-      e.preventDefault()
-      this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
-    }
-    this.buttons.showGrid.onchange = e => {
-      e.preventDefault()
-      this.shouldShowGrid = !this.shouldShowGrid
-    }
-    this.buttons.snap.onchange = e => {
-      e.preventDefault()
-      this.shouldSnapToGrid = !this.shouldSnapToGrid
-    }
-    this.buttons.advanceFrame.onclick = this.advanceFrame
-    this.buttons.layer1.onchange = e => {
-      e.preventDefault()
-      this.renderingEngine.enableLayer(0, this.buttons.layer1.checked)
-    }
-    this.buttons.layer2.onchange = e => {
-      e.preventDefault()
-      this.renderingEngine.enableLayer(1, this.buttons.layer2.checked)
-    }
-    this.buttons.layer3.onchange = e => {
-      e.preventDefault()
-      this.renderingEngine.enableLayer(2, this.buttons.layer3.checked)
-    }
+    this.buttons.start.onclick = e => this.changeState(this.currentStateName == 'off' ? 'initial' : 'off')
+    this.buttons.scroll.onclick = e => this.changeState(this.currentStateName == 'scroll' ? 'selection' : 'scroll')
+    this.buttons.showGrid.onchange = e => this.shouldShowGrid = !this.shouldShowGrid
+    this.buttons.snap.onchange = e => this.shouldSnapToGrid = !this.shouldSnapToGrid
+    this.buttons.advanceFrame.onclick = this.game.advanceFrame.bind(this.game)
+    this.buttons.layer1.onchange = e => this.renderingEngine.enableLayer(0, this.buttons.layer1.checked)
+    this.buttons.layer2.onchange = e => this.renderingEngine.enableLayer(1, this.buttons.layer2.checked)
+    this.buttons.layer3.onchange = e => this.renderingEngine.enableLayer(2, this.buttons.layer3.checked)
     this.buttons.exportMap.onclick = e => {
-      e.preventDefault()
       var textMap = this.map.this.map.this.map(e => e.join('')).join('\n') //Yes this sounds silly
       var blob = new Blob([textMap], {type: 'text/plain;charset=utf-8;'})
       var el = window.document.createElement('a')
@@ -138,13 +118,11 @@ class DebugManager extends StateMachine{
       window.URL.revokeObjectURL(blob)
     }
     this.buttons.atlasSelect.onchange = e => {
-      e.preventDefault()
       this.atlasImage = new Image(160, 160)
-      this.atlasImage.onload = this.renderInspector
+      this.atlasImage.onload = this.renderInspector.bind(this)
       this.atlasImage.src = '../assets/' + e.target.value
     }
     this.buttons.drawAtlasGrid.onchange = e => {
-      e.preventDefault()
       this.shouldDrawAtlasGrid = !this.shouldDrawAtlasGrid
 
       this.renderInspector()
