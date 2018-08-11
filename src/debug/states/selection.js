@@ -53,13 +53,13 @@ var selection = new DebugState({
     if (!this.highlightedObject){
       var mapCoords = this.map.worldToMapCoords(...pointer)
       var tile = this.map.map[mapCoords[0]][mapCoords[1]]
-      if (tile != ' '){
+      // if (tile != ' '){
         this.highlightedTile = tile
         this.highlightedTileCoords = [pointer[0] - pointer[0] % 32, pointer[1] - pointer[1] % 32, 32, 32]
-      } else {
-        this.highlightedTile = null
-        this.highlightedTileCoords = null
-      }
+      // } else {
+        // this.highlightedTile = null
+        // this.highlightedTileCoords = null
+      // }
     }
     this.render()
   }

@@ -46,6 +46,7 @@
           </div>
           <button id="export-map">Export map</button>
           <button id="undo">Undo</button>
+          <button id="paste">Paste</button>
         </div>
 
         <canvas width=320 height=240 id="canvas"
@@ -63,13 +64,14 @@
       <section id="inspector-view" style="display: inline-block;">
 
         <div id="inspector-menu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
-          <button id="inspector-scroll-button" disabled="disabled"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
+          <button id="inspector-scroll-button"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
           <span style="font-size: 12px;">Show grid</span>
-            <input type="checkbox" id="inspector-show-grid" checked="checked" disabled="disabled">
-          <select id="atlas-select" disabled="disabled">
-            <option value="">Atlas:</option>
+            <input type="checkbox" id="inspector-show-grid" checked="checked">
+          <select id="atlas-select">
+            <option value="" disabled="disabled" selected="selected">Atlas:</option>
             <option value="ground-atlas.png">Ground</option>
           </select>
+          <button id="copy-button">Copy</button>
         </div>
 
         <canvas width=320 height=240 id="inspector-canvas"

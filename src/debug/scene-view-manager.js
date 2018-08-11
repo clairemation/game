@@ -42,9 +42,7 @@ class DebugManager extends StateMachine{
       layer3: document.getElementById('layer-3'),
       exportMap: document.getElementById('export-map'),
       undo: document.getElementById('undo'),
-
-      atlasSelect: document.getElementById('atlas-select'),
-      drawAtlasGrid: document.getElementById('inspector-show-grid')
+      paste: document.getElementById('paste-button')
     }
 
     this.keys = {
@@ -55,6 +53,7 @@ class DebugManager extends StateMachine{
     this.updateLoop
 
     this.renderer = renderer
+    this.clipboard = args.clipboard
 
     this.shouldShowGrid = false
     this.shouldSnapToGrid = false

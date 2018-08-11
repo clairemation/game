@@ -1,7 +1,6 @@
 var ground = {
   sheet: 'groundTile',
   coords: {x:0, y:0, w:32, h:32},
-  rays: [[0, 32, 0, 0], [0, 0, 32, 0], [32, 0, 32, 32]],
   onHitFront: function(other, myPos){},
   onHitTop: function(other, myPos, tileMap){
     var destY = tileMap.mapToWorldCoords(...myPos)[1] - other.owner.controls.transform.size[1]

@@ -23,7 +23,8 @@ class InspectorManager extends StateMachine{
 
     this.buttons = {
       atlasSelect: document.getElementById('atlas-select'),
-      drawAtlasGrid: document.getElementById('inspector-show-grid')
+      drawAtlasGrid: document.getElementById('inspector-show-grid'),
+      copy: document.getElementById('copy-button')
     }
 
     this.keys = {
@@ -61,18 +62,20 @@ class InspectorManager extends StateMachine{
     this.gridWidth = 320
     this.gridHeight = 240
 
+    this.atlasImage
+    this.atlasName
+
     this.buttons.atlasSelect.onchange = e => {
       this.atlasImage = new Image()
       this.atlasImage.onload = this.render.bind(this)
-      this.atlasImage.src = '../assets/' + e.target.value
+      this.atlasName = e.target.value
+      this.atlasImage.src = '../assets/' + atlasName
     }
     this.buttons.drawAtlasGrid.onchange = e => {
       this.shouldShowGrid = !this.shouldShowGrid
       this.render()
     }
-
-    // this.buttons.sceneSelect.onchange = this.selectScene
-    // this.buttons.placePlayer.onclick = togglePlacePlayerMode
+    this.buttons.copy.onclick = this.copy.bind(this)
 
     this.onMouseDown = this.onMouseDown.bind(this)
     this.onMouseMove = this.onMouseMove.bind(this)
@@ -102,23 +105,22 @@ class InspectorManager extends StateMachine{
     this.game.advanceFrame()
   }
 
-  enableAllButtons(){
-    for (var key in this.buttons){
-      this.buttons[key].disabled = false
-    }
-  }
+  copy(e){
+    var selectionTileWidth = this.selectionWidth / 32
+    var selectionTileHeight = this.selectionHeight / 32
 
-  disableAllButtonsExcept(button){
-    for (var key in this.buttons){
-      if (this.buttons[key] != button){
-        this.buttons[key].disabled = "disabled"
+    this.clipboard = []
+
+    for (var y = 0; y < selectionTileHeight; y++){
+      this.clipboard[y] = []
+      for (var x = 0; x < selectionTileWidth; x++){
+        var tile = {}
+        tile.image = this.atlasImage
+        tile.coords = [this.worldSelectionStart[0] + x * 32, this.worldSelectionStart[1] + y * 32]
+        this.clipboard[y][x] = tile
       }
     }
-  }
 
-  selectScene(e){
-    this.game.replaceTop(e.target.value)
-    this.renderingEngine.update()
   }
 
   highlightObject(object){
