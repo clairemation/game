@@ -47,11 +47,11 @@ class TileMap{
   }
 
   getTileAtMapCoords(y, x){
-    if (y > this.map.length - 1|| x > this.map[0].length - 1){
+    if (y >= this.map.length|| x >= this.map[0].length){
       return null
     }
     var tile = this.map[y][x]
-    if (tile == ' '){
+    if (tile == 255){
       return null
     }
     return this.key[tile]
