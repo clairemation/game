@@ -19,7 +19,8 @@ var level01 = new Scene({
     background: './assets/bg2.png',
     blop: './assets/blop.wav',
     screech: './assets/pusou.wav',
-    groundTile: './assets/ground-tile.png'
+    groundTile: './assets/ground-tile.png',
+    groundAtlas: './assets/ground-atlas.png'
   },
   tileMapSrc: './assets/level01.png',
   tileMapKey: require('../maps/level01mapkey'),
