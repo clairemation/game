@@ -10,10 +10,14 @@ class MapRenderer extends Control{
     this.name = 'mapRenderer'
     this.tag = 'renderer'
     this.layer = args.layer
-    this.tileMap = args.tileMap
+    this.tileMap
     this.enabled = true
     SCREEN_TILE_WIDTH = Math.floor(Camera.getPixelWidth() / 32) + 32
     SCREEN_TILE_HEIGHT = Math.floor(Camera.getPixelHeight() / 32) + 32
+  }
+
+  init(){
+    this.tileMap = this.owner.scene.tileMap
   }
 
   render(){
@@ -22,7 +26,6 @@ class MapRenderer extends Control{
     var worldStartY = camPosition[1] - camPosition[1] % 32 - 32
     var mapStartPos = this.tileMap.worldToMapCoords(worldStartX, worldStartY)
     var sprite, worldX, worldY
-
     for (var yMap = mapStartPos[0], yWorld = worldStartY; yMap < mapStartPos[0] + SCREEN_TILE_HEIGHT; yMap++, yWorld += 32){
       for (var xMap = mapStartPos[1], xWorld = worldStartX; xMap < mapStartPos[1] + SCREEN_TILE_WIDTH; xMap++, xWorld += 32){
         sprite = this.tileMap.getSpriteAt(yMap, xMap)

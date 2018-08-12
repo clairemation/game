@@ -1,4 +1,5 @@
 const AssetManager = require('./assetmanager')
+const TileMap = require('./tilemap')
 const renderer = require('../core/renderer')
 
 var count = 1
@@ -11,6 +12,10 @@ class Scene {
         this.objects = []
         this.initialized = false
         this.assetManager = new AssetManager(args.assets)
+        this.tileMap = new TileMap({
+            mapSrc: args.tileMapSrc,
+            key: args.tileMapKey
+        })
         this.enter = args.enter || this.enter
         this.exit = args.exit || this.exit
         this.initialObjectList = args.objects || []
@@ -37,10 +42,13 @@ class Scene {
     enter(){
         this.game.stop()
         this.resetObjects()
-        return this.assetManager.load().then(() => { // return for Promise chainability
-            if (!this.game.debugMode){
-                this.game.start()
-            }
+        return new Promise((resolve, reject) => {  // return for Promise chainability
+            this.assetManager.load().then(() => {
+                this.tileMap.init().then(() => {
+                    this.game.start()
+                    resolve()
+                })
+            })
         })
     }
 

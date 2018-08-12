@@ -12,6 +12,7 @@ class MapCollisionEngine extends Control{
   }
 
   init(){
+    this.tileMap = this.owner.scene.tileMap
     this.components = this.owner.scene.getControlsByName('collider').filter(c => c.tags.includes(this.tag))
   }
 

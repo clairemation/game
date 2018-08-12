@@ -21,6 +21,8 @@ var level01 = new Scene({
     screech: './assets/pusou.wav',
     groundTile: './assets/ground-tile.png'
   },
+  tileMapSrc: './assets/level01.png',
+  tileMapKey: require('../maps/level01mapkey'),
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
