@@ -42,7 +42,7 @@ class DebugManager extends StateMachine{
       layer3: document.getElementById('layer-3'),
       exportMap: document.getElementById('export-map'),
       undo: document.getElementById('undo'),
-      paste: document.getElementById('paste-button')
+      paste: document.getElementById('paste')
     }
 
     this.keys = {

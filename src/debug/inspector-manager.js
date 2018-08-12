@@ -69,7 +69,7 @@ class InspectorManager extends StateMachine{
       this.atlasImage = new Image()
       this.atlasImage.onload = this.render.bind(this)
       this.atlasName = e.target.value
-      this.atlasImage.src = '../assets/' + atlasName
+      this.atlasImage.src = '../assets/' + this.atlasName
     }
     this.buttons.drawAtlasGrid.onchange = e => {
       this.shouldShowGrid = !this.shouldShowGrid
