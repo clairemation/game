@@ -2,16 +2,19 @@ var key = {
   0: {
     sheet: 'groundAtlas',
     coords: {x:128, y:0, w:32, h:32},
+    rays: [[0,0,32,0]],
     onHit
   },
   199: {
     sheet: 'groundAtlas',
     coords: {x:0, y:0, w:32, h:32},
+    rays: [[0,0,32,0]],
     onHit
   },
   66: {
     sheet: 'groundAtlas',
     coords: {x:32, y:0, w:32, h:32},
+    rays: [[0,0,32,0]],
     onHit
   }
 }

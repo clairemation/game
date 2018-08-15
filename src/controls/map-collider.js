@@ -12,7 +12,6 @@ class MapCollider extends Control{
   }
 
   getWorldCheckPoint(){
-    console.log(this.owner.controls.transform.position)
     return [this.checkPoint[0] + this.owner.controls.transform.position[0], this.checkPoint[1] + this.owner.controls.transform.position[1]]
   }
 

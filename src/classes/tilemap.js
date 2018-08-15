@@ -38,7 +38,7 @@ class TileMap{
   }
 
   worldToMapCoords(x, y){
-    return [Math.abs(Math.floor(y / TILE_SIZE)), Math.abs(Math.floor(x / TILE_SIZE))]
+    return [Math.abs(Math.floor(x / TILE_SIZE)), Math.abs(Math.floor(y / TILE_SIZE))]
   }
 
   getTileAtWorldPosition(x, y){
@@ -46,7 +46,7 @@ class TileMap{
     this.getTileAtMapCoords(...mapCoords)
   }
 
-  getTileAtMapCoords(y, x){
+  getTileAtMapCoords(x, y){
     if (y >= this.map.length|| x >= this.map[0].length){
       return null
     }
@@ -68,7 +68,7 @@ class TileMap{
     return this.key[tile]
   }
 
-  mapToWorldCoords(y, x){
+  mapToWorldCoords(x, y){
     return [x * 32, y * 32]
   }
 }

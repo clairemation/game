@@ -26,9 +26,9 @@ class MapRenderer extends Control{
     var worldStartY = camPosition[1] - camPosition[1] % 32 - 32
     var mapStartPos = this.tileMap.worldToMapCoords(worldStartX, worldStartY)
     var sprite, worldX, worldY
-    for (var yMap = mapStartPos[0], yWorld = worldStartY; yMap < mapStartPos[0] + SCREEN_TILE_HEIGHT; yMap++, yWorld += 32){
-      for (var xMap = mapStartPos[1], xWorld = worldStartX; xMap < mapStartPos[1] + SCREEN_TILE_WIDTH; xMap++, xWorld += 32){
-        sprite = this.tileMap.getSpriteAt(yMap, xMap)
+    for (var xMap = mapStartPos[0], xWorld = worldStartX; xMap < mapStartPos[0] + SCREEN_TILE_HEIGHT; xMap++, xWorld += 32){
+      for (var yMap = mapStartPos[1], yWorld = worldStartY; yMap < mapStartPos[1] + SCREEN_TILE_WIDTH; yMap++, yWorld += 32){
+        sprite = this.tileMap.getTileAtMapCoords(xMap, yMap)
         if (sprite){
           renderer.drawImage(this.owner.scene.assetManager.assets[sprite.sheet],
             sprite.coords.x,

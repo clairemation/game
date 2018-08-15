@@ -499,6 +499,14 @@ Vector.prototype.hexColor = function(min = 0){
   return this;
 }
 
+//Input is a line segment [x1, y1, x2, y2]
+Vector.prototype.findParametricEquation = function(outValues = {}){
+  var r = values.peek();
+  outValues.slope = (r[3] - r[1]) / (r[2] - r[0]);
+  outValues.yIntercept = r[1] - slope * r[0];
+  return this;
+}
+
 Vector.prototype.inverse = function(){
   var r = Vector.IDENTITY_MATRIX,
     m = values.pop();
