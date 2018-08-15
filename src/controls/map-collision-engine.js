@@ -13,7 +13,7 @@ class MapCollisionEngine extends Control{
 
   init(){
     this.tileMap = this.owner.scene.tileMap
-    this.components = this.owner.scene.getControlsByName('collider').filter(c => c.tags.includes(this.tag))
+    this.components = this.owner.scene.getControlsByName('mapCollider').filter(c => c.tags.includes(this.tag))
   }
 
   update(){
@@ -21,15 +21,10 @@ class MapCollisionEngine extends Control{
       if (!this.components[i].owner.active){
         continue
       }
-      var frontTileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldFrontCheckPoint())
-      var frontTile = this.tileMap.getTileAtMapCoords(...frontTileMapPos)
-      if (frontTile){
-        frontTile.onHitFront(this.components[i], frontTileMapPos, this.tileMap)
-      }
-      var bottomTileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldBottomCheckPoint())
-      var bottomTile = this.tileMap.getTileAtMapCoords(...bottomTileMapPos)
-      if (bottomTile && bottomTile != frontTile){
-        bottomTile.onHitTop(this.components[i], bottomTileMapPos, this.tileMap)
+      var tileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldCheckPoint())
+      var tile = this.tileMap.getTileAtMapCoords(...tileMapPos)
+      if (tile){
+        tile.onHit(this.components[i], tileMapPos, this.tileMap)
       }
     }
   }

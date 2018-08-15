@@ -50,15 +50,11 @@ class Player extends SceneObject{
           }
         },
 
-        collider: {
-          kind: require('../controls/collider'),
+        mapCollider: {
+          kind: require('../controls/map-collider'),
           args: {
-            tags: ['ground', 'level01'],
-            hitbox: [0,30, 48, 34],
-            checkPoints: {
-              front: [48, 16],
-              bottom: [16, 32]
-            },
+            tags: ['level01'],
+            checkPoint: [16, 32],
             onHit: function(other){
               // if (other.owner.tag == 'ground'){
               //     this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
