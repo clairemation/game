@@ -31,6 +31,7 @@ class TileMap{
             this.map[y].push(oneDArr[y * img.width + x])
           }
         }
+        console.log(this.map)
         resolve()
       }
       img.src = this.mapSrc

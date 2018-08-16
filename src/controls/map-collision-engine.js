@@ -47,36 +47,20 @@ class MapCollisionEngine extends Control{
           for (var j = 0; j < tile.rays.length; j++){
             tileRay = tile.rays[j]
             tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
-
             if (!$(endPos).isLeftOf(tileRay).$ || $(startPos).isLeftOf(tileRay).$){
               continue
             }
-            // if ($([ray[2], ray[3]]).isLeftOf(tileRay).$){
-            //   continue
-            // }
 
-            // var intersection = intersectionOf(...checkRay, ...tileRay)
-
-            // if (!intersection){
-            //   console.error("Intersection should not be null.")
-            // }
-            // if (intersection) {
               var dist = $(endPos).distanceToLineSegment(tileRay).$
-              // if (dist != 0){
-                var projPos = $(endPos).plusVector($(tile.rayNormals[i]).$).$
-                var projRay = [...endPos, ...projPos]
-                var newPos = intersectionOf(...projRay, ...tileRay)
-                comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
-                comp.owner.controls.altitude.resetFall()
-                comp.owner.changeState('walking')
+              var projPos = $(endPos).plusVector($(tile.rayNormals[j]).$).$
+              var projRay = [...endPos, ...projPos]
+              var newPos = intersectionOf(...projRay, ...tileRay)
+              comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
+              comp.owner.controls.altitude.resetFall()
+              comp.owner.changeState('walking')
 
-              // }
-
-                shouldBreak = true
-                break
-            // } else {
-              // console.log($([ray[0], ray[1]]).distanceToLineSegment(tileRay).$, $([ray[2], ray[3]]).isLeftOf(tileRay).$)
-            // }
+              shouldBreak = true
+              break
           }
 
           if (shouldBreak){
