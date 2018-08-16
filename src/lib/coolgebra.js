@@ -507,6 +507,29 @@ Vector.prototype.findParametricEquation = function(outValues = {}){
   return this;
 }
 
+Vector.prototype.sqDistanceToLineSegment = function(lineSeg){
+  var p = values.pop();
+  var length = $([lineSeg[0], lineSeg[1]]).distanceTo([lineSeg[2], lineSeg[3]]).$;
+  if (length == 0){
+    values.push($(p).distanceTo([lineSeg[0], lineSeg[1]]).$);
+    return this;
+  }
+  var t = ((p[0] - lineSeg[0]) * (lineSeg[2] - lineSeg[0]) + (p[0] - lineSeg[1]) * (lineSeg[3] - lineSeg[1])) / length;
+  values.push(t);
+  return this;
+}
+
+Vector.prototype.distanceToLineSegment = function(lineSeg){
+  var p = values.pop();
+  var sqDist = $(p).sqDistanceToLineSegment(lineSeg).$
+  if (sqDist == 0) {
+    values.push(0);
+  } else {
+    values.push(Math.sqrt(sqDist));
+  }
+  return this;
+}
+
 Vector.prototype.inverse = function(){
   var r = Vector.IDENTITY_MATRIX,
     m = values.pop();
