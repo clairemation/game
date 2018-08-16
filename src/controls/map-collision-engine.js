@@ -48,19 +48,24 @@ class MapCollisionEngine extends Control{
             tileRay = tile.rays[j]
             tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
 
-            if (!$(endPos).isLeftOf(tileRay).$){
+            if (!$(endPos).isLeftOf(tileRay).$ || $(startPos).isLeftOf(tileRay).$){
               continue
             }
             // if ($([ray[2], ray[3]]).isLeftOf(tileRay).$){
             //   continue
             // }
 
-            // var intersection = intersectionOf(...ray, ...tileRay)
+            // var intersection = intersectionOf(...checkRay, ...tileRay)
+
+            // if (!intersection){
+            //   console.error("Intersection should not be null.")
+            // }
             // if (intersection) {
               var dist = $(endPos).distanceToLineSegment(tileRay).$
-              console.log(dist)
               // if (dist != 0){
-                var newPos = $(endPos).plusVector($(tile.rayNormals[i]).timesScalar(dist).$).$
+                var projPos = $(endPos).plusVector($(tile.rayNormals[i]).$).$
+                var projRay = [...endPos, ...projPos]
+                var newPos = intersectionOf(...projRay, ...tileRay)
                 comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
                 comp.owner.controls.altitude.resetFall()
                 comp.owner.changeState('walking')
