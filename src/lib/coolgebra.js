@@ -287,9 +287,10 @@ Vector.prototype.nearest = function(a, b){
   return this;
 }
 
+// https://stackoverflow.com/questions/1560492/how-to-tell-whether-a-point-is-to-the-right-or-left-side-of-a-line#comment28468479_3461533
 Vector.prototype.isLeftOf = function(r){
-  var v = values.pop();
-  values.push((v[1]-r[1])*(r[2]-r[0]) > (v[0]-r[0])*(r[3]-r[2]));
+  var p = values.pop();
+  values.push((r[2] - r[0])*(p[1] - r[1]) > (r[3] - r[1])*(p[0] - r[0]));
   return this;
 }
 

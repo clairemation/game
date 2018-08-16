@@ -25,9 +25,11 @@ class MapCollisionEngine extends Control{
       }
 
       var comp = this.components[i]
-      var ray = comp.getMovementRay()
-      var startTileCoords = this.tileMap.worldToMapCoords(ray[0], ray[1])
-      var endTileCoords = this.tileMap.worldToMapCoords(ray[2], ray[3])
+      var startPos = comp.getLastWorldCheckPoint()
+      var endPos = comp.getWorldCheckPoint()
+      var checkRay = [...startPos, ...endPos]
+      var startTileCoords = this.tileMap.worldToMapCoords(...startPos)
+      var endTileCoords = this.tileMap.worldToMapCoords(...endPos)
       var tile
       var shouldBreak = false
       // Ray bounding box
@@ -43,18 +45,22 @@ class MapCollisionEngine extends Control{
           shouldBreak = false
           var tileRay
           for (var j = 0; j < tile.rays.length; j++){
-            tileRay = tile.rays[i]
+            tileRay = tile.rays[j]
             tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
-            console.log($([ray[2],ray[3]]).isLeftOf(tileRay).$)
+
+            if (!$(endPos).isLeftOf(tileRay).$){
+              continue
+            }
             // if ($([ray[2], ray[3]]).isLeftOf(tileRay).$){
             //   continue
             // }
 
             // var intersection = intersectionOf(...ray, ...tileRay)
             // if (intersection) {
-              var dist = $([ray[2], ray[3]]).distanceToLineSegment(tileRay).$
+              var dist = $(endPos).distanceToLineSegment(tileRay).$
+              console.log(dist)
               // if (dist != 0){
-                var newPos = $([ray[2], ray[3]]).plusVector($(tile.rayNormals[i]).timesScalar(dist).$).$
+                var newPos = $(endPos).plusVector($(tile.rayNormals[i]).timesScalar(dist).$).$
                 comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
                 comp.owner.controls.altitude.resetFall()
                 comp.owner.changeState('walking')
