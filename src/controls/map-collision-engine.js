@@ -25,31 +25,50 @@ class MapCollisionEngine extends Control{
       }
 
       var comp = this.components[i]
-      var startPos = comp.getLastWorldCheckPoint()
-      var endPos = comp.getWorldCheckPoint()
-      var checkRay = [...startPos, ...endPos]
-      var startTileCoords = this.tileMap.worldToMapCoords(...startPos)
-      var endTileCoords = this.tileMap.worldToMapCoords(...endPos)
-      var tile
-      var shouldBreak = false
-      // Ray bounding box
-      for (var x = startTileCoords[0]; x <= endTileCoords[0]; x++){
-        for (var y = startTileCoords[1]; y <= endTileCoords[1]; y++){
-          //  TODO: skip tiles in BB that aren't on movement ray
-          // (Left undone for now because this is unlikely to include many tiles at normal speeds)
-          tile = this.tileMap.getTileAtMapCoords(x, y)
-          if (!tile){
-            continue
-          }
 
-          shouldBreak = false
-          var tileRay
-          for (var j = 0; j < tile.rays.length; j++){
-            tileRay = tile.rays[j]
-            tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
-            if (!$(endPos).isLeftOf(tileRay).$ || $(startPos).isLeftOf(tileRay).$){
+      var dirty = true
+      var startPos = comp.getLastWorldCheckPoint()
+
+      var count = 0
+      while (dirty){
+        if (count > 1){
+          console.log(count)
+        }
+        if (count > 3){
+          console.error("Stuck in collision loop")
+          break
+        }
+        count ++
+        dirty = false
+
+        var endPos = comp.getWorldCheckPoint()
+
+        var upperLeftCorner = [Math.min(startPos[0], endPos[0]) - 1, Math.min(startPos[1], endPos[1]) - 1]
+        var lowerRightCorner = [Math.max(startPos[0], endPos[0]) + 1, Math.max(startPos[1], endPos[1]) + 1]
+
+        var startTileCoords = this.tileMap.worldToMapCoords(...upperLeftCorner)
+        var endTileCoords = this.tileMap.worldToMapCoords(...lowerRightCorner)
+        var tile
+        var shouldBreakOuterLoop = false
+        // Ray bounding box
+        for (var x = startTileCoords[0]; x <= endTileCoords[0]; x++){
+          for (var y = startTileCoords[1]; y <= endTileCoords[1]; y++){
+            //  TODO: skip tiles in BB that aren't on movement ray
+            // (Left undone for now because this is unlikely to include many tiles at normal speeds)
+            tile = this.tileMap.getTileAtMapCoords(x, y)
+            if (!tile){
               continue
             }
+
+            shouldBreakOuterLoop = false
+            var tileRay
+            for (var j = 0; j < tile.rays.length; j++){
+              tileRay = tile.rays[j]
+              tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
+              if (!$(endPos).isLeftOf(tileRay).$ || $(startPos).isLeftOf(tileRay).$){
+                continue
+              }
+
 
               var dist = $(endPos).distanceToLineSegment(tileRay).$
               var projPos = $(endPos).plusVector($(tile.rayNormals[j]).$).$
@@ -59,12 +78,14 @@ class MapCollisionEngine extends Control{
               comp.owner.controls.altitude.resetFall()
               comp.owner.changeState('walking')
 
-              shouldBreak = true
+              dirty = true
+              shouldBreakOuterLoop = true
               break
-          }
+            }
 
-          if (shouldBreak){
-            break
+            if (shouldBreakOuterLoop){
+              break
+            }
           }
         }
       }

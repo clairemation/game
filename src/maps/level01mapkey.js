@@ -46,6 +46,22 @@ var key = {
     rays: [[0,0,32,32]],
     rayNormals: [[0.7071067811865475, -0.7071067811865475]],
     onHit
+  },
+  // gentle slope up 1
+  151: {
+    sheet: 'groundAtlas',
+    coords: {x:64, y:64, w:32, h:32},
+    rays: [[0,32,32,16]],
+    rayNormals: [[-0.4472135954999579, 0.8944271909999159]],
+    onHit
+  },
+  // gentle slope up 2
+  212: {
+    sheet: 'groundAtlas',
+    coords: {x:96, y:64, w:32, h:32},
+    rays: [[0,16,32,0]],
+    rayNormals: [[-0.4472135954999579, 0.8944271909999159]],
+    onHit
   }
 
 }
