@@ -30,74 +30,79 @@ class MapCollisionEngine extends Control{
       var startPos = comp.getLastWorldCheckPoint()
 
       var count = 0
+
       while (dirty){
-        if (count > 1){
-          console.log(count)
-        }
-        if (count > 3){
+
+        dirty = false
+
+        if (count++ > 5){
           console.error("Stuck in collision loop")
           break
         }
-        count ++
-        dirty = false
 
         var endPos = comp.getWorldCheckPoint()
 
+        // Make check box one pixel larger than start and end points, in case it's bordering on another tile
         var upperLeftCorner = [Math.min(startPos[0], endPos[0]) - 1, Math.min(startPos[1], endPos[1]) - 1]
         var lowerRightCorner = [Math.max(startPos[0], endPos[0]) + 1, Math.max(startPos[1], endPos[1]) + 1]
 
-        var startTileCoords = this.tileMap.worldToMapCoords(...upperLeftCorner)
-        var endTileCoords = this.tileMap.worldToMapCoords(...lowerRightCorner)
+        var upperLeftTile = this.tileMap.worldToMapCoords(...upperLeftCorner)
+        var lowerRightTile = this.tileMap.worldToMapCoords(...lowerRightCorner)
+
+        var tileRays = []
+
         var tile
-        var shouldBreakOuterLoop = false
-        // Ray bounding box
-        for (var x = startTileCoords[0]; x <= endTileCoords[0]; x++){
-          for (var y = startTileCoords[1]; y <= endTileCoords[1]; y++){
-            //  TODO: skip tiles in BB that aren't on movement ray
-            // (Left undone for now because this is unlikely to include many tiles at normal speeds)
+        for (let x = upperLeftTile[0]; x <= lowerRightTile[0]; x++){
+          for (let y = upperLeftTile[1]; y <= lowerRightTile[1]; y++){
             tile = this.tileMap.getTileAtMapCoords(x, y)
             if (!tile){
               continue
             }
-
-            shouldBreakOuterLoop = false
-            var tileRay
-            for (var j = 0; j < tile.rays.length; j++){
-              tileRay = tile.rays[j]
-              tileRay = $(tileRay).plusVector([x * 32, y * 32, x*32, y*32]).$
-              if (!$(endPos).isLeftOf(tileRay).$ || $(startPos).isLeftOf(tileRay).$){
-                continue
-              }
-
-
-              var dist = $(endPos).distanceToLineSegment(tileRay).$
-              var projPos = $(endPos).plusVector($(tile.rayNormals[j]).$).$
-              var projRay = [...endPos, ...projPos]
-              var newPos = intersectionOf(...projRay, ...tileRay)
-              comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
-              comp.owner.controls.altitude.resetFall()
-              comp.owner.changeState('walking')
-
-              dirty = true
-              shouldBreakOuterLoop = true
-              break
+            var tr
+            for (var k = 0; k < tile.rays.length; k++){
+              tr = {
+                ray: $(tile.rays[k].ray).plusVector([x * 32, y * 32, x*32, y*32]).$,
+                normal: tile.rays[k].normal
+                }
+              tileRays.push(tr)
             }
+            //  TODO: skip tiles in BB that aren't on movement ray
+            // (Left undone for now because this is unlikely to include many tiles at normal speeds)
+          }
+        }
 
-            if (shouldBreakOuterLoop){
-              break
-            }
+        if (tileRays.length == 0){
+          break
+        }
+
+        tileRays = tileRays.sort((a, b) => $(startPos).sqDistanceToLineSegment(a.ray).$ - $(startPos).sqDistanceToLineSegment(b.ray).$)
+
+        var tileRay, normal
+
+        for (var j = 0; j < tileRays.length; j++){
+          tileRay = tileRays[j].ray
+          normal = tileRays[j].normal
+          if (!$(endPos).isRightOf(tileRay).$){
+            continue
+          }
+
+          var projPos = $(endPos).plusVector($(normal).timesScalar(100).$).$
+          var projRay = [...endPos, ...projPos]
+          var newPos = intersectionOf(...projRay, ...tileRay)
+          if (newPos){
+            comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
+            comp.owner.controls.altitude.resetFall()
+            comp.owner.changeState('walking')
+
+            dirty = true
+            break
           }
         }
       }
-
-
-      // var tileMapPos = this.tileMap.worldToMapCoords(...this.components[i].getWorldCheckPoint())
-      // var tile = this.tileMap.getTileAtMapCoords(...tileMapPos)
-      // if (tile){
-      //   tile.onHit(this.components[i], tileMapPos, this.tileMap)
-      // }
     }
   }
 }
+
+// function pushPointToSurface(p, )
 
 module.exports = MapCollisionEngine
