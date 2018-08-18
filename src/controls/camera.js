@@ -17,7 +17,16 @@ class Camera extends Control{
 
   init(){
     this.cameraFollow = this.owner.scene.getControlsByName('camera-follow')[0]
-    this.cameraFollow.camera = this
+  }
+
+  update(){
+    if (this.cameraFollow && this.cameraFollow.shouldFollow){
+      var newPos = []
+      newPos[0] = Math.min(-this.cameraFollow.owner.controls.transform.position[0] + this.cameraFollow.margin[0], -32)
+      newPos[1] = Math.min(-this.cameraFollow.owner.controls.transform.position[1] + this.cameraFollow.margin[1], -32)
+      Camera.setOffset(...newPos)
+      this.cameraFollow.shouldFollow = false
+    }
   }
 
   reset(){

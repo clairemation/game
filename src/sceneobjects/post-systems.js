@@ -13,8 +13,9 @@ class PostSystems extends SceneObject{
             // this.controls.groundLevelObstaclePool.update()
             this.controls.groundPool.update()
             // this.controls.groundLevelObstaclePool.update()
-            this.controls.collisionEngine.update()
+            // this.controls.collisionEngine.update()
             this.controls.mapCollisionEngine.update()
+            this.controls.camera.update()
             this.controls.renderingEngine.update()
           }
         })

@@ -22,6 +22,7 @@ class MapRenderer extends Control{
 
   render(){
     var camPosition = Camera.getViewportPosition()
+    console.log(camPosition)
     var worldStartX = camPosition[0] - camPosition[0] % 32 - 32
     var worldStartY = camPosition[1] - camPosition[1] % 32 - 32
     var mapStartPos = this.tileMap.worldToMapCoords(worldStartX, worldStartY)
@@ -33,12 +34,12 @@ class MapRenderer extends Control{
           renderer.drawImage(this.owner.scene.assetManager.assets[sprite.sheet],
             sprite.coords.x,
             sprite.coords.y,
-            sprite.coords.w,
-            sprite.coords.h,
+            32,
+            32,
             xWorld,
             yWorld,
-            sprite.coords.w,
-            sprite.coords.h
+            32,
+            32
           )
         }
       }

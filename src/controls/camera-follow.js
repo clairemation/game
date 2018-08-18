@@ -8,12 +8,11 @@ class CameraFollow extends Control{
     super(args)
     this.name = 'camera-follow'
     this.margin = args.margin || [50, 100]
-    this.camera = null
+    this.shouldFollow = false
   }
 
   update(){
-    this.camera.setOffset(-this.owner.controls.transform.position[0] + this.margin[0],
-                          -this.owner.controls.transform.position[1] + this.margin[1])
+    this.shouldFollow = true
   }
 }
 
