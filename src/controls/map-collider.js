@@ -6,26 +6,16 @@ class MapCollider extends Control{
     args.name = 'mapCollider'
     super(args)
     this.tags = args.tags
-    this.hitbox = args.hitbox
     this.checkPoint = args.checkPoint
     this.onHit = args.onHit || (() => {})
   }
 
   getWorldCheckPoint(){
-    return [this.checkPoint[0] + this.owner.controls.transform.position[0], this.checkPoint[1] + this.owner.controls.transform.position[1]]
+    return $(this.checkPoint).plusVector(this.owner.controls.transform.position).$
   }
 
-  getLastWorldCheckPoint(){
-    return [this.checkPoint[0] + this.owner.controls.transform.prevPosition[0], this.checkPoint[1] + this.owner.controls.transform.prevPosition[1]]
-  }
-
-  getMovementRay(){
-    return [
-      this.checkPoint[0] + this.owner.controls.transform.prevPosition[0],
-      this.checkPoint[1] + this.owner.controls.transform.prevPosition[1],
-      this.checkPoint[0] + this.owner.controls.transform.position[0],
-      this.checkPoint[1] + this.owner.controls.transform.position[1]
-    ]
+  getNextWorldCheckPoint(){
+    return $(this.checkPoint).plusVector(this.owner.controls.velocity.previewNewPosition()).$
   }
 }
 

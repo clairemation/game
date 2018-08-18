@@ -1,33 +1,19 @@
 const Control = require('../classes/control')
+const $ = require('../lib/coolgebra')
 
 class Velocity extends Control{
   constructor(args){
     super(args)
-    this.yAccel = 0
+    this.x = 0
+    this.y = 0
   }
 
-  resetFall(){
-    this.yAccel = 4
+  applyVelocity(){
+    this.owner.controls.transform.moveBy(Math.ceil(this.x), Math.ceil(this.y))
   }
 
-  startJump(){
-    this.yAccel -= 12
-    this.owner.changeState('flying')
-    this.owner.controls.sprite.setCurrentAnimation('jump')
-  }
-
-  flap(){
-    this.yAccel -= Math.max(1.5, this.yAccel * 0.9)
-    this.owner.controls.sprite.setCurrentAnimation("jump")
-  }
-
-  fall(){
-    this.owner.controls.sprite.setCurrentAnimation("fall")
-  }
-
-  update(){
-      this.owner.controls.physics.addMovement(0, Math.ceil(this.yAccel * (this.getGame().dt / 30)))
-      this.yAccel += 0.6 * (this.getGame().dt / 30)
+  previewNewPosition(){
+    return $(this.owner.controls.transform.position).plusVector([this.x, this.y]).$
   }
 }
 

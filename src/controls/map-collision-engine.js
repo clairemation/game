@@ -27,7 +27,8 @@ class MapCollisionEngine extends Control{
       var comp = this.components[i]
 
       var dirty = true
-      var startPos = comp.getLastWorldCheckPoint()
+      var startPos = comp.getWorldCheckPoint()
+      var endPos = comp.getNextWorldCheckPoint()
 
       var count = 0
 
@@ -40,7 +41,6 @@ class MapCollisionEngine extends Control{
           break
         }
 
-        var endPos = comp.getWorldCheckPoint()
 
         // Make check box one pixel larger than start and end points, in case it's bordering on another tile
         var upperLeftCorner = [Math.min(startPos[0], endPos[0]) - 1, Math.min(startPos[1], endPos[1]) - 1]
@@ -86,19 +86,28 @@ class MapCollisionEngine extends Control{
             continue
           }
 
-          var projPos = $(endPos).plusVector($(normal).timesScalar(100).$).$
-          var projRay = [...endPos, ...projPos]
-          var newPos = intersectionOf(...projRay, ...tileRay)
-          if (newPos){
-            comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
-            comp.owner.controls.velocity.resetFall()
+          var intersection = intersectionOf(...startPos, ...endPos, ...tileRay)
+          if (intersection){
             comp.owner.changeState('walking')
+            comp.owner.controls.velocity.x += comp.owner.controls.velocity.x * normal[0]
+            comp.owner.controls.velocity.y += comp.owner.controls.velocity.y * normal[1]
+            startPos = intersection
+            endPos = comp.owner.controls.velocity.previewNewPosition()
+          // }
+
+          // var projPos = $(endPos).plusVector($(normal).timesScalar(100).$).$
+          // var projRay = [...endPos, ...projPos]
+          // var newPos = intersectionOf(...projRay, ...tileRay)
+          // if (newPos){
+          //   comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
+          //   comp.owner.controls.velocity.resetFall()
 
             dirty = true
             break
           }
         }
       }
+      comp.owner.controls.velocity.applyVelocity()
     }
   }
 }

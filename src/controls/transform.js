@@ -54,6 +54,10 @@ class Transform extends Control{
     this.prevPosition[0] = this.position[0]
     this.prevPosition[1] = this.position[1]
   }
+
+  update(){
+    this._setPrevPosition()
+  }
 }
 
 module.exports = Transform
