@@ -16,10 +16,6 @@ class Altitude extends Control{
     this.owner.controls.sprite.setCurrentAnimation('jump')
   }
 
-  startBounce(){
-    this.yAccel = -5
-  }
-
   flap(){
     this.yAccel -= Math.max(1.5, this.yAccel * 0.9)
     this.owner.controls.sprite.setCurrentAnimation("jump")
