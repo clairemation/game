@@ -91,7 +91,7 @@ class MapCollisionEngine extends Control{
           var newPos = intersectionOf(...projRay, ...tileRay)
           if (newPos){
             comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
-            comp.owner.controls.altitude.resetFall()
+            comp.owner.controls.velocity.resetFall()
             comp.owner.changeState('walking')
 
             dirty = true

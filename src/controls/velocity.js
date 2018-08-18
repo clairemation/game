@@ -1,6 +1,6 @@
 const Control = require('../classes/control')
 
-class Altitude extends Control{
+class Velocity extends Control{
   constructor(args){
     super(args)
     this.yAccel = 0
@@ -31,4 +31,4 @@ class Altitude extends Control{
   }
 }
 
-module.exports = Altitude
+module.exports = Velocity

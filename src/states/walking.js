@@ -5,7 +5,7 @@ var walking = new State({
     this.controls.sprite.setCurrentAnimation('walk')
   },
   update: function(){
-    this.controls.altitude.update()
+    this.controls.velocity.update()
     this.controls.advance.update()
     this.controls.loseChecker.update()
     this.controls.physics.update()
@@ -14,7 +14,7 @@ var walking = new State({
   },
   message: function(msg, e){
     if (msg == "keyDown"){
-      this.controls.altitude.startJump()
+      this.controls.velocity.startJump()
     }
   }
 })

@@ -65,8 +65,8 @@ class Player extends SceneObject{
           },
         },
 
-        altitude: {
-          kind: require('../controls/altitude')
+        velocity: {
+          kind: require('../controls/velocity')
         },
 
         physics: {

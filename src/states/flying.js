@@ -3,7 +3,7 @@ const State = require('../classes/state')
 var flying = new State({
   update: function(){
     this.controls.advance.update()
-    this.controls.altitude.update()
+    this.controls.velocity.update()
     this.controls.physics.update()
     this.controls.loseChecker.update()
     this.controls.sprite.update()
@@ -11,9 +11,9 @@ var flying = new State({
   },
   message: function(msg, e){
     if (msg == 'keyDown'){
-      this.controls.altitude.flap()
+      this.controls.velocity.flap()
     } else if (msg == 'keyUp'){
-      this.controls.altitude.fall()
+      this.controls.velocity.fall()
     }
   }
 })

@@ -22,7 +22,6 @@ class MapRenderer extends Control{
 
   render(){
     var camPosition = Camera.getViewportPosition()
-    console.log(camPosition)
     var worldStartX = camPosition[0] - camPosition[0] % 32 - 32
     var worldStartY = camPosition[1] - camPosition[1] % 32 - 32
     var mapStartPos = this.tileMap.worldToMapCoords(worldStartX, worldStartY)

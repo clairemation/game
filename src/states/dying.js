@@ -7,7 +7,7 @@ var dying = new State({
     setTimeout(() => this.getGame().replaceTop('titlescreen'), 1000)
   },
   update: function(){
-    this.controls.altitude.update()
+    this.controls.velocity.update()
     this.controls.advance.update()
     this.controls.physics.update()
     this.controls.sprite.update()
