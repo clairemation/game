@@ -86,21 +86,16 @@ class MapCollisionEngine extends Control{
             continue
           }
 
-          var intersection = intersectionOf(...startPos, ...endPos, ...tileRay)
-          if (intersection){
+          var normalRayEnd = $(endPos).plusVector($(normal).timesScalar(1000).$).$ //Arbitrary large number
+          var normalRay = [...endPos, ...normalRayEnd]
+          var newPos = intersectionOf(...normalRay, ...tileRay)
+          if (newPos){
+            var resistanceRay = $([...endPos, ...newPos]).coordPairToVector().$
             comp.owner.changeState('walking')
-            comp.owner.controls.velocity.x += comp.owner.controls.velocity.x * normal[0]
-            comp.owner.controls.velocity.y += comp.owner.controls.velocity.y * normal[1]
-            startPos = intersection
+            comp.owner.controls.velocity.x += resistanceRay[0]
+            comp.owner.controls.velocity.y += resistanceRay[1]
+            startPos = intersectionOf(...startPos, ...endPos, ...tileRay)
             endPos = comp.owner.controls.velocity.previewNewPosition()
-          // }
-
-          // var projPos = $(endPos).plusVector($(normal).timesScalar(100).$).$
-          // var projRay = [...endPos, ...projPos]
-          // var newPos = intersectionOf(...projRay, ...tileRay)
-          // if (newPos){
-          //   comp.owner.controls.transform.moveTo(...($(newPos).minusVector(comp.checkPoint).$))
-          //   comp.owner.controls.velocity.resetFall()
 
             dirty = true
             break

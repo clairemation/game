@@ -50,7 +50,7 @@ function intersection(x1, y1, x2, y2, x3, y3, x4, y4) {
 
   // is the intersection along the segments
     if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
-        return null
+        // return null
     }
 
   // Return a object with the x and y coordinates of the intersection
