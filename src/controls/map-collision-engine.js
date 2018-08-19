@@ -11,6 +11,7 @@ class MapCollisionEngine extends Control{
     this.tileMap = args.tileMap
     this.tag = this.tileMap.name
     this.components = []
+    this.debugDrawLines = []
   }
 
   init(){
@@ -19,6 +20,8 @@ class MapCollisionEngine extends Control{
   }
 
   update(){
+    this.debugDrawLines = []
+
     for (var i = 0; i < this.components.length; i++){
       if (!this.components[i].owner.active){
         continue
@@ -40,7 +43,6 @@ class MapCollisionEngine extends Control{
           console.error("Stuck in collision loop")
           break
         }
-
 
         // Make check box one pixel larger than start and end points, in case it's bordering on another tile
         var upperLeftCorner = [Math.min(startPos[0], endPos[0]) - 1, Math.min(startPos[1], endPos[1]) - 1]
@@ -94,8 +96,9 @@ class MapCollisionEngine extends Control{
             comp.owner.changeState('walking')
             comp.owner.controls.velocity.x += resistanceRay[0]
             comp.owner.controls.velocity.y += resistanceRay[1]
-            startPos = intersectionOf(...startPos, ...endPos, ...tileRay)
-            endPos = comp.owner.controls.velocity.previewNewPosition()
+            startPos = intersectionOf(...startPos, ...endPos, ...tileRay) || startPos
+            endPos = comp.getNextWorldCheckPoint()
+            this.debugDrawLines.push([...startPos, ...endPos], tileRay)
 
             dirty = true
             break

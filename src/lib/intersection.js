@@ -49,14 +49,13 @@ function intersection(x1, y1, x2, y2, x3, y3, x4, y4) {
     let ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denominator
 
   // is the intersection along the segments
-    if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
+    // if (ua < 0 || ua > 1 || ub < 0 || ub > 1) {
         // return null
-    }
+    // }
 
   // Return a object with the x and y coordinates of the intersection
     let x = x1 + ua * (x2 - x1)
     let y = y1 + ua * (y2 - y1)
-
     return [x, y]
 }
 
