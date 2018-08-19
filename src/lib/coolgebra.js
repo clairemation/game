@@ -294,6 +294,12 @@ Vector.prototype.isRightOf = function(r){
   return this;
 }
 
+Vector.prototype.sideOfLine = function(r){
+  var p = values.pop();
+  values.push(Math.sign((r[2] - r[0])*(p[1] - r[1]) - (r[3] - r[1])*(p[0] - r[0])));
+  return this;
+}
+
 Vector.prototype.unit = function(){
   var value = values.peek();
   if (value[0] === 0 && value[1] === 0 && (value.length === 2 || value[2] === 0)) {

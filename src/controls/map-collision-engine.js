@@ -85,12 +85,11 @@ class MapCollisionEngine extends Control{
         for (var j = 0; j < tileRays.length; j++){
           tileRay = tileRays[j].ray
           normal = tileRays[j].normal
-          if (!$(endPos).isRightOf(tileRay).$){
+
+          if (!$(endPos).isRightOf(tileRay).$ || $(startPos).isRightOf(tileRay).$){
             continue
           }
-          var intersection = intersectionOf.lineSegments(...startPos, ...endPos, ...tileRay)
 
-          startPos = intersection || startPos
 
           var normalRay = [...endPos, ...($(endPos).plusVector($(normal).timesScalar(1000).$).$)] //Arbitrary large number
           var surfacePos = intersectionOf.lines(...normalRay, ...tileRay)

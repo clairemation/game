@@ -58,18 +58,11 @@ class Player extends SceneObject{
           }
         },
 
-        mapCollider: {
+        feetMapCollider: {
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [16, 34],
-            onHit: function(other){
-              // if (other.owner.tag == 'ground'){
-              //     this.owner.controls.transform.moveTo(...$(collisionPoint).minusVector([this.owner.controls.transform.size[0] / 2, this.owner.controls.transform.size[1]]).$)
-              //     this.owner.controls.altitude.resetFall()
-              //     this.owner.changeState('walking')
-              // }
-            }
+            checkPoint: [16, 34]
           },
         },
 
