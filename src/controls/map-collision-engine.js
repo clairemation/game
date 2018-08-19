@@ -31,7 +31,6 @@ class MapCollisionEngine extends Control{
 
       var dirty = true
       var startPos = comp.getWorldCheckPoint()
-      var endPos = comp.getNextWorldCheckPoint()
 
       var count = 0
 
@@ -43,6 +42,8 @@ class MapCollisionEngine extends Control{
           console.error("Stuck in collision loop")
           break
         }
+
+        var endPos = comp.getNextWorldCheckPoint()
 
         // Make check box one pixel larger than start and end points, in case it's bordering on another tile
         var upperLeftCorner = [Math.min(startPos[0], endPos[0]) - 1, Math.min(startPos[1], endPos[1]) - 1]
@@ -87,22 +88,22 @@ class MapCollisionEngine extends Control{
           if (!$(endPos).isRightOf(tileRay).$){
             continue
           }
-
-          var normalRayEnd = $(endPos).plusVector($(normal).timesScalar(1000).$).$ //Arbitrary large number
-          var normalRay = [...endPos, ...normalRayEnd]
-          var newPos = intersectionOf(...normalRay, ...tileRay)
-          if (newPos){
-            var resistanceRay = $([...endPos, ...newPos]).coordPairToVector().$
-            comp.owner.changeState('walking')
-            comp.owner.controls.velocity.x += resistanceRay[0]
-            comp.owner.controls.velocity.y += resistanceRay[1]
-            startPos = intersectionOf(...startPos, ...endPos, ...tileRay) || startPos
-            endPos = comp.getNextWorldCheckPoint()
-            this.debugDrawLines.push([...startPos, ...endPos], tileRay)
-
-            dirty = true
-            break
+          var intersection = intersectionOf.lineSegments(...startPos, ...endPos, ...tileRay)
+          if (!intersection){
+            continue
           }
+
+          startPos = intersection
+
+          var normalRay = [...endPos, ...($(endPos).plusVector($(normal).timesScalar(1000).$).$)] //Arbitrary large number
+          var surfacePos = intersectionOf.lines(...normalRay, ...tileRay)
+          var resistanceRay = $([...endPos, ...surfacePos]).coordPairToVector().$
+          comp.owner.changeState('walking')
+          comp.owner.controls.velocity.x += (resistanceRay[0])
+          comp.owner.controls.velocity.y += (resistanceRay[1])
+          console.log(surfacePos, comp.getNextWorldCheckPoint())
+          dirty = true
+          break
         }
       }
       comp.owner.controls.velocity.applyVelocity()

@@ -9,7 +9,7 @@ class Velocity extends Control{
   }
 
   applyVelocity(){
-    this.owner.controls.transform.moveBy(Math.ceil(this.x), Math.ceil(this.y))
+    this.owner.controls.transform.moveBy(this.x, this.y)
   }
 
   previewNewPosition(){
