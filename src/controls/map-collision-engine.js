@@ -89,21 +89,17 @@ class MapCollisionEngine extends Control{
             continue
           }
           var intersection = intersectionOf.lineSegments(...startPos, ...endPos, ...tileRay)
-          if (!intersection){
-            continue
-          }
 
-          startPos = intersection
+          startPos = intersection || startPos
 
           var normalRay = [...endPos, ...($(endPos).plusVector($(normal).timesScalar(1000).$).$)] //Arbitrary large number
           var surfacePos = intersectionOf.lines(...normalRay, ...tileRay)
           var resistanceVec = $([...endPos, ...surfacePos]).coordPairToVector().$
           var rLength = $(resistanceVec).length().$
-          resistanceVec = $(normal).timesScalar(rLength + 2).$
+          resistanceVec = $(normal).timesScalar(rLength + 0.1).$
           comp.owner.changeState('walking')
           comp.owner.controls.velocity.y += (resistanceVec[1])
           comp.owner.controls.velocity.x += (resistanceVec[0])
-          this.debugDrawLines.push([...startPos, ...surfacePos])
           dirty = true
           break
         }
