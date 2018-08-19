@@ -14,7 +14,7 @@ class PostSystems extends SceneObject{
             this.controls.groundPool.update()
             // this.controls.groundLevelObstaclePool.update()
             // this.controls.collisionEngine.update()
-            this.controls.mapCollisionEngine.update()
+            this.controls.physicsEngine.update()
             this.controls.camera.update()
             this.controls.renderingEngine.update()
           }
@@ -49,6 +49,9 @@ class PostSystems extends SceneObject{
         },
         renderingEngine: {
           kind: require('../controls/rendering-engine')
+        },
+        physicsEngine: {
+          kind: require('../controls/physics-engine')
         },
         groundLevelObstaclePool: {
           kind: require('../controls/objectpool-engine'),

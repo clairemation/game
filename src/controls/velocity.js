@@ -4,6 +4,7 @@ const $ = require('../lib/coolgebra')
 class Velocity extends Control{
   constructor(args){
     super(args)
+    this.name = 'velocity'
     this.x = 0
     this.y = 0
   }

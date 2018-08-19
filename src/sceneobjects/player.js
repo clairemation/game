@@ -62,8 +62,16 @@ class Player extends SceneObject{
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [16, 34]
+            checkPoint: [24, 34]
           },
+        },
+
+        chestMapCollider: {
+          kind: require('../controls/map-collider'),
+          args: {
+            tags: ['level01'],
+            checkPoint: [48, 16]
+          }
         },
 
         velocity: {

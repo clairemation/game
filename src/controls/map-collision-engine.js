@@ -9,19 +9,17 @@ class MapCollisionEngine extends Control{
     super(args)
     this.name = 'mapCollisionEngine'
     this.tileMap = args.tileMap
-    this.tag = this.tileMap.name
+    this.tag = 'physics'
+    this.order = 0
     this.components = []
-    this.debugDrawLines = []
   }
 
   init(){
     this.tileMap = this.owner.scene.tileMap
-    this.components = this.owner.scene.getControlsByName('mapCollider').filter(c => c.tags.includes(this.tag))
+    this.components = this.owner.scene.getControlsByName('mapCollider')
   }
 
-  update(){
-    this.debugDrawLines = []
-
+  calculate(){
     for (var i = 0; i < this.components.length; i++){
       if (!this.components[i].owner.active){
         continue
@@ -103,7 +101,6 @@ class MapCollisionEngine extends Control{
           break
         }
       }
-      comp.owner.controls.velocity.applyVelocity()
     }
   }
 }
