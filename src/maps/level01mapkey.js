@@ -3,7 +3,12 @@ var key = {
   0: {
     sheet: 'groundAtlas',
     coords: {x:128, y:0, w:32, h:32},
-    rays: [],
+    rays: [
+      {
+        ray: [0,0,32,0],
+        normal: [0, -1]
+      }
+    ],
     onHit
   },
   // flat

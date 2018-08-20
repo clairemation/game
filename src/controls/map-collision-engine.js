@@ -27,6 +27,8 @@ class MapCollisionEngine extends Control{
 
       var comp = this.components[i]
 
+      var collision = false
+
       var dirty = true
       var startPos = comp.getWorldCheckPoint()
 
@@ -88,18 +90,22 @@ class MapCollisionEngine extends Control{
             continue
           }
 
+          collision = true
 
           var normalRay = [...endPos, ...($(endPos).plusVector($(normal).timesScalar(1000).$).$)] //Arbitrary large number
           var surfacePos = intersectionOf.lines(...normalRay, ...tileRay)
           var resistanceVec = $([...endPos, ...surfacePos]).coordPairToVector().$
           var rLength = $(resistanceVec).length().$
           resistanceVec = $(normal).timesScalar(rLength + 0.1).$
-          comp.owner.changeState('walking')
+          // comp.owner.changeState('walking')
           comp.owner.controls.velocity.y += (resistanceVec[1])
           comp.owner.controls.velocity.x += (resistanceVec[0])
           dirty = true
           break
         }
+      }
+      if (collision){
+        comp.onHit()
       }
     }
   }

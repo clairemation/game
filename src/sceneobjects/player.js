@@ -62,7 +62,10 @@ class Player extends SceneObject{
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [24, 34]
+            checkPoint: [24, 34],
+            onHit: function(){
+              this.owner.changeState('walking')
+            }
           },
         },
 
