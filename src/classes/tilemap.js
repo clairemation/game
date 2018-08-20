@@ -1,3 +1,5 @@
+const $ = require('../lib/coolgebra')
+
 var PIXEL_WIDTH = 320, PIXEL_HEIGHT = 240
 var TILE_SIZE = 32
 
@@ -19,16 +21,18 @@ class TileMap{
         var tempCtx = tempCanvas.getContext('2d')
         tempCtx.drawImage(img, 0, 0, img.width, img.height)
         var imgData = tempCtx.getImageData(0, 0, img.width, img.height).data
-        var oneDArr = []
+        var oneDimensionalArray = []
         //B & W image, only need one channel
+        var hex
         for (let i = 0; i < imgData.length; i += 4){
-          oneDArr.push(imgData[i])
+          hex = parseInt($([imgData[i], imgData[i+1], imgData[i+2]]).toHexString().$, 16);
+          oneDimensionalArray.push(hex)
         }
         this.map = []
         for (let y = 0; y < img.height; y++){
           this.map[y] = []
           for (let x = 0; x < img.width; x++){
-            this.map[y].push(oneDArr[y * img.width + x])
+            this.map[y].push(oneDimensionalArray[y * img.width + x])
           }
         }
         resolve()
@@ -51,7 +55,7 @@ class TileMap{
       return null
     }
     var tile = this.map[y][x]
-    if (tile == 255){
+    if (tile == 16777215){
       return null
     }
     return this.key[tile]
@@ -62,7 +66,7 @@ class TileMap{
       return null
     }
     var tile = this.map[y][x]
-    if (tile == '255'){
+    if (tile == 16777215){
       return null
     }
     return this.key[tile]

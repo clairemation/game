@@ -97,7 +97,6 @@ class MapCollisionEngine extends Control{
           var resistanceVec = $([...endPos, ...surfacePos]).coordPairToVector().$
           var rLength = $(resistanceVec).length().$
           resistanceVec = $(normal).timesScalar(rLength + 0.1).$
-          // comp.owner.changeState('walking')
           comp.owner.controls.velocity.y += (resistanceVec[1])
           comp.owner.controls.velocity.x += (resistanceVec[0])
           dirty = true

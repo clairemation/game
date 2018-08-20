@@ -1,85 +1,27 @@
 var key = {
-  // no collision
+  // inner
   0: {
     sheet: 'groundAtlas',
-    coords: {x:128, y:0, w:32, h:32},
-    rays: [
-      {
-        ray: [0,0,32,0],
-        normal: [0, -1]
-      }
-    ],
+    coords: {x:32, y:32, w:32, h:32},
+    rays: [],
     onHit
   },
   // flat
-  135: {
-    sheet: 'groundAtlas',
-    coords: {x:128, y:0, w:32, h:32},
-    rays: [
-      {
-        ray: [-1,0,33,0],
-        normal: [0, -1]
-      }
-    ],
-    onHit
-  },
-  // corner
-  199: {
-    sheet: 'groundAtlas',
-    coords: {x:0, y:0, w:32, h:32},
-    rays: [
-      {
-        ray: [0,0,32,0],
-        normal: [0, -1]
-      },
-      {
-        ray: [0,32,0,0],
-        normal: [-1, 0]
-      }
-    ],
-    onHit
-  },
-  // corner
-  66: {
+  8325038: {
     sheet: 'groundAtlas',
     coords: {x:32, y:0, w:32, h:32},
     rays: [
       {
-        ray: [-1,0,33,0],
+        ray: [0,0,32,0],
         normal: [0, -1]
-      }
-    ],
-    onHit
-  },
-  // slope up
-  87: {
-    sheet: 'groundAtlas',
-    coords: {x:32, y:64, w:32, h:32},
-    rays: [
-      {
-        ray: [-1,33,33,-1],
-        normal: [-0.7071067811865475, -0.7071067811865475]
-      }
-    ],
-    onHit
-  },
-  // slope down
-  204: {
-    sheet: 'groundAtlas',
-    coords: {x:0, y:64, w:32, h:32},
-    rays: [
-      {
-        ray: [-1,-1,33,33],
-        normal: [0.7071067811865475, -0.7071067811865475]
-
       }
     ],
     onHit
   },
   // gentle slope up 1
-  151: {
+  11604909: {
     sheet: 'groundAtlas',
-    coords: {x:64, y:64, w:32, h:32},
+    coords: {x:128, y:96, w:32, h:32},
     rays: [
       {
         ray: [0,32,32,16],
@@ -89,9 +31,9 @@ var key = {
     onHit
   },
   // gentle slope up 2
-  212: {
+  9047942: {
     sheet: 'groundAtlas',
-    coords: {x:96, y:64, w:32, h:32},
+    coords: {x:160, y:96, w:32, h:32},
     rays: [
       {
         ray: [0,16,32,0],
@@ -99,7 +41,55 @@ var key = {
       }
     ],
     onHit
-  }
+  },
+  // steep slope up 1
+  16081320: {
+    sheet: 'groundAtlas',
+    coords: {x:224, y:128, w:32, h:32},
+    rays: [
+      {
+        ray: [0,32,16,0],
+        normal: [-0.8944271909999159, -0.4472135954999579]
+      }
+    ],
+    onHit
+  },
+  //steep slope up 2
+  16094659: {
+    sheet: 'groundAtlas',
+    coords: {x:224, y:96, w:32, h:32},
+    rays: [
+      {
+        ray: [16,32,32,0],
+        normal: [-0.8944271909999159, -0.4472135954999579]
+      }
+    ],
+    onHit
+  },
+  // steep slope down 1
+  1403350: {
+    sheet: 'groundAtlas',
+    coords: {x:192, y:96, w:32, h:32},
+    rays: [
+      {
+        ray: [0,0,16,32],
+        normal: [0.8944271909999159, -0.4472135954999579]
+      }
+    ],
+    onHit
+  },
+  //steep slope down 2
+  1136818: {
+    sheet: 'groundAtlas',
+    coords: {x:192, y:128, w:32, h:32},
+    rays: [
+      {
+        ray: [16,32,32,32],
+        normal: [0.8944271909999159, -0.4472135954999579]
+      }
+    ],
+    onHit
+  },
 
 }
 

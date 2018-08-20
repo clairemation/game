@@ -15,7 +15,4 @@ var game = new Game({
 game.start()
 game.push('titlescreen')
 
-
-
-
-module.exports = {game, Game, Scene, AssetManager}
+module.exports = {$: require('./lib/coolgebra')}
