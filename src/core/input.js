@@ -23,8 +23,8 @@ class Input {
   }
 
   turnOff(){
-    document.removeEventListener("keydown", keydownHandler)
-    document.removeEventListener("keyup", keyupHandler)
+    document.removeEventListener("keydown", this.runKeyDownHandlers)
+    document.removeEventListener("keyup", this.runKeyUpHandlers)
   }
 
   addKeyDownListener(key, handler){
@@ -59,7 +59,7 @@ class Input {
     this.handlers[key].upHandlerIndices[handler] = this.handlers[key].upHandlers.length - 1
   }
 
-  removeKeyUpListener(handler){
+  removeKeyUpListener(key, handler){
     this.handlers[key].upHandlers[this.handlers[key].upHandlerIndices[handler]] = this.handlers[key].upHandlers[this.handlers[key].upHandlers.length - 1]
     this.handlers[key].upHandlers.splice(this.handlers[key].upHandlers.length - 1, 1)
     delete this.handlers[key].upHandlerIndices[handler]

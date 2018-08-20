@@ -66,6 +66,30 @@ var key = {
     ],
     onHit
   },
+  // gentle slope down 1
+  5706164: {
+    sheet: 'groundAtlas',
+    coords: {x:64, y:96, w:32, h:32},
+    rays: [
+      {
+        ray: [0,0,32,16],
+        normal: [0.4472135954999579, -0.8944271909999159]
+      }
+    ],
+    onHit
+  },
+  // gentle slope down 2
+  7295925: {
+    sheet: 'groundAtlas',
+    coords: {x:96, y:96, w:32, h:32},
+    rays: [
+      {
+        ray: [0,16,32,32],
+        normal: [0.4472135954999579, -0.8944271909999159]
+      }
+    ],
+    onHit
+  },
   // steep slope down 1
   1403350: {
     sheet: 'groundAtlas',

@@ -28,12 +28,20 @@ var level01 = new Scene({
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
       input.addKeyDownListener(32, flap)
-      input.addKeyUpListener(32, release)
+      input.addKeyUpListener(32, releaseFlap)
+      input.addKeyDownListener(37, walkLeft)
+      input.addKeyUpListener(37, releaseWalkLeft)
+      input.addKeyDownListener(39, walkRight)
+      input.addKeyUpListener(39, releaseWalkRight)
     })
   },
   exit: function(){
     input.removeKeyDownListener(32, flap)
-    input.removeKeyUpListener('32', release)
+    input.removeKeyUpListener(32, releaseFlap)
+    input.removeKeyDownListener(37, walkLeft)
+    input.removeKeyUpListener(37, releaseWalkLeft)
+    input.removeKeyDownListener(39, walkRight)
+    input.removeKeyUpListener(39, releaseWalkRight)
   },
   objects: [
     require('../sceneobjects/pre-systems'),
@@ -57,7 +65,7 @@ function flap(e){
   level01.getObjectByName('player').message('keyDown')
 }
 
-function release(e){
+function releaseFlap(e){
   level01.getObjectByName('player').message('keyUp')
 }
 
@@ -67,6 +75,14 @@ function walkLeft(e){
 
 function walkRight(e){
   level01.getObjectByName('player').message('walkRight')
+}
+
+function releaseWalkLeft(e){
+  level01.getObjectByName('player').message('stop')
+}
+
+function releaseWalkRight(e){
+  level01.getObjectByName('player').message('stop')
 }
 
 module.exports = level01

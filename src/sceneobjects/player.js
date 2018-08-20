@@ -101,7 +101,7 @@ class Player extends SceneObject{
           kind: require('../controls/condition-checker'),
           args: {
             condition: function(){
-              return this.owner.controls.transform.getBounds()[3] >= 400
+              return this.owner.controls.transform.getBounds()[3] >= 800
             },
             result: function(){
               this.owner.changeState('dying')
