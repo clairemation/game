@@ -1,6 +1,7 @@
 const Control = require('../classes/control')
 
 const ANIM_FRAMERATE = 200
+const LEFT = false, RIGHT = true
 
 // animations: {
 //     stand: ['walk00'],
@@ -20,6 +21,7 @@ class Sprite extends Control{
         this.looping = true
         this.finished = false
         this.shouldDraw = false
+        this.forward = args.forward || RIGHT
         this.onFinished = function(){}
         this.setCurrentAnimation(...args.initialAnimation)
     }
@@ -47,7 +49,7 @@ class Sprite extends Control{
         this.looping = looping
         this.finished = false
         this.onFinished = onFinished
-        this.currentAnimation = this.animations[name]
+        this.currentAnimation = this.animations[this.forward][name]
         this.currentFrameNum = 0
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
         this.numFrames = this.currentAnimation.length

@@ -47,11 +47,20 @@ class Player extends SceneObject{
             spritesheetName: 'spritesheet',
             spritesheetData: require('../spritesheet-data/spritesheet'),
             animations: {
-              stand: ['raptorwalk00'],
-              walk: ['raptorwalk00', 'raptorwalk01'],
-              jump: ['raptorflap00'],
-              fall: ['raptorflap01'],
-              hurt: ['raptorhurt']
+              false: {
+                stand: ['Lraptorwalk00'],
+                walk: ['Lraptorwalk00', 'Lraptorwalk01'],
+                jump: ['Lraptorflap00'],
+                fall: ['Lraptorflap01'],
+                hurt: ['Lraptorhurt']
+              },
+              true: {
+                stand: ['Rraptorwalk00'],
+                walk: ['Rraptorwalk00', 'Rraptorwalk01'],
+                jump: ['Rraptorflap00'],
+                fall: ['Rraptorflap01'],
+                hurt: ['Rraptorhurt']
+              }
             },
             initialAnimation: ['walk', true],
             layer: 2

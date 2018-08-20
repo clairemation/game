@@ -12,11 +12,11 @@ var titlescreen = new Scene({
     this.game.stop()
     this.assetManager.load().then(() => renderer.drawImage(this.assetManager.assets.titlescreen, 0, 0))
     this.game.scenes.level01.assetManager.load()
-    input.addKeyDownListener(pushLevel)
+    input.addKeyDownListener(32, pushLevel)
   },
 
   exit: function(){
-    input.removeKeyDownListener(pushLevel)
+    input.removeKeyDownListener(32, pushLevel)
   }
 })
 

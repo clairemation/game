@@ -14,7 +14,7 @@ const Player = require('../sceneobjects/player')
 var level01 = new Scene({
   name: 'Level01',
   assets: {
-    spritesheet: './assets/spritesheet.png',
+    spritesheet: './assets/raptor-sprites.png',
     groundSpritesheet: './assets/ground.png',
     background: './assets/bg2.png',
     blop: './assets/blop.wav',
@@ -27,18 +27,18 @@ var level01 = new Scene({
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {
       this.assetManager.play('blop')
-      input.addKeyDownListener(flap)
-      input.addKeyUpListener(release)
+      input.addKeyDownListener(32, flap)
+      input.addKeyUpListener(32, release)
     })
   },
   exit: function(){
-    input.removeKeyDownListener(flap)
-    input.removeKeyUpListener(release)
+    input.removeKeyDownListener(32, flap)
+    input.removeKeyUpListener('32', release)
   },
   objects: [
     require('../sceneobjects/pre-systems'),
-    require('../sceneobjects/background'),
-    require('../sceneobjects/background'),
+    // require('../sceneobjects/background'),
+    // require('../sceneobjects/background'),
     // require('../sceneobjects/ground'),
     // require('../sceneobjects/ground'),
     // require('../sceneobjects/ground'),
@@ -59,6 +59,14 @@ function flap(e){
 
 function release(e){
   level01.getObjectByName('player').message('keyUp')
+}
+
+function walkLeft(e){
+  level01.getObjectByName('player').message('walkLeft')
+}
+
+function walkRight(e){
+  level01.getObjectByName('player').message('walkRight')
 }
 
 module.exports = level01
