@@ -25,6 +25,7 @@ class MapCollisionEngine extends Control{
         continue
       }
 
+
       var comp = this.components[i]
 
       var collision = false
@@ -105,6 +106,8 @@ class MapCollisionEngine extends Control{
       }
       if (collision){
         comp.onHit()
+      } else {
+        comp.onNoCollision()
       }
     }
   }

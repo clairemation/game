@@ -8,6 +8,7 @@ class MapCollider extends Control{
     this.tags = args.tags
     this.checkPoint = args.checkPoint
     this.onHit = args.onHit || (() => {})
+    this.onNoCollision = args.onNoCollision || (() => {})
   }
 
   getWorldCheckPoint(){

@@ -65,6 +65,9 @@ class Player extends SceneObject{
             checkPoint: [24, 34],
             onHit: function(){
               this.owner.changeState('walking')
+            },
+            onNoCollision: function(){
+              this.owner.changeState('flying')
             }
           },
         },
