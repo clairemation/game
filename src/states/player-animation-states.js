@@ -2,7 +2,8 @@ const State = require('../classes/state')
 
 var initial = new State({
   update: function(){
-    this.changeState('Rstand')
+    this.owner.controls.sprite.setAnimation('Rstand', false)
+    // this.changeState('Rstand')
   }
 })
 
@@ -39,6 +40,30 @@ var LwalkTailCurled = new State({
 var RwalkTailCurled = new State({
   enter: function(){
     this.owner.controls.sprite.setAnimation('RwalkTailCurled', false)
+  }
+})
+
+var Ljump = new State({
+  enter: function(){
+    this.owner.controls.sprite.setAnimation('Ljump', true)
+  }
+})
+
+var Rjump = new State({
+  enter: function(){
+    this.owner.controls.sprite.setAnimation('Rjump', false)
+  }
+})
+
+var Lfall = new State({
+  enter: function(){
+    this.owner.controls.sprite.setAnimation('Lfall', true)
+  }
+})
+
+var Rfall = new State({
+  enter: function(){
+    this.owner.controls.sprite.setAnimation('Rfall', false)
   }
 })
 

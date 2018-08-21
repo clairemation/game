@@ -2,7 +2,7 @@ const State = require('../classes/state')
 
 var standing = new State({
   enter: function(){
-    this.controls.sprite.setAnimation('stand')
+    // this.controls.sprite.setAnimation('stand')
   },
   update: function(){
     this.controls.advance.update()

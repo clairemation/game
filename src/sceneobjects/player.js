@@ -45,7 +45,12 @@ class Player extends SceneObject{
           kind: require('../classes/state-machine-control'),
           args: {
             states: require('../states/player-animation-states'),
-            initialState: 'initial'
+            initialState: 'initial',
+            parameters: {
+              speed: 0,
+              direction: 0,
+              onGround: false
+            }
           }
         },
 

@@ -4,6 +4,11 @@ class StateMachineControl extends StateMachine{
     constructor(args){
         super(args)
         this.owner = args.owner
+        this.parameters = args.parameters || {}
+    }
+
+    evaluateState(){
+        this.currentState.evaluateState.call.this()
     }
 
     getGame(){
@@ -12,6 +17,17 @@ class StateMachineControl extends StateMachine{
 
     init(){
       // Override
+    }
+
+    setParameter(name, value){
+        this.parameters[name] = value
+        this.evaluateState()
+    }
+
+    setTrigger(name){
+        this.parameters[name] = true
+        this.evaluateState()
+        this.parameters[name] = false
     }
 }
 
