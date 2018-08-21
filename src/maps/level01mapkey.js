@@ -18,6 +18,62 @@ var key = {
     ],
     onHit
   },
+  // left edge
+  16416927: {
+    sheet: 'groundAtlas',
+    coords: {x:0, y:32, w:32, h:32},
+    rays: [
+      {
+        ray: [0,32,0,0],
+        normal: [-1, 0]
+      }
+    ],
+    onHit
+  },
+  // right edge
+  687282: {
+    sheet: 'groundAtlas',
+    coords: {x:64, y:32, w:32, h:32},
+    rays: [
+      {
+        ray: [32, 0,32,32],
+        normal: [1, 0]
+      }
+    ],
+    onHit
+  },
+  // upper left corner
+  11701498: {
+    sheet: 'groundAtlas',
+    coords: {x:0, y:0, w:32, h:32},
+    rays: [
+      {
+        ray: [0,0,32,0],
+        normal: [0, -1]
+      },
+      {
+        ray: [0,32,0,0],
+        normal: [-1, 0]
+      }
+    ],
+    onHit
+  },
+  // upper right corner
+  10987514: {
+    sheet: 'groundAtlas',
+    coords: {x:64, y:0, w:32, h:32},
+    rays: [
+      {
+        ray: [0,0,32,0],
+        normal: [0, -1]
+      },
+      {
+        ray: [32, 0,32,32],
+        normal: [1, 0]
+      }
+    ],
+    onHit
+  },
   // gentle slope up 1
   11604909: {
     sheet: 'groundAtlas',
