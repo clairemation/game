@@ -49,7 +49,8 @@ class Player extends SceneObject{
             parameters: {
               speed: 0,
               direction: 0,
-              onGround: false
+              onGround: false,
+              flap: false
             }
           }
         },

@@ -16,7 +16,6 @@ class AnimationStateMachine extends StateMachineControl{
     }
 
     init(){
-      this.sprite = this.controls.owner.sprite
     }
 }
 

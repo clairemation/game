@@ -11,13 +11,7 @@ class Walk extends Control{
 
     change(direction){
         this.direction = direction
-        if (direction == 1){
-            this.owner.controls.sprite.forward = true
-            // this.owner.controls.sprite.setAnimation('Rwalk')
-        } else if (direction == -1){
-            this.owner.controls.sprite.forward = false
-            // this.owner.controls.sprite.setAnimation('Rwalk')
-        }
+        this.owner.controls.animationStateMachine.setParameter('direction', direction)
     }
 
     update(dt){
