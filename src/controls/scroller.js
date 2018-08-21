@@ -7,7 +7,7 @@ class Walk extends Control{
     }
 
     update(dt){
-        this.owner.controls.velocity.x = 3
+        this.owner.controls.velocity.x = Math.max(3, this.owner.controls.velocity.x)
     }
 }
 
