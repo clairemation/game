@@ -37,6 +37,10 @@ class Player extends SceneObject{
           kind: require('../controls/gravity')
         },
 
+        friction: {
+          kind: require('../controls/friction')
+        },
+
         flap: {
           kind: require('../controls/flap')
         },

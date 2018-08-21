@@ -98,6 +98,18 @@ var key = {
     ],
     onHit
   },
+  // 45-degree slope down
+  2960311: {
+    sheet: 'groundAtlas',
+    coords: {x:0, y:96, w:32, h:32},
+    rays: [
+      {
+        ray: [0,0,32,32],
+        normal: [0.7071067811865475, -0.7071067811865475]
+      }
+    ],
+    onHit
+  },
   // steep slope up 1
   16081320: {
     sheet: 'groundAtlas',
