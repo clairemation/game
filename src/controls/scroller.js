@@ -17,7 +17,6 @@ class Walk extends Control{
     update(dt){
         if (this.direction == 0){
             if (this.owner.controls.velocity.x == 0){
-                // this.owner.controls.sprite.setAnimation('Rstand')
                 return
             }
             if (Math.abs(this.owner.controls.velocity.x) < 1){

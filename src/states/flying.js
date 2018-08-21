@@ -19,13 +19,13 @@ var flying = new State({
         this.controls.flap.fall()
         break
       case('walkRight'):
-        this.controls.advance.direction = 1
+        this.controls.advance.change(1)
         break
       case('walkLeft'):
-        this.controls.advance.direction = -1
+        this.controls.advance.change(-1)
         break
       case('stop'):
-        this.controls.advance.direction = 0
+        this.controls.advance.change(0)
     }
   }
 })

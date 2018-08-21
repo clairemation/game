@@ -47,10 +47,7 @@ class Player extends SceneObject{
             states: require('../states/player-animation-states'),
             initialState: 'initial',
             parameters: {
-              speed: 0,
-              direction: 0,
-              onGround: false,
-              flap: false
+              direction: 0
             }
           }
         },
@@ -84,6 +81,7 @@ class Player extends SceneObject{
             checkPoint: [24, 34],
             onHit: function(){
               this.owner.changeState('walking')
+              this.owner.controls.animationStateMachine.setTrigger('land')
               return false
             },
             onNoCollision: function(){

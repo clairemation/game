@@ -7,8 +7,8 @@ class StateMachineControl extends StateMachine{
         this.parameters = args.parameters || {}
     }
 
-    evaluateChange(parameterName){
-        this.currentState.evaluateChange.call(this, parameterName)
+    evaluateChange(parameterName, value){
+        this.currentState.evaluateChange.call(this, parameterName, value)
     }
 
     getGame(){
@@ -21,13 +21,11 @@ class StateMachineControl extends StateMachine{
 
     setParameter(name, value){
         this.parameters[name] = value
-        this.evaluateChange(name)
+        this.evaluateChange(name, value)
     }
 
-    setTrigger(name){
-        this.parameters[name] = true
-        this.evaluateChange(name)
-        this.parameters[name] = false
+    setTrigger(name, value){
+        this.evaluateChange(name, value)
     }
 }
 
