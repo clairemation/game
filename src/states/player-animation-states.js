@@ -2,20 +2,20 @@ const State = require('../classes/state')
 
 var initial = new State({
   update: function(){
-    this.owner.controls.sprite.setAnimation('Rstand', false)
-    // this.changeState('Rstand')
+    this.owner.controls.sprite.setAnimation('Rstand', true)
+    this.changeState('Rstand')
   }
 })
 
 var Lstand = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Lstand', false)
+    this.owner.controls.sprite.setAnimation('Lstand', true)
   }
 })
 
 var Rstand = new State({
-  enter: function(){
-    this.owner.controls.sprite.setAnimation('Rstand', false)
+  update: function(){
+    // this.owner.controls.sprite.setAnimation('Rstand', false)
   }
 })
 

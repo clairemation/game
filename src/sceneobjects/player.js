@@ -71,7 +71,7 @@ class Player extends SceneObject{
                 Rfall: ['Rraptorflap01'],
                 Rhurt: ['Rraptorhurt']
             },
-            initialAnimation: ['Rwalk', true],
+            initialAnimation: ['Rstand', true],
             layer: 2
           }
         },
