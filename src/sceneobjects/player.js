@@ -81,11 +81,19 @@ class Player extends SceneObject{
           },
         },
 
-        chestMapCollider: {
+        rightChestMapCollider: {
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [48, 16]
+            checkPoint: [40, 16]
+          }
+        },
+
+        leftChestMapCollider: {
+          kind: require('../controls/map-collider'),
+          args: {
+            tags: ['level01'],
+            checkPoint: [8, 16]
           }
         },
 

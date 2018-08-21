@@ -4,7 +4,6 @@ var flying = new State({
   update: function(){
     this.controls.advance.update()
     this.controls.gravity.update()
-    // this.controls.friction.update()
     this.controls.velocity.update()
     this.controls.loseChecker.update()
     this.controls.sprite.update()
