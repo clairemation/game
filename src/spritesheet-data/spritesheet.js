@@ -13,6 +13,13 @@ var spritesheet = {
 		Lraptorpounce: {x:96,y:34,w:48,h:34},
 		Lraptorwalk00: {x:48,y:34,w:48,h:34},
 		Lraptorwalk01: {x:0,y:34,w:48,h:34},
+		RraptorWalkTailCurled00: {x:288, y:0, w:48, h:34},
+		RraptorWalkTailCurled01: {x:336, y:0, w:48, h:34},
+		LraptorWalkTailCurled0: {x:288, y:34, w:48, h:34},
+		RraptorWalkTailCurled01: {x:336, y:34, w:48, h:34},
+		RraptorStandNeckCurled00: {x:384, y:0, w:48, h:34},
+		LraptorStandNeckCurled01: {x:384, y:34, w:48, h:34},
+
 	}
 }
 

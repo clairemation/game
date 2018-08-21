@@ -11,6 +11,7 @@ class StateMachine{
 
         this.controls = {}
         var control, controlArgs
+        args.controls = args.controls || {}
         for (var name in args.controls){
             control = args.controls[name]
             controlArgs = control.args || {}

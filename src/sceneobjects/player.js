@@ -41,28 +41,32 @@ class Player extends SceneObject{
           kind: require('../controls/flap')
         },
 
+        animationStateMachine: {
+          kind: require('../classes/state-machine-control'),
+          args: {
+            states: require('../states/player-animation-states'),
+            initialState: 'initial'
+          }
+        },
+
         sprite: {
           kind: require('../controls/sprite'),
           args: {
             spritesheetName: 'spritesheet',
             spritesheetData: require('../spritesheet-data/spritesheet'),
             animations: {
-              false: {
-                stand: ['Lraptorwalk00'],
-                walk: ['Lraptorwalk00', 'Lraptorwalk01'],
-                jump: ['Lraptorflap00'],
-                fall: ['Lraptorflap01'],
-                hurt: ['Lraptorhurt']
-              },
-              true: {
-                stand: ['Rraptorwalk00'],
-                walk: ['Rraptorwalk00', 'Rraptorwalk01'],
-                jump: ['Rraptorflap00'],
-                fall: ['Rraptorflap01'],
-                hurt: ['Rraptorhurt']
-              }
+                Lstand: ['Lraptorwalk00'],
+                Lwalk: ['Lraptorwalk00', 'Lraptorwalk01'],
+                Ljump: ['Lraptorflap00'],
+                Lfall: ['Lraptorflap01'],
+                Lhurt: ['Lraptorhurt'],
+                Rstand: ['Rraptorwalk00'],
+                Rwalk: ['Rraptorwalk00', 'Rraptorwalk01'],
+                Rjump: ['Rraptorflap00'],
+                Rfall: ['Rraptorflap01'],
+                Rhurt: ['Rraptorhurt']
             },
-            initialAnimation: ['walk', true],
+            initialAnimation: ['Rwalk', true],
             layer: 2
           }
         },
@@ -74,6 +78,7 @@ class Player extends SceneObject{
             checkPoint: [24, 34],
             onHit: function(){
               this.owner.changeState('walking')
+              return false
             },
             onNoCollision: function(){
               this.owner.changeState('flying')

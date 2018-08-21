@@ -21,9 +21,8 @@ class Sprite extends Control{
         this.looping = true
         this.finished = false
         this.shouldDraw = false
-        this.forward = args.forward || RIGHT
         this.onFinished = function(){}
-        this.setCurrentAnimation(...args.initialAnimation)
+        this.setAnimation(...args.initialAnimation)
     }
 
     update(){
@@ -45,11 +44,11 @@ class Sprite extends Control{
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
     }
 
-    setCurrentAnimation(name, looping = true, onFinished = function(){}){
+    setAnimation(name, looping = true, onFinished = function(){}){
         this.looping = looping
         this.finished = false
         this.onFinished = onFinished
-        this.currentAnimation = this.animations[this.forward][name]
+        this.currentAnimation = this.animations[name]
         this.currentFrameNum = 0
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
         this.numFrames = this.currentAnimation.length

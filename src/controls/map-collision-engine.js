@@ -93,6 +93,11 @@ class MapCollisionEngine extends Control{
 
           collision = true
 
+          // Returns true if we should skip collision restitution
+          if (comp.onHit()){
+            break
+          }
+
           var normalRay = [...endPos, ...($(endPos).plusVector($(normal).timesScalar(1000).$).$)] //Arbitrary large number
           var surfacePos = intersectionOf.lines(...normalRay, ...tileRay)
           var resistanceVec = $([...endPos, ...surfacePos]).coordPairToVector().$

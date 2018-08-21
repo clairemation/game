@@ -7,7 +7,7 @@ class MapCollider extends Control{
     super(args)
     this.tags = args.tags
     this.checkPoint = args.checkPoint
-    this.onHit = args.onHit || (() => {})
+    this.onHit = args.onHit || (() => false)
     this.onNoCollision = args.onNoCollision || (() => {})
   }
 

@@ -2,13 +2,14 @@ const State = require('../classes/state')
 
 var walking = new State({
   enter: function(){
-    this.controls.sprite.setCurrentAnimation('walk')
+    this.controls.sprite.setAnimation('Rwalk')
   },
   update: function(){
     this.controls.advance.update()
     this.controls.gravity.update()
     this.controls.velocity.update()
     this.controls.loseChecker.update()
+    this.controls.animationStateMachine.update()
     this.controls.sprite.update()
     this.controls.cameraFollow.update()
   },

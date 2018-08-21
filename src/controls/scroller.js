@@ -13,17 +13,17 @@ class Walk extends Control{
         this.direction = direction
         if (direction == 1){
             this.owner.controls.sprite.forward = true
-            this.owner.controls.sprite.setCurrentAnimation('walk')
+            this.owner.controls.sprite.setAnimation('Rwalk')
         } else if (direction == -1){
             this.owner.controls.sprite.forward = false
-            this.owner.controls.sprite.setCurrentAnimation('walk')
+            this.owner.controls.sprite.setAnimation('Rwalk')
         }
     }
 
     update(dt){
         if (this.direction == 0){
             if (this.owner.controls.velocity.x == 0){
-                this.owner.controls.sprite.setCurrentAnimation('stand')
+                this.owner.controls.sprite.setAnimation('Rstand')
                 return
             }
             if (Math.abs(this.owner.controls.velocity.x) < 1){

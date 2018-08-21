@@ -6,6 +6,7 @@ var flying = new State({
     this.controls.gravity.update()
     this.controls.velocity.update()
     this.controls.loseChecker.update()
+    this.controls.animationStateMachine.update()
     this.controls.sprite.update()
     this.controls.cameraFollow.update()
   },
