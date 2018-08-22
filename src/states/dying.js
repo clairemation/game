@@ -10,7 +10,8 @@ var dying = new State({
     this.controls.advance.update()
     this.controls.gravity.update()
     this.controls.velocity.update()
-    this.controls.sprite.update()
+    this.controls.bodySprite.update()
+    this.controls.tailSprite.update()
     // this.controls.cameraFollow.update()
   }
 })

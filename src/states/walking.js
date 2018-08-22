@@ -10,7 +10,8 @@ var walking = new State({
     this.controls.velocity.update()
     this.controls.loseChecker.update()
     this.controls.animationStateMachine.update()
-    this.controls.sprite.update()
+    this.controls.bodySprite.update()
+    this.controls.tailSprite.update()
     this.controls.cameraFollow.update()
   },
   message: function(msg, e){

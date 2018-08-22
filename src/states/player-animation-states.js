@@ -9,7 +9,7 @@ var initial = new State({
 
 var Lstand = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Lstand', true)
+    this.sprite.setAnimation('Lstand', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -26,7 +26,7 @@ var Lstand = new State({
 
 var Rstand = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Rstand', true)
+    this.sprite.setAnimation('Rstand', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -43,7 +43,7 @@ var Rstand = new State({
 
 var Lwalk = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Lwalk', true)
+    this.sprite.setAnimation('Lwalk', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -60,7 +60,7 @@ var Lwalk = new State({
 
 var Rwalk = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Rwalk', true)
+    this.sprite.setAnimation('Rwalk', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -77,19 +77,19 @@ var Rwalk = new State({
 
 var LwalkTailCurled = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('LwalkTailCurled', true)
+    this.sprite.setAnimation('LwalkTailCurled', true)
   }
 })
 
 var RwalkTailCurled = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('RwalkTailCurled', true)
+    this.sprite.setAnimation('RwalkTailCurled', true)
   }
 })
 
 var Ljump = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Ljump', true)
+    this.sprite.setAnimation('Ljump', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -111,7 +111,7 @@ var Ljump = new State({
 
 var Rjump = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Rjump', true)
+    this.sprite.setAnimation('Rjump', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -133,7 +133,7 @@ var Rjump = new State({
 
 var Lfall = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Lfall', true)
+    this.sprite.setAnimation('Lfall', true)
   },
 
   evaluateChange: function(parameterName, value){
@@ -155,7 +155,7 @@ var Lfall = new State({
 
 var Rfall = new State({
   enter: function(){
-    this.owner.controls.sprite.setAnimation('Rfall', true)
+    this.sprite.setAnimation('Rfall', true)
   },
 
   evaluateChange: function(parameterName, value){

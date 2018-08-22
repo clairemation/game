@@ -42,19 +42,21 @@ class Player extends SceneObject{
         },
 
         animationStateMachine: {
-          kind: require('../classes/state-machine-control'),
+          kind: require('../controls/animation-state-machine'),
           args: {
+            tag: 'body',
             states: require('../states/player-animation-states'),
             initialState: 'initial',
             parameters: {
               direction: 0
-            }
+            },
           }
         },
 
-        sprite: {
+        bodySprite: {
           kind: require('../controls/sprite'),
           args: {
+            tag: 'body',
             spritesheetName: 'spritesheet',
             spritesheetData: require('../spritesheet-data/spritesheet'),
             animations: {
@@ -70,6 +72,21 @@ class Player extends SceneObject{
                 Rhurt: ['Rraptorhurt']
             },
             initialAnimation: ['Rstand', true],
+            layer: 2
+          }
+        },
+
+        tailSprite: {
+          kind: require('../controls/sprite'),
+          args: {
+            tag: 'tail',
+            spritesheetName: 'spritesheet',
+            spritesheetData: require('../spritesheet-data/spritesheet'),
+            animations: {
+                Rblend: ['Rtail00', 'Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07'],
+                Lblend: ['Ltail00', 'Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07']
+            },
+            initialAnimation: ['Rblend', true],
             layer: 2
           }
         },
