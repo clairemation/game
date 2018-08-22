@@ -25,30 +25,34 @@ class TailManager extends Control{
   }
 
   oscillate(){
-    var sinValue = Math.cos(this.progress) * this.oscillationMagnitude
     this.progress += this.getGame().dt / 100
+    this.tailPos = Math.cos(this.progress) * this.oscillationMagnitude
     this.oscillationMagnitude -= this.getGame().dt / 150
     this.oscillationMagnitude = Math.max(this.oscillationMagnitude, 0)
-    this.tailPos = sinValue
   }
 
-  settle(){
+  startOscillation(){
     this.oscillationMagnitude = this.tailPos
     this.progress = 0
   }
 
-  setFromYVelocity(){
-    this.tailPos += 0.25 * Math.sign(this.owner.controls.velocity.y - this.tailPos)
+  tweenTowardsYVelocity(){
+    var diff = this.owner.controls.velocity.y - this.tailPos
+    if (Math.abs(diff) < 0.5) {
+      this.tailPos = this.owner.controls.velocity.y
+    } else {
+      this.tailPos += 0.5 * Math.sign(diff)
+    }
   }
 
   update(){
     var yPos = this.owner.controls.transform.position[1]
     if (Math.abs(this.lastYPos - yPos) >= 1){
-      this.setFromYVelocity()
+      this.tweenTowardsYVelocity()
       this.oscillating = false
     } else if (!this.oscillating){
       this.oscillating = true
-      this.settle()
+      this.startOscillation()
     } else {
       this.oscillate()
     }
