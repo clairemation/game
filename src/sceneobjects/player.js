@@ -57,8 +57,8 @@ class Player extends SceneObject{
           kind: require('../controls/sprite'),
           args: {
             tag: 'body',
-            spritesheetName: 'spritesheet',
-            spritesheetData: require('../spritesheet-data/spritesheet'),
+            spritesheetName: 'bodySprites',
+            spritesheetData: require('../spritesheet-data/body'),
             animations: {
                 Lstand: ['Lraptorstand'],
                 Lwalk: ['Lraptorwalk00', 'Lraptorwalk01'],
@@ -85,11 +85,11 @@ class Player extends SceneObject{
           args: {
             tag: 'tail',
             animating: false,
-            spritesheetName: 'spritesheet',
-            spritesheetData: require('../spritesheet-data/spritesheet'),
+            spritesheetName: 'tailSprites',
+            spritesheetData: require('../spritesheet-data/tail'),
             animations: {
-                Rblend: ['Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07'],
-                Lblend: ['Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07']
+                Rblend: ['Rtail00', 'Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07', 'Rtail08'],
+                Lblend: ['Ltail00', 'Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07', 'Ltail08']
             },
             initialAnimation: ['Rblend', true],
             layer: 2
@@ -103,8 +103,8 @@ class Player extends SceneObject{
             checkPoint: [28, 28],
             onHit: function(){
               this.owner.changeState('walking')
-              this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
               this.owner.controls.tailManager.settle()
+              this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
               return false
             },
             onNoCollision: function(){

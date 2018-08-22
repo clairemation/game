@@ -9,6 +9,8 @@ class TailManager extends Control{
     this.onGround = false
     this.blendAnimationLength = 0
     this.normalizationNum = 0
+    this.tailPos = 0
+    this.lastYVelocity = 0
   }
 
   init(){
@@ -23,10 +25,10 @@ class TailManager extends Control{
   }
 
   oscillate(){
-    var sinValue = Math.sin(this.progress) * this.oscillationMagnitude
+    var sinValue = Math.cos(this.progress) * this.oscillationMagnitude
     this.progress += this.getGame().dt / 100
-    this.oscillationMagnitude -= this.getGame().dt / 100
-    this.tailPos = this.blendAnimationLength - Math.floor(sinValue / 2 + this.normalizationNum)
+    this.oscillationMagnitude -= this.getGame().dt / 150
+    this.tailPos = sinValue
     if (this.oscillationMagnitude < 1){
       this.oscillating = false
     }
@@ -37,18 +39,22 @@ class TailManager extends Control{
       return
     }
     this.onGround = true
-    this.oscillationMagnitude = 4
+    this.oscillationMagnitude = this.tailPos
     this.progress = 0
     this.oscillating = true
+  }
+
+  setFromYVelocity(){
+    this.tailPos = this.owner.controls.velocity.y
   }
 
   update(){
     if (this.oscillating){
       this.oscillate()
     } else {
-      this.tailPos = (this.blendAnimationLength - Math.floor(this.owner.controls.velocity.y / 2 + this.normalizationNum))
+      this.setFromYVelocity()
     }
-    this.owner.controls.tailSprite.setFrame(this.tailPos)
+    this.owner.controls.tailSprite.setFrame(this.blendAnimationLength - Math.floor(this.tailPos / 2 + this.normalizationNum))
   }
 }
 
