@@ -13,6 +13,7 @@ class Sprite extends Control{
         super(args)
         this.name = 'sprite'
         this.tag = args.tag
+        this.animating = args.animating == undefined ? true : args.animating
         this.spritesheetName = args.spritesheetName
         this.spritesheetData = args.spritesheetData
         this.animations = args.animations
@@ -27,7 +28,9 @@ class Sprite extends Control{
     }
 
     update(){
-        this.advanceFrame()
+        if (this.animating){
+            this.advanceFrame()
+        }
         this.shouldDraw = true
     }
 
@@ -42,6 +45,11 @@ class Sprite extends Control{
             }
         }
         this.currentFrameNum = Math.floor (this.elapsedTime / ANIM_FRAMERATE)
+        this.currentFrame = this.currentAnimation[this.currentFrameNum]
+    }
+
+    setFrame(num){
+        this.currentFrameNum = Math.max(Math.min(num, this.currentAnimation.length - 1), 0)
         this.currentFrame = this.currentAnimation[this.currentFrameNum]
     }
 

@@ -41,7 +41,7 @@ class Player extends SceneObject{
           kind: require('../controls/flap')
         },
 
-        animationStateMachine: {
+        bodyAnimationStateMachine: {
           kind: require('../controls/animation-state-machine'),
           args: {
             tag: 'body',
@@ -76,15 +76,20 @@ class Player extends SceneObject{
           }
         },
 
+        tailManager: {
+          kind: require('../controls/tail-manager')
+        },
+
         tailSprite: {
           kind: require('../controls/sprite'),
           args: {
             tag: 'tail',
+            animating: false,
             spritesheetName: 'spritesheet',
             spritesheetData: require('../spritesheet-data/spritesheet'),
             animations: {
-                Rblend: ['Rtail00', 'Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07'],
-                Lblend: ['Ltail00', 'Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07']
+                Rblend: ['Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07'],
+                Lblend: ['Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07']
             },
             initialAnimation: ['Rblend', true],
             layer: 2
@@ -98,7 +103,7 @@ class Player extends SceneObject{
             checkPoint: [28, 28],
             onHit: function(){
               this.owner.changeState('walking')
-              this.owner.controls.animationStateMachine.setTrigger('land')
+              this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
               return false
             },
             onNoCollision: function(){

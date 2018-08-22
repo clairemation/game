@@ -10,6 +10,7 @@ var standing = new State({
     this.controls.velocity.update()
     this.controls.loseChecker.update()
     this.controls.bodySprite.update()
+    this.controls.tailManager.update()
     this.controls.tailSprite.update()
     this.controls.cameraFollow.update()
   },

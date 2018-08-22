@@ -11,7 +11,8 @@ class Walk extends Control{
 
     change(direction){
         this.direction = direction
-        this.owner.controls.animationStateMachine.setParameter('direction', direction)
+        this.owner.controls.bodyAnimationStateMachine.setParameter('direction', direction)
+        this.owner.controls.tailManager.changeDirection(direction)
     }
 
     update(dt){
