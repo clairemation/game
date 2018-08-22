@@ -7,6 +7,13 @@ class TailManager extends Control{
     this.oscillationMagnitude = 0
     this.progress = 0
     this.onGround = false
+    this.blendAnimationLength = 0
+    this.normalizationNum = 0
+  }
+
+  init(){
+    this.blendAnimationLength = this.owner.controls.tailSprite.currentAnimation.length
+    this.normalizationNum = Math.ceil(this.blendAnimationLength / 2)
   }
 
   changeDirection(dir){
@@ -19,11 +26,10 @@ class TailManager extends Control{
     var sinValue = Math.sin(this.progress) * this.oscillationMagnitude
     this.progress += this.getGame().dt / 100
     this.oscillationMagnitude -= this.getGame().dt / 100
-    this.tailPos = 7 - Math.floor(sinValue / 2 + Math.ceil(this.owner.controls.tailSprite.currentAnimation.length / 2))
+    this.tailPos = this.blendAnimationLength - Math.floor(sinValue / 2 + this.normalizationNum)
     if (this.oscillationMagnitude < 1){
       this.oscillating = false
     }
-    console.log(this.progress)
   }
 
   settle(){
@@ -40,7 +46,7 @@ class TailManager extends Control{
     if (this.oscillating){
       this.oscillate()
     } else {
-      this.tailPos = (7 - Math.floor(this.owner.controls.velocity.y / 2 + Math.ceil(this.owner.controls.tailSprite.currentAnimation.length / 2)))
+      this.tailPos = (this.blendAnimationLength - Math.floor(this.owner.controls.velocity.y / 2 + this.normalizationNum))
     }
     this.owner.controls.tailSprite.setFrame(this.tailPos)
   }
