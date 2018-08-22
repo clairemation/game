@@ -5,6 +5,7 @@ class Flap extends Control{
     this.owner.controls.velocity.y -= 7
     this.owner.changeState('flying')
     this.owner.controls.bodyAnimationStateMachine.setTrigger('flap')
+    this.owner.controls.tailManager.onGround = false
   }
 
   flap(){

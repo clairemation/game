@@ -104,6 +104,7 @@ class Player extends SceneObject{
             onHit: function(){
               this.owner.changeState('walking')
               this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
+              this.owner.controls.tailManager.settle()
               return false
             },
             onNoCollision: function(){
