@@ -38,13 +38,12 @@ class TailManager extends Control{
   }
 
   setFromYVelocity(){
-    this.tailPos = this.owner.controls.velocity.y
+    this.tailPos += 0.25 * Math.sign(this.owner.controls.velocity.y - this.tailPos)
   }
 
   update(){
     var yPos = this.owner.controls.transform.position[1]
     if (Math.abs(this.lastYPos - yPos) >= 1){
-      console.log('asdf')
       this.setFromYVelocity()
       this.oscillating = false
     } else if (!this.oscillating){
