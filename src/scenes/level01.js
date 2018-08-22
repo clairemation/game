@@ -14,7 +14,7 @@ const Player = require('../sceneobjects/player')
 var level01 = new Scene({
   name: 'Level01',
   assets: {
-    spritesheet: './assets/raptor-sprites.png',
+    spritesheet: './assets/raptorsprite2.png',
     groundSpritesheet: './assets/ground.png',
     background: './assets/bg2.png',
     blop: './assets/blop.wav',

@@ -58,12 +58,12 @@ class Player extends SceneObject{
             spritesheetName: 'spritesheet',
             spritesheetData: require('../spritesheet-data/spritesheet'),
             animations: {
-                Lstand: ['Lraptorwalk00'],
+                Lstand: ['Lraptorstand'],
                 Lwalk: ['Lraptorwalk00', 'Lraptorwalk01'],
                 Ljump: ['Lraptorflap00'],
                 Lfall: ['Lraptorflap01'],
                 Lhurt: ['Lraptorhurt'],
-                Rstand: ['Rraptorwalk00'],
+                Rstand: ['Rraptorstand'],
                 Rwalk: ['Rraptorwalk00', 'Rraptorwalk01'],
                 Rjump: ['Rraptorflap00'],
                 Rfall: ['Rraptorflap01'],
@@ -78,7 +78,7 @@ class Player extends SceneObject{
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [24, 34],
+            checkPoint: [28, 28],
             onHit: function(){
               this.owner.changeState('walking')
               this.owner.controls.animationStateMachine.setTrigger('land')
