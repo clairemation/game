@@ -11,6 +11,7 @@ class TailManager extends Control{
     this.normalizationNum = 0
     this.tailPos = 0
     this.lastYPos = 0
+    this.oscillationRate = 100
   }
 
   init(){
@@ -25,19 +26,20 @@ class TailManager extends Control{
   }
 
   oscillate(){
-    this.progress += this.getGame().dt / 100
+    this.progress += this.getGame().dt / this.oscillationRate
     this.tailPos = Math.cos(this.progress) * this.oscillationMagnitude
     this.oscillationMagnitude -= this.getGame().dt / 150
     this.oscillationMagnitude = Math.max(this.oscillationMagnitude, 0)
   }
 
-  startOscillation(){
-    this.oscillationMagnitude = this.tailPos
+  startOscillation(startPos){
+    this.oscillationMagnitude = startPos
     this.progress = 0
+    this.oscillationRate = 100
   }
 
-  tweenTowardsYVelocity(){
-    var diff = this.owner.controls.velocity.y - this.tailPos
+  tweenTowards(pos){
+    var diff = pos - this.tailPos
     if (Math.abs(diff) < 0.5) {
       this.tailPos = this.owner.controls.velocity.y
     } else {
@@ -45,15 +47,29 @@ class TailManager extends Control{
     }
   }
 
+  offsetTowardsButtPosition(){
+    if ((this.owner.controls.bodySprite.currentAnimationName == 'Lwalk' || this.owner.controls.bodySprite.currentAnimationName == 'Rwalk') && this.owner.controls.bodySprite.currentFrameNum == 1){
+      // this.owner.controls.tailSprite.offset[1] = -1
+    } else {
+      this.owner.controls.tailSprite.offset[1] = 0
+    }
+  }
+
   update(){
+    this.offsetTowardsButtPosition()
     var yPos = this.owner.controls.transform.position[1]
-    if (Math.abs(this.lastYPos - yPos) >= 1){
-      this.tweenTowardsYVelocity()
+    var yPosDiff = yPos - this.lastYPos
+    if (Math.abs(yPosDiff) >= 1){
       this.oscillating = false
+      this.tweenTowards(yPosDiff)
     } else if (!this.oscillating){
       this.oscillating = true
-      this.startOscillation()
+      this.startOscillation(this.tailPos)
     } else {
+      if (this.owner.controls.velocity.x != 0){
+        this.oscillationMagnitude = Math.max(this.oscillationMagnitude, 2)
+        this.oscillationRate = 75
+      }
       this.oscillate()
     }
     this.owner.controls.tailSprite.setFrame(this.blendAnimationLength - Math.floor(this.tailPos / 2 + this.normalizationNum))

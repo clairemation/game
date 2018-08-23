@@ -18,6 +18,9 @@ class Sprite extends Control{
         this.spritesheetData = args.spritesheetData
         this.animations = args.animations
         this.layer = args.layer
+        this.offset = args.offset || [0,0]
+        this.currentAnimation
+        this.currentAnimationName
         this.currentFrameNum = 0
         this.elapsedTime = 0
         this.looping = true
@@ -57,6 +60,7 @@ class Sprite extends Control{
         this.looping = looping
         this.finished = false
         this.onFinished = onFinished
+        this.currentAnimationName = name
         this.currentAnimation = this.animations[name]
         this.currentFrameNum = 0
         this.currentFrame = this.currentAnimation[this.currentFrameNum]

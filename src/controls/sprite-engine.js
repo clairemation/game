@@ -33,8 +33,8 @@ class SpriteEngine extends Control{
         frameCoords.y,
         frameCoords.w,
         frameCoords.h,
-        this.components[i].owner.controls.transform.position[0],
-        this.components[i].owner.controls.transform.position[1],
+        this.components[i].owner.controls.transform.position[0] + this.components[i].offset[0],
+        this.components[i].owner.controls.transform.position[1] + this.components[i].offset[1],
         frameCoords.w,
         frameCoords.h)
       // this.components[i].shouldDraw = false

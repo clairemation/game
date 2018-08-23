@@ -34,6 +34,12 @@ var level01 = new Scene({
       input.addKeyUpListener(37, releaseWalkLeft)
       input.addKeyDownListener(39, walkRight)
       input.addKeyUpListener(39, releaseWalkRight)
+
+      document.addEventListener('touchstart', tap)
+      document.addEventListener('touchend', releaseTap)
+      document.addEventListener('touchstart', touchStart)
+      document.addEventListener('touchmove', touchMove)
+      document.addEventListener('touchend', touchEnd)
     })
   },
   exit: function(){
@@ -43,6 +49,12 @@ var level01 = new Scene({
     input.removeKeyUpListener(37, releaseWalkLeft)
     input.removeKeyDownListener(39, walkRight)
     input.removeKeyUpListener(39, releaseWalkRight)
+
+    document.removeEventListener('touchstart', tap)
+    document.removeEventListener('touchend', releaseTap)
+    document.removeEventListener('touchstart', touchStart)
+    document.removeEventListener('touchmove', touchMove)
+    document.removeEventListener('touchend', touchEnd)
   },
   objects: [
     require('../sceneobjects/pre-systems'),
@@ -84,6 +96,69 @@ function releaseWalkLeft(e){
 
 function releaseWalkRight(e){
   level01.getObjectByName('player').message('stop')
+}
+
+
+var isPressed = false
+
+function tap(e){
+  if (isPressed){
+    return
+  }
+  for (var i = 0; i < e.changedTouches.length; i++){
+    if (e.changedTouches[i].pageX > window.innerWidth / 2){
+      flap(e)
+      isPressed = true
+      break
+    }
+  }
+}
+
+function releaseTap(e){
+  if (!isPressed){
+    return
+  }
+  for (var i = 0; i < e.changedTouches.length; i++){
+    if (e.changedTouches[i].pageX > window.innerWidth / 2){
+      releaseFlap(e)
+      isPressed = false
+      break
+    }
+  }
+}
+
+var lastX = 0
+
+function touchStart(e){
+  for (var i = 0; i < e.changedTouches.length; i++){
+    if (e.changedTouches[i].pageX < window.innerWidth / 2){
+      lastX = e.changedTouches[i].pageX
+      break
+    }
+  }
+}
+
+function touchMove(e){
+  for (var i = 0; i < e.changedTouches.length; i++){
+    if (e.changedTouches[i].pageX < window.innerWidth / 2){
+      if (e.changedTouches[i].pageX < lastX){
+        walkLeft(e)
+      } else {
+        walkRight(e)
+      }
+      lastX = e.changedTouches[i].pageX
+      break
+    }
+  }
+}
+
+function touchEnd(e){
+  for (var i = 0; i < e.changedTouches.length; i++){
+    if (e.changedTouches[i].pageX < window.innerWidth / 2){
+      releaseWalkLeft(e)
+      break
+    }
+  }
 }
 
 module.exports = level01

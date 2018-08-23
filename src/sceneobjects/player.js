@@ -103,7 +103,6 @@ class Player extends SceneObject{
             checkPoint: [28, 28],
             onHit: function(){
               this.owner.changeState('walking')
-              // this.owner.controls.tailManager.settle()
               this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
               return false
             },
