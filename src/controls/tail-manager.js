@@ -35,7 +35,6 @@ class TailManager extends Control{
   startOscillation(startPos){
     this.oscillationMagnitude = startPos
     this.progress = 0
-    this.oscillationRate = 100
   }
 
   tweenTowards(pos){
@@ -49,7 +48,7 @@ class TailManager extends Control{
 
   offsetTowardsButtPosition(){
     if ((this.owner.controls.bodySprite.currentAnimationName == 'Lwalk' || this.owner.controls.bodySprite.currentAnimationName == 'Rwalk') && this.owner.controls.bodySprite.currentFrameNum == 1){
-      // this.owner.controls.tailSprite.offset[1] = -1
+      this.owner.controls.tailSprite.offset[1] = -1
     } else {
       this.owner.controls.tailSprite.offset[1] = 0
     }
@@ -67,8 +66,7 @@ class TailManager extends Control{
       this.startOscillation(this.tailPos)
     } else {
       if (this.owner.controls.velocity.x != 0){
-        this.oscillationMagnitude = Math.max(this.oscillationMagnitude, 2)
-        this.oscillationRate = 75
+        this.oscillationMagnitude = Math.max(this.oscillationMagnitude, 1)
       }
       this.oscillate()
     }
