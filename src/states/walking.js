@@ -9,7 +9,7 @@ var walking = new State({
     this.controls.gravity.update()
     this.controls.velocity.update()
     this.controls.loseChecker.update()
-    this.controls.bodyAnimationStateMachine.update()
+    this.controls.animationStateMachine.update()
     this.controls.tailManager.update()
     this.controls.bodySprite.update()
     this.controls.tailSprite.update()

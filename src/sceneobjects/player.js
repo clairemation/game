@@ -41,7 +41,7 @@ class Player extends SceneObject{
           kind: require('../controls/flap')
         },
 
-        bodyAnimationStateMachine: {
+        animationStateMachine: {
           kind: require('../controls/animation-state-machine'),
           args: {
             tag: 'body',
@@ -103,7 +103,7 @@ class Player extends SceneObject{
             checkPoint: [28, 28],
             onHit: function(){
               this.owner.changeState('walking')
-              this.owner.controls.bodyAnimationStateMachine.setTrigger('land')
+              this.owner.controls.animationStateMachine.setTrigger('land')
               return false
             },
             onNoCollision: function(){

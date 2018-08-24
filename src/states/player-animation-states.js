@@ -16,6 +16,7 @@ var Lstand = new State({
     switch(parameterName){
       case('direction'):
         this.changeState(value == -1 ? 'Lwalk' : 'Rwalk')
+        this.owner.controls.tailManager.changeDirection(value)
         break
       case('flap'):
         this.changeState('Ljump')
@@ -32,7 +33,9 @@ var Rstand = new State({
   evaluateChange: function(parameterName, value){
     switch(parameterName){
       case('direction'):
+      console.log(this)
         this.changeState(value == -1 ? 'Lwalk' : 'Rwalk')
+        this.owner.controls.tailManager.changeDirection(value)
         break
       case('flap'):
         this.changeState('Rjump')
@@ -50,6 +53,7 @@ var Lwalk = new State({
     switch(parameterName){
       case('direction'):
         this.changeState(value == 1 ? 'Rwalk' : 'Lstand')
+        this.owner.controls.tailManager.changeDirection(value)
         break
       case('flap'):
         this.changeState('Ljump')
@@ -67,6 +71,7 @@ var Rwalk = new State({
     switch(parameterName){
       case('direction'):
         this.changeState(value == -1 ? 'Lwalk' : 'Rstand')
+        this.owner.controls.tailManager.changeDirection(value)
         break
       case('flap'):
         this.changeState('Rjump')
@@ -97,6 +102,7 @@ var Ljump = new State({
       case('direction'):
         if (value == 1){
           this.changeState('Rjump')
+          this.owner.controls.tailManager.changeDirection(value)
         }
         break
       case('fall'):
@@ -119,6 +125,7 @@ var Rjump = new State({
       case('direction'):
         if (value == -1){
           this.changeState('Ljump')
+          this.owner.controls.tailManager.changeDirection(value)
         }
         break
       case('fall'):
@@ -141,6 +148,7 @@ var Lfall = new State({
       case('direction'):
         if (value == 1){
           this.changeState('Rfall')
+          this.owner.controls.tailManager.changeDirection(value)
         }
         break
       case('flap'):
@@ -163,6 +171,7 @@ var Rfall = new State({
       case('direction'):
         if (value == -1){
           this.changeState('Lfall')
+          this.owner.controls.tailManager.changeDirection(value)
         }
         break
       case('flap'):

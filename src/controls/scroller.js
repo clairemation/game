@@ -1,6 +1,6 @@
 const Control = require('../classes/control')
 
-class Walk extends Control{
+class Advance extends Control{
     constructor(args){
         super(args)
         this.name = 'walk'
@@ -11,8 +11,7 @@ class Walk extends Control{
 
     change(direction){
         this.direction = direction
-        this.owner.controls.bodyAnimationStateMachine.setParameter('direction', direction)
-        this.owner.controls.tailManager.changeDirection(direction)
+        this.owner.controls.animationStateMachine.setParameter('direction', direction)
     }
 
     update(dt){
@@ -33,4 +32,4 @@ class Walk extends Control{
     }
 }
 
-module.exports = Walk
+module.exports = Advance

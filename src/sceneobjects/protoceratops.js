@@ -19,7 +19,7 @@ class Proto extends SceneObject{
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: [100.0, 100.0],
+            position: [300.0, 100.0],
             size: [128, 64]
           }
         },
@@ -63,25 +63,25 @@ class Proto extends SceneObject{
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [28, 28]
+            checkPoint: [64, 64]
           }
         },
 
-        rightNoseMapCollider: {
-          kind: require('../controls/map-collider'),
-          args: {
-            tags: ['level01'],
-            checkPoint: [60, 10]
-          }
-        },
+        // rightNoseMapCollider: {
+        //   kind: require('../controls/map-collider'),
+        //   args: {
+        //     tags: ['level01'],
+        //     checkPoint: [60, 10]
+        //   }
+        // },
 
-        leftNoseMapCollider: {
-          kind: require('../controls/map-collider'),
-          args: {
-            tags: ['level01'],
-            checkPoint: [56, 10]
-          }
-        },
+        // leftNoseMapCollider: {
+        //   kind: require('../controls/map-collider'),
+        //   args: {
+        //     tags: ['level01'],
+        //     checkPoint: [56, 10]
+        //   }
+        // },
 
         velocity: {
           kind: require('../controls/velocity')
