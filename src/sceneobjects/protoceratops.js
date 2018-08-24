@@ -20,7 +20,7 @@ class Proto extends SceneObject{
           kind: require('../controls/transform'),
           args: {
             position: [300.0, 100.0],
-            size: [128, 64]
+            size: [80, 44]
           }
         },
 
@@ -68,7 +68,7 @@ class Proto extends SceneObject{
           kind: require('../controls/map-collider'),
           args: {
             tags: ['level01'],
-            checkPoint: [64, 64]
+            checkPoint: [40, 44]
           }
         },
 
