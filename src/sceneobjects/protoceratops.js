@@ -1,72 +1,96 @@
 const SceneObject = require('../classes/sceneobject')
+const Game = require('../classes/game')
+const $ = require('../lib/coolgebra')
 
-var count = 0
-
-class Protoceratops extends SceneObject{
+class Proto extends SceneObject{
   constructor(args){
     var sceneObjArgs = {
-      name: 'protoceratops' + count++,
+      name: 'proto',
       scene: args.scene,
-      tag: 'protoceratops',
+      active: true,
 
       states: {
-        active: require('../states/activeGround'),
-        inactive: require('../states/inactive')
+        walking: require('../states/enemy-standing'),
       },
-      initialState: 'inactive',
+      initialState: 'walking',
 
       controls: {
 
         transform: {
           kind: require('../controls/transform'),
           args: {
-            position: [0, 0],
-            size: [48, 34]
+            position: [100.0, 100.0],
+            size: [128, 64]
           }
         },
+
+        advance: {
+          kind: require('../controls/scroller')
+        },
+
+        gravity: {
+          kind: require('../controls/gravity')
+        },
+
+        // animationStateMachine: {
+        //   kind: require('../controls/animation-state-machine'),
+        //   args: {
+        //     tag: 'proto',
+        //     states: require('../states/player-animation-states'),
+        //     initialState: 'initial',
+        //     parameters: {
+        //       direction: 0
+        //     },
+        //   }
+        // },
 
         sprite: {
           kind: require('../controls/sprite'),
           args: {
-            spritesheetName: 'spritesheet',
-            spritesheetData: require('../spritesheet-data/spritesheet'),
+            tag: 'proto',
+            spritesheetName: 'protoSprites',
+            spritesheetData: require('../spritesheet-data/proto'),
             animations: {
-              default: ['proto'],
+                stand: ['stand'],
+                run: ['run00', 'run01']
             },
-            initialAnimation: ['default', true]
+            initialAnimation: ['run', true],
+            layer: 2
           }
         },
 
-        scroller: {
-          kind: require('../controls/scroller'),
+        feetMapCollider: {
+          kind: require('../controls/map-collider'),
           args: {
-            layer: 'foreground'
+            tags: ['level01'],
+            checkPoint: [28, 28]
           }
         },
 
-        objectPooler: {
-          kind: require('../controls/objectpooler'),
+        rightNoseMapCollider: {
+          kind: require('../controls/map-collider'),
           args: {
-            tag: 'groundLevel',
-            spawnPosition: [360, 166]
+            tags: ['level01'],
+            checkPoint: [60, 10]
           }
         },
 
-        collider: {
-          kind: require('../controls/collider'),
+        leftNoseMapCollider: {
+          kind: require('../controls/map-collider'),
           args: {
-            hitbox: [0, 20, 48, 50],
-            onHit: () => console.log('asdf')
+            tags: ['level01'],
+            checkPoint: [56, 10]
           }
-        }
+        },
+
+        velocity: {
+          kind: require('../controls/velocity')
+        },
       }
     }
-    super(sceneObjArgs)
-  }
 
-  static reset(){
-    count = 0
+    super(sceneObjArgs)
   }
 }
 
-module.exports = Protoceratops
+module.exports = Proto

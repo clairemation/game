@@ -33,11 +33,7 @@ class PostSystems extends SceneObject{
           }
         },
         mapRenderer: {
-          kind: require('../controls/map-renderer'),
-          args: {
-            tileMap: require('../maps/level01'),
-            layer: 1
-          }
+          kind: require('../controls/map-renderer')
         },
         groundSpriteEngine: {
           kind: require('../controls/sprite-engine'),
@@ -68,10 +64,7 @@ class PostSystems extends SceneObject{
           }
         },
         mapCollisionEngine: {
-          kind: require('../controls/map-collision-engine'),
-          args: {
-            tileMap: require('../maps/level01')
-          }
+          kind: require('../controls/map-collision-engine')
         },
         camera: {
           kind: require('../controls/camera')

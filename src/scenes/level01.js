@@ -16,6 +16,7 @@ var level01 = new Scene({
   assets: {
     bodySprites: './assets/body-sprites.png',
     tailSprites: './assets/tail-sprites.png',
+    protoSprites: './assets/proto-sprites.png',
     groundSpritesheet: './assets/ground.png',
     background: './assets/bg2.png',
     blop: './assets/blop.wav',
@@ -68,7 +69,7 @@ var level01 = new Scene({
     // require('../sceneobjects/ground'),
     // require('../sceneobjects/ground'),
     require('../sceneobjects/player'),
-    // require('../sceneobjects/protoceratops'),
+    require('../sceneobjects/protoceratops'),
     // require('../sceneobjects/protoceratops'),
     require('../sceneobjects/post-systems')
   ]
