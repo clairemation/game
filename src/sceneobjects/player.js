@@ -103,7 +103,7 @@ class Player extends SceneObject{
         objectCollider: {
           kind: require('../controls/object-collider'),
           args: {
-            hitbox: [0, 0, 48, 34],
+            hitbox: [20, 10, 44, 20],
             onHit: function(other){
               this.owner.changeState('dying')
               var worldHitbox = this.getWorldHitbox()

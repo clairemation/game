@@ -75,7 +75,7 @@ class Proto extends SceneObject{
         objectCollider: {
           kind: require('../controls/object-collider'),
           args: {
-            hitbox: [0, 0, 80, 44]
+            hitbox: [10, 20, 70, 40]
           }
         },
 
