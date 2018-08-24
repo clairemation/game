@@ -96,6 +96,27 @@ class Player extends SceneObject{
           }
         },
 
+        flicker: {
+          kind: require('../controls/flicker')
+        },
+
+        objectCollider: {
+          kind: require('../controls/object-collider'),
+          args: {
+            hitbox: [0, 0, 48, 34],
+            onHit: function(other){
+              this.owner.changeState('dying')
+              var worldHitbox = this.getWorldHitbox()
+              var otherWorldHitbox = other.getWorldHitbox()
+              var center = $([worldHitbox[0], worldHitbox[1]]).plusVector($([this.hitbox[2], this.hitbox[3]]).minusVector([this.hitbox[0], this.hitbox[1]]).timesScalar(0.5).$).$
+              var otherCenter = $([otherWorldHitbox[0], otherWorldHitbox[1]]).plusVector($([otherWorldHitbox[2], otherWorldHitbox[3]]).minusVector([otherWorldHitbox[0], otherWorldHitbox[1]]).timesScalar(0.5).$).$
+              var bounceBack = $(center).minusVector(otherCenter).unit().$
+              this.owner.controls.velocity.x += bounceBack[0] * 10
+              this.owner.controls.velocity.y += bounceBack[1] * 10
+            }
+          }
+        },
+
         feetMapCollider: {
           kind: require('../controls/map-collider'),
           args: {
@@ -130,10 +151,6 @@ class Player extends SceneObject{
 
         velocity: {
           kind: require('../controls/velocity')
-        },
-
-        physics: {
-          kind: require('../controls/physics')
         },
 
         loseChecker: {

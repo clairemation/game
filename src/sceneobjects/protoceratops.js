@@ -72,6 +72,13 @@ class Proto extends SceneObject{
           }
         },
 
+        objectCollider: {
+          kind: require('../controls/object-collider'),
+          args: {
+            hitbox: [0, 0, 80, 44]
+          }
+        },
+
         // rightNoseMapCollider: {
         //   kind: require('../controls/map-collider'),
         //   args: {

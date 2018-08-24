@@ -10,7 +10,7 @@ class MapCollisionEngine extends Control{
     this.name = 'mapCollisionEngine'
     this.tileMap = args.tileMap
     this.tag = 'physics'
-    this.order = 0
+    this.order = 1
     this.components = []
   }
 
@@ -21,7 +21,7 @@ class MapCollisionEngine extends Control{
 
   calculate(){
     for (var i = 0; i < this.components.length; i++){
-      if (!this.components[i].owner.active){
+      if (!this.components[i].enabled){
         continue
       }
 

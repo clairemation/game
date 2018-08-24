@@ -57,8 +57,8 @@ class PostSystems extends SceneObject{
             tag: 'ground'
           }
         },
-        collisionEngine: {
-          kind: require('../controls/collision-engine'),
+        objectCollisionEngine: {
+          kind: require('../controls/object-collision-engine'),
           args: {
             tag: 'ground'
           }

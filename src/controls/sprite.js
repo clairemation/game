@@ -25,7 +25,7 @@ class Sprite extends Control{
         this.elapsedTime = 0
         this.looping = true
         this.finished = false
-        this.shouldDraw = false
+        this.enabled = true
         this.onFinished = function(){}
         this.setAnimation(...args.initialAnimation)
     }
@@ -34,7 +34,6 @@ class Sprite extends Control{
         if (this.animating){
             this.advanceFrame()
         }
-        this.shouldDraw = true
     }
 
     advanceFrame(){

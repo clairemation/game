@@ -5,7 +5,7 @@ var standing = new State({
   },
   update: function(){
     var dist = this.scene.getObjectByName('player').controls.transform.position[0] - this.controls.transform.position[0]
-    if (Math.abs(dist) < 50){
+    if (Math.abs(dist) < 100){
       this.controls.advance.change(0)
     } else if (Math.abs(dist) < 200){
       this.controls.advance.change(Math.sign(this.scene.getObjectByName('player').controls.transform.position[0] - this.controls.transform.position[0]))

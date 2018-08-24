@@ -22,7 +22,7 @@ class SpriteEngine extends Control{
     var frameName, frameCoords, spritesheetName
 
     for (let i = 0; i < this.components.length; i++){
-      if (!this.components[i].shouldDraw){
+      if (!this.components[i].enabled){
         continue
       }
       spritesheetName = this.components[i].spritesheetName
