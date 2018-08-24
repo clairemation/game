@@ -32,17 +32,17 @@ class Proto extends SceneObject{
           kind: require('../controls/gravity')
         },
 
-        // animationStateMachine: {
-        //   kind: require('../controls/animation-state-machine'),
-        //   args: {
-        //     tag: 'proto',
-        //     states: require('../states/player-animation-states'),
-        //     initialState: 'initial',
-        //     parameters: {
-        //       direction: 0
-        //     },
-        //   }
-        // },
+        animationStateMachine: {
+          kind: require('../controls/animation-state-machine'),
+          args: {
+            tag: 'proto',
+            states: require('../states/proto-animation-states'),
+            initialState: 'initial',
+            parameters: {
+              direction: 0
+            },
+          }
+        },
 
         sprite: {
           kind: require('../controls/sprite'),
@@ -51,10 +51,12 @@ class Proto extends SceneObject{
             spritesheetName: 'protoSprites',
             spritesheetData: require('../spritesheet-data/proto'),
             animations: {
-                stand: ['stand'],
-                run: ['run00', 'run01']
+                Lstand: ['Lstand'],
+                Lwalk: ['Lwalk00', 'Lwalk01'],
+                Rstand: ['Rstand'],
+                Rwalk: ['Rwalk00', 'Rwalk01']
             },
-            initialAnimation: ['run', true],
+            initialAnimation: ['Lstand', true],
             layer: 2
           }
         },

@@ -10,6 +10,9 @@ class Advance extends Control{
     }
 
     change(direction){
+        if (direction == this.direction){
+            return
+        }
         this.direction = direction
         this.owner.controls.animationStateMachine.setParameter('direction', direction)
     }
