@@ -33,7 +33,6 @@ var Rstand = new State({
   evaluateChange: function(parameterName, value){
     switch(parameterName){
       case('direction'):
-      console.log(this)
         this.changeState(value == -1 ? 'Lwalk' : 'Rwalk')
         this.owner.controls.tailManager.changeDirection(value)
         break

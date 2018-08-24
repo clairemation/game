@@ -27,9 +27,9 @@ class Player extends SceneObject{
         },
 
         advance: {
-          kind: require('../controls/scroller'),
+          kind: require('../controls/advance'),
           args: {
-            multiplier: 1.0
+            acceleration: 2
           }
         },
 

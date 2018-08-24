@@ -25,7 +25,10 @@ class Proto extends SceneObject{
         },
 
         advance: {
-          kind: require('../controls/scroller')
+          kind: require('../controls/advance'),
+          args: {
+            acceleration: 0.5
+          }
         },
 
         gravity: {

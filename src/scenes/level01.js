@@ -58,7 +58,6 @@ var level01 = new Scene({
     document.removeEventListener('touchend', touchEnd)
   },
   objects: [
-    require('../sceneobjects/pre-systems'),
     // require('../sceneobjects/background'),
     // require('../sceneobjects/background'),
     // require('../sceneobjects/ground'),

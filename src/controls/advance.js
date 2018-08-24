@@ -4,9 +4,10 @@ class Advance extends Control{
     constructor(args){
         super(args)
         this.name = 'walk'
+        this.acceleration = args.acceleration || 1
+        this.topImpulse = args.topImpulse || 3
         this.impulse = 0
         this.direction = 0
-        this.topImpulse = args.topImpulse || 3
     }
 
     change(direction){
@@ -30,7 +31,7 @@ class Advance extends Control{
         }
         if ((this.direction > 0 && this.owner.controls.velocity.x < this.topImpulse) ||
             (this.direction < 0 && this.owner.controls.velocity.x > -this.topImpulse)){
-            this.owner.controls.velocity.x += this.direction
+            this.owner.controls.velocity.x += this.direction * this.acceleration
         }
     }
 }
