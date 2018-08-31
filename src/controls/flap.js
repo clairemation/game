@@ -1,8 +1,15 @@
 const Control = require('../classes/control')
+const $ = require('../lib/coolgebra')
 
 class Flap extends Control{
+  constructor(args){
+    super(args)
+    this.floorNormal = [0, -1]
+  }
+
   startJump(){
-    this.owner.controls.velocity.y -= 7
+    var jumpVec = $(this.floorNormal).timesScalar(7).$
+    this.owner.controls.velocity.y += jumpVec[1]
     this.owner.changeState('flying')
     this.owner.controls.animationStateMachine.setTrigger('flap')
     this.owner.controls.tailManager.onGround = false

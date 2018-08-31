@@ -94,7 +94,7 @@ class MapCollisionEngine extends Control{
           collision = true
 
           // Returns true if we should skip collision restitution
-          if (comp.onHit()){
+          if (comp.onHit(tileRays[j])){
             break
           }
 
@@ -109,9 +109,7 @@ class MapCollisionEngine extends Control{
           break
         }
       }
-      if (collision){
-        comp.onHit()
-      } else {
+      if (!collision){
         comp.onNoCollision()
       }
     }

@@ -68,7 +68,7 @@ var level01 = new Scene({
     // require('../sceneobjects/ground'),
     // require('../sceneobjects/ground'),
     require('../sceneobjects/player'),
-    require('../sceneobjects/protoceratops'),
+    // require('../sceneobjects/protoceratops'),
     // require('../sceneobjects/protoceratops'),
     require('../sceneobjects/post-systems')
   ]

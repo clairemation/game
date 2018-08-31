@@ -122,8 +122,9 @@ class Player extends SceneObject{
           args: {
             tags: ['level01'],
             checkPoint: [28, 28],
-            onHit: function(){
+            onHit: function(floor){
               this.owner.changeState('walking')
+              this.owner.controls.flap.floorNormal = floor.normal
               this.owner.controls.animationStateMachine.setTrigger('land')
               return false
             },
