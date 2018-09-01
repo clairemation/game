@@ -1,6 +1,7 @@
 const AssetManager = require('./assetmanager')
 const TileMap = require('./tilemap')
 const renderer = require('../core/renderer')
+const objectValues = require('../lib/object-values-polyfill')
 
 var count = 1
 
@@ -64,7 +65,7 @@ class Scene {
     getAllControls(){
         var arr = []
         for (let i = 0; i < this.objects.length; i++){
-            arr.push(...Object.values(this.objects[i].controls))
+            arr.push(...objectValues(this.objects[i].controls))
         }
         return arr
     }

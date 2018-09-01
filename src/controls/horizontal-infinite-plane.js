@@ -21,8 +21,8 @@ class HorizontalInfinitePlane extends Control{
   render(){
     var camOffset = Camera.getOffset()
 
-    var x = -camOffset[0] % (PIXEL_WIDTH * this.rate) / this.rate
-    var y = -camOffset[1] % (PIXEL_HEIGHT * this.rate) / this.rate + this.offset[1]
+    var x = Math.round(-camOffset[0] % (PIXEL_WIDTH * this.rate) / this.rate)
+    var y = Math.round(-camOffset[1] % (PIXEL_HEIGHT * this.rate) / this.rate + this.offset[1])
 
     var clipWidth = Math.min(PIXEL_WIDTH - x, PIXEL_WIDTH)
 

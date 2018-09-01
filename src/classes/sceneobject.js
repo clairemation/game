@@ -1,4 +1,5 @@
 const StateMachine = require('./statemachine')
+const objectValues = require('../lib/object-values-polyfill')
 
 class SceneObject extends StateMachine{
     constructor(args){
@@ -10,11 +11,11 @@ class SceneObject extends StateMachine{
     }
 
     getControlsByName(name){
-        return Object.values(this.controls).filter(control => control.name == name)
+        return objectValues(this.controls).filter(control => control.name == name)
     }
 
     getControlsByTag(tag){
-        return Object.values(this.controls).filter(control => control.tag == tag)
+        return objectValues(this.controls).filter(control => control.tag == tag)
     }
 
     getGame(){

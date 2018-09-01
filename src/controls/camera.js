@@ -40,8 +40,8 @@ class Camera extends Control{
   }
 
   static setOffset(x, y){
-    offset[0] = x
-    offset[1] = y
+    offset[0] = Math.round(x)
+    offset[1] = Math.round(y)
     renderer.setTransform(1, 0, 0, 1, -offset[0], -offset[1])
   }
 
