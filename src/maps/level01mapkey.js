@@ -1,3 +1,5 @@
+const TILE_SIZE = 32
+
 var key = {
   // inner
   0: {
@@ -77,7 +79,7 @@ var key = {
   // gentle slope up 1
   11604909: {
     sheet: 'groundAtlas',
-    coords: {x:128, y:96, w:32, h:32},
+    coords: {x:5 * TILE_SIZE, y:4 * TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,32,32,16],
@@ -89,7 +91,7 @@ var key = {
   // gentle slope up 2
   9047942: {
     sheet: 'groundAtlas',
-    coords: {x:160, y:96, w:32, h:32},
+    coords: {x:6*TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,16,32,0],
@@ -101,7 +103,7 @@ var key = {
   // 45-degree slope down
   2960311: {
     sheet: 'groundAtlas',
-    coords: {x:0, y:96, w:32, h:32},
+    coords: {x:TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,0,32,32],
@@ -113,7 +115,7 @@ var key = {
   // steep slope up 1
   16081320: {
     sheet: 'groundAtlas',
-    coords: {x:224, y:128, w:32, h:32},
+    coords: {x:8*TILE_SIZE, y:5*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,32,16,0],
@@ -125,7 +127,7 @@ var key = {
   //steep slope up 2
   16094659: {
     sheet: 'groundAtlas',
-    coords: {x:224, y:96, w:32, h:32},
+    coords: {x:9*TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [16,32,32,0],
@@ -137,7 +139,7 @@ var key = {
   // gentle slope down 1
   5706164: {
     sheet: 'groundAtlas',
-    coords: {x:64, y:96, w:32, h:32},
+    coords: {x:3*TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,0,32,16],
@@ -149,7 +151,7 @@ var key = {
   // gentle slope down 2
   7295925: {
     sheet: 'groundAtlas',
-    coords: {x:96, y:96, w:32, h:32},
+    coords: {x:4*TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,16,32,32],
@@ -161,7 +163,7 @@ var key = {
   // steep slope down 1
   1403350: {
     sheet: 'groundAtlas',
-    coords: {x:192, y:96, w:32, h:32},
+    coords: {x:7*TILE_SIZE, y:4*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [0,0,16,32],
@@ -173,7 +175,7 @@ var key = {
   //steep slope down 2
   1136818: {
     sheet: 'groundAtlas',
-    coords: {x:192, y:128, w:32, h:32},
+    coords: {x:7*TILE_SIZE, y:5*TILE_SIZE, w:32, h:32},
     rays: [
       {
         ray: [16,0,32,32],

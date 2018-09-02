@@ -29,7 +29,7 @@ class Advance extends Control{
                 this.owner.controls.velocity.x *= 0.7
             }
         }
-        if ((this.direction > 0 && this.owner.controls.velocity.x < this.topImpulse) ||
+        else if ((this.direction > 0 && this.owner.controls.velocity.x < this.topImpulse) ||
             (this.direction < 0 && this.owner.controls.velocity.x > -this.topImpulse)){
             this.owner.controls.velocity.x += this.direction * this.acceleration
         }

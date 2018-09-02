@@ -11,6 +11,8 @@ const raptorSpritesheetData = require('../spritesheet-data/raptor')
 const walking = require('../states/walking')
 const Player = require('../sceneobjects/player')
 
+var player
+
 var level01 = new Scene({
   name: 'Level01',
   assets: {
@@ -18,11 +20,11 @@ var level01 = new Scene({
     tailSprites: './assets/tail-sprites.png',
     protoSprites: './assets/proto-sprites.png',
     groundSpritesheet: './assets/ground.png',
-    background: './assets/bg2.png',
+    background: './assets/bg3.png',
     blop: './assets/blop.wav',
     screech: './assets/pusou.wav',
     groundTile: './assets/ground-tile.png',
-    groundAtlas: './assets/ground-atlas.png'
+    groundAtlas: './assets/sand-terrain.png'
   },
   tileMapSrc: './assets/level01.png',
   tileMapKey: require('../maps/level01mapkey'),
@@ -41,6 +43,10 @@ var level01 = new Scene({
       document.addEventListener('touchstart', touchStart)
       document.addEventListener('touchmove', touchMove)
       document.addEventListener('touchend', touchEnd)
+
+      player = this.getObjectByName('player')
+
+      // setTimeout(() => player.controls.advance.change(1), 500)
     })
   },
   exit: function(){
@@ -68,34 +74,34 @@ var level01 = new Scene({
     // require('../sceneobjects/ground'),
     // require('../sceneobjects/ground'),
     require('../sceneobjects/player'),
-    // require('../sceneobjects/protoceratops'),
+    require('../sceneobjects/protoceratops'),
     // require('../sceneobjects/protoceratops'),
     require('../sceneobjects/post-systems')
   ]
 })
 
 function flap(e){
-  level01.getObjectByName('player').message('keyDown')
+  player.message('keyDown')
 }
 
 function releaseFlap(e){
-  level01.getObjectByName('player').message('keyUp')
+  player.message('keyUp')
 }
 
 function walkLeft(e){
-  level01.getObjectByName('player').message('walkLeft')
+  player.message('walkLeft')
 }
 
 function walkRight(e){
-  level01.getObjectByName('player').message('walkRight')
+  player.message('walkRight')
 }
 
 function releaseWalkLeft(e){
-  level01.getObjectByName('player').message('stop')
+  player.message('stop')
 }
 
 function releaseWalkRight(e){
-  level01.getObjectByName('player').message('stop')
+  player.message('stop')
 }
 
 

@@ -1,9 +1,6 @@
 const State = require('../classes/state')
 
 var walking = new State({
-  enter: function(){
-    // this.controls.sprite.setAnimation('Rwalk')
-  },
   update: function(){
     this.controls.advance.update()
     this.controls.gravity.update()

@@ -41,6 +41,26 @@ class Player extends SceneObject{
           kind: require('../controls/flap')
         },
 
+        tailManager: {
+          kind: require('../controls/tail-manager')
+        },
+
+        tailSprite: {
+          kind: require('../controls/sprite'),
+          args: {
+            tag: 'tail',
+            animating: false,
+            spritesheetName: 'tailSprites',
+            spritesheetData: require('../spritesheet-data/tail'),
+            animations: {
+                Rblend: ['Rtail00', 'Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07', 'Rtail08'],
+                Lblend: ['Ltail00', 'Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07', 'Ltail08']
+            },
+            initialAnimation: ['Rblend', true],
+            layer: 2
+          }
+        },
+
         animationStateMachine: {
           kind: require('../controls/animation-state-machine'),
           args: {
@@ -72,26 +92,6 @@ class Player extends SceneObject{
                 Rhurt: ['Rraptorhurt']
             },
             initialAnimation: ['Rstand', true],
-            layer: 2
-          }
-        },
-
-        tailManager: {
-          kind: require('../controls/tail-manager')
-        },
-
-        tailSprite: {
-          kind: require('../controls/sprite'),
-          args: {
-            tag: 'tail',
-            animating: false,
-            spritesheetName: 'tailSprites',
-            spritesheetData: require('../spritesheet-data/tail'),
-            animations: {
-                Rblend: ['Rtail00', 'Rtail01', 'Rtail02', 'Rtail03', 'Rtail04', 'Rtail05', 'Rtail06', 'Rtail07', 'Rtail08'],
-                Lblend: ['Ltail00', 'Ltail01', 'Ltail02', 'Ltail03', 'Ltail04', 'Ltail05', 'Ltail06', 'Ltail07', 'Ltail08']
-            },
-            initialAnimation: ['Rblend', true],
             layer: 2
           }
         },
