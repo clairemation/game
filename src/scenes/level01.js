@@ -30,7 +30,7 @@ var level01 = new Scene({
   tileMapKey: require('../maps/level01mapkey'),
   enter: function(){
     Scene.prototype.enter.call(this).then(() => {
-      this.assetManager.play('blop')
+      // this.assetManager.play('blop')
       input.addKeyDownListener(32, flap)
       input.addKeyUpListener(32, releaseFlap)
       input.addKeyDownListener(37, walkLeft)
