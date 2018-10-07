@@ -33,7 +33,7 @@
             <input type="checkbox" id="show-grid" disabled="disabled">
           <span style="font-size: 12px;">Snap to grid</span>
             <input type="checkbox" id="snap" disabled="disabled">
-          <select id="scene-select" disabled="disabled">
+          <select id="scene-select" style="display:none;">
             <option value="">Scene</option>
             <option value="titlescreen">Title</option>
             <option value="level01">Level 01</option>
@@ -44,9 +44,9 @@
             2<input type="checkbox" id="layer-2" checked="checked" disabled="disabled">
             3<input type="checkbox" id="layer-3" checked="checked" disabled="disabled">
           </div>
-          <button id="export-map">Export map</button>
-          <button id="undo">Undo</button>
-          <button id="paste">Paste</button>
+          <button id="export-map" style="display:none;">Export map</button>
+          <button id="undo" style="display:none;">Undo</button>
+          <button id="paste" style="display:none;">Paste</button>
         </div>
 
         <canvas width=320 height=240 id="canvas"
@@ -61,7 +61,7 @@
 
       </section>
 
-      <section id="inspector-view" style="display: inline-block;">
+      <section id="inspector-view" style="display: none;">
 
         <div id="inspector-menu" align=left style="display: block; width: 100%; margin: auto; text-align: left; background: gray;">
           <button id="inspector-scroll-button"><i class="fa fa-arrows-alt" style="transform: rotate(45deg);"></i></button>
